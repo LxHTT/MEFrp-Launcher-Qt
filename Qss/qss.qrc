@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="built-InQss">
+    <file>title_bar_dark.qss</file>
+    <file>title_bar_light.qss</file>
+  </qresource>
+</RCC>

@@ -1,0 +1,94 @@
+[project]
+name = "MEFrp-Launcher-Qt"
+dynamic = ["version"]
+description = "A Launcher for MEFrp."
+authors = [{ name = "LxHTT", email = "lxhtt@mcsl.com.cn" }]
+dependencies = [
+    "setuptools>=60", # 随便指定个版本就好 (
+    # qt
+    "PyQt5",
+    "PyQt-Material-Widgets[full]",
+    "pyqt5-qt5==5.15.2",
+    # 系统信息
+    "psutil==5.9.5",
+    "requests==2.31.0",
+    # 构建需要
+    "lib-not-dr[nuitka]>=0.3",
+    "nuitka>=1.9.5",
+]
+requires-python = ">=3.8,<3.9"
+readme = "README.md"
+license = { text = "GPL-3.0" }
+
+[tool.setuptools.dynamic]
+version = { attr = "MELauncherLib.VERSION" }
+
+[project.optional-dependencies]
+all = ["tomli>=2.0.1", "ruff>=0.1.6", "pyqt5-stubs>=5.15.6.0"]
+
+[tool.pdm.scripts]
+main = "python MEFrp-Launcher.py"
+build = "python -m lndl_nuitka . -y"
+build_github = "python -m lndl_nuitka . -y -- --disable-console"
+
+[tool.ruff]
+target-version = "py38"
+line-length = 100
+src = ["MELauncherLib", "Tools", "Adapters"]
+output-format = "grouped"
+preview = true
+
+[tool.ruff.lint]
+select = [
+    "E", # pycodestyle
+    "F", # pyflakes
+    "I", # isort
+    "W", # pycodestyle
+]
+ignore = ["I001"]
+
+[tool.ruff.lint.isort]
+force-single-line = true
+force-wrap-aliases = true
+combine-as-imports = true
+
+
+[tool.lndl.nuitka]
+script = "Tools/lndl-config.py"
+
+# 请使用 lndl_nuitka . -y 编译 (-y 为自动确认)
+[tool.lndl.nuitka.cli]
+main = "MEFrp-Launcher.py"
+output-dir = "build"
+
+# 编译选项
+clang = true
+msvc = "latest"
+standalone = true
+lto = "yes"
+disable-console = false
+show-memory = false
+show-progress = false
+
+# 版本号 构建时通过 Tools/lndl-config.py 自动填充
+product-version = false
+file-version = false
+
+# 文件信息
+product-name = "MEFrp-Launcher-Qt"
+company-name = "LxHTT"
+file-description = "MEFrp-Launcher"
+copyright = "Copyright ©LxHTT. All rights reserved."
+
+# 依赖
+include-package = ["MELauncherLib", "sqlite3"]
+follow-import-to = ["loguru", "requests"]
+nofollow-import-to = ["numpy", "scipy", "PIL", "colorthief", "sqlite3.test"]
+
+enable-plugin = ["pyqt5", "multiprocessing"]
+windows-icon-from-ico = "MEFrpLauncher.ico"
+assume-yes-for-download = true
+
+[tool.setuptools]
+packages = []
+# 实际上并不发布包 (用于解决无法 pdm install)

@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="built-InIcons">
+    <file>MEFrp.ico</file>
+  </qresource>
+</RCC>
