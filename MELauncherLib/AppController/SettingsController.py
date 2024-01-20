@@ -2,12 +2,14 @@ from typing import Union
 
 from PyQt5.QtCore import QFile
 
-from qmaterialwidgets import QConfig, ConfigItem
+from qmaterialwidgets import QConfig, ConfigItem, BoolValidator
 
 
 class Config(QConfig):
     """MEFrp Launcher Configuration"""
-
+    isLoggedIn = ConfigItem("User", "isLoggedIn", False, BoolValidator())
+    userName = ConfigItem("User", "userName", "", "")
+    userPassword = ConfigItem("User", "userToken", "", "")
     oldExecuteable = ConfigItem("Other", "oldExecuteable", "", "")
 
 

@@ -19,11 +19,14 @@ from qmaterialwidgets import (
     setTheme,
     isDarkTheme,
     BottomNavMaterialTitleBar,
+    FilledLineEdit,
+    TextPushButton,
 )
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QSize, QThreadPool
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtCore import QSize, QThreadPool, Qt
+from PyQt5.QtWidgets import QApplication, QDialogButtonBox
 
+from .. import VERSION
 from .HomePage import HomePage
 
 
@@ -43,7 +46,7 @@ class MEMainWindow(BottomNavMaterialWindow):
     def initWindow(self):
         """初始化窗口"""
 
-        self.setWindowTitle("镜缘映射 MEFrp 启动器")
+        self.setWindowTitle(f"镜缘映射 MEFrp 启动器 {VERSION} - Qt!")
         self.titleBar.titleLabel.setStyleSheet(
             getStyleSheetFromFile(
                 f":/built-InQss/title_bar_{'dark' if isDarkTheme() else 'light'}.qss"
@@ -79,7 +82,10 @@ class MEMainWindow(BottomNavMaterialWindow):
         setTheme(cfg.theme)
 
     def finishSetup(self):
+        # from time import sleep
+        # sleep(2)
         self.splashScreen.finish()
+        self.checkLogin()
 
     def closeEvent(self, a0) -> None:
         # close thread pool
@@ -131,5 +137,32 @@ class MEMainWindow(BottomNavMaterialWindow):
             box.cancelButton.clicked.connect(box.deleteLater)
             box.yesButton.clicked.connect(exceptionWidget.deleteLater)
             box.cancelButton.clicked.connect(exceptionWidget.deleteLater)
-            box.exec()
+            box.exec_()
             return self.oldHook(ty, value, _traceback)
+
+    def checkLogin(self):
+        if not cfg.get(cfg.isLoggedIn):
+            w = MessageBox(title="登录到 ME Frp", content="", parent=self, icon=FIF.VPN)
+
+            userNameEdit = FilledLineEdit(w)
+            userNameEdit.setLabel("邮箱或用户名")
+
+            pwdEdit = FilledLineEdit(w)
+            pwdEdit.setLabel("密码")
+
+            registerBtn = TextPushButton(w)
+            registerBtn.setText("注册")
+            registerBtn.setAttribute(Qt.WidgetAttribute.WA_LayoutUsesWidgetRect)
+
+            forgotPwdBtn = TextPushButton(w)
+            forgotPwdBtn.setText("找回密码")
+            forgotPwdBtn.setAttribute(Qt.WidgetAttribute.WA_LayoutUsesWidgetRect)
+
+            w.contentLabel.setParent(None)
+            w.textLayout.addWidget(userNameEdit)
+            w.textLayout.addWidget(pwdEdit)
+            w.cancelButton.setText("取消")
+            w.yesButton.setText("登录")
+            w.buttonGroup.addButton(registerBtn, QDialogButtonBox.ActionRole)
+            w.buttonGroup.addButton(forgotPwdBtn, QDialogButtonBox.ActionRole)
+            w.exec_()

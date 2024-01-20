@@ -4,10 +4,12 @@ from PyQt5.QtWidgets import QApplication
 from qmaterialwidgets import MaterialTranslator
 
 from MELauncherLib.AppController.ExceptionHandler import initMELauncher
+from MELauncherLib.AppController.SettingsController import cfg
 from MELauncherLib.Interfaces.MainWindow import MEMainWindow
 
 if __name__ == "__main__":
     initMELauncher()
+    cfg.load("MEFrp-Launcher-Settings.json", cfg)
     QApplication.setHighDpiScaleFactorRoundingPolicy(
         Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
     )
