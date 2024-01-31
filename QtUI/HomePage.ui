@@ -27,6 +27,22 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="0" colspan="2">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>10</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
    <item row="2" column="1">
     <widget class="OutlinedCardWidget" name="announcementWidget">
      <property name="sizePolicy">
@@ -68,12 +84,18 @@
    <item row="2" column="0">
     <widget class="OutlinedCardWidget" name="userInfoWidget">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="minimumSize">
+      <size>
+       <width>270</width>
+       <height>0</height>
+      </size>
+     </property>
+     <layout class="QVBoxLayout" name="userInfoWidgetLayout">
       <item>
        <widget class="SubtitleLabel" name="userInfoTitle">
         <property name="sizePolicy">
@@ -112,7 +134,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>318</width>
+           <width>252</width>
            <height>330</height>
           </rect>
          </property>
@@ -121,22 +143,6 @@
       </item>
      </layout>
     </widget>
-   </item>
-   <item row="1" column="0" colspan="2">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>10</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>

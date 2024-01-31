@@ -1,27 +1,47 @@
 import sys
-from PyQt5.QtCore import Qt, QLocale
+from os import path as osp
+from PyQt5.QtCore import Qt, QLocale, QObject, QEvent
 from PyQt5.QtWidgets import QApplication
-from qmaterialwidgets import MaterialTranslator
 
-from MELauncherLib.AppController.ExceptionHandler import initMELauncher
-from MELauncherLib.AppController.SettingsController import cfg
-from MELauncherLib.Interfaces.MainWindow import MEMainWindow
+
+class MEApplication(QApplication):
+    def __init__(self, argv):
+        super().__init__(argv)
+
+    def notify(self, a0: QObject, a1: QEvent) -> bool:
+        try:
+            done = super().notify(a0, a1)
+            return done
+        except Exception:
+            return False
+
 
 if __name__ == "__main__":
+    # fmt: off
+    from MELauncherLib.AppController.Utils import initMELauncher
     initMELauncher()
-    cfg.load("MEFrp-Launcher-Settings.json", cfg)
-    QApplication.setHighDpiScaleFactorRoundingPolicy(
+    del initMELauncher
+
+    from MELauncherLib.AppController.SettingsController import initMELauncherConfig
+    initMELauncherConfig()
+    del initMELauncherConfig
+
+    MEApplication.setHighDpiScaleFactorRoundingPolicy(
         Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
     )
-    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
-    QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
-    QApplication.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
+    MEApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+    MEApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
+    MEApplication.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
 
-    app = QApplication(sys.argv)
+    app = MEApplication(sys.argv)
+
+    from qmaterialwidgets import MaterialTranslator
     fluentTranslator = MaterialTranslator(QLocale(QLocale.Chinese))
     app.installTranslator(fluentTranslator)
 
+    from MELauncherLib.Interfaces.MainWindow import MEMainWindow
     w = MEMainWindow()
-    w.show()
+
     app.exec_()
     sys.exit()
+    # fmt: on

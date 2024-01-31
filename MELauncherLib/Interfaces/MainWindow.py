@@ -1,12 +1,12 @@
 import sys
-from platform import system as systemName
-from platform import version as systemVersion
+from platform import system as systemName, version as systemVersion
 from traceback import format_exception
 from types import TracebackType
 from typing import Type
 
 from .Multiplex.ExceptionWidget import ExceptionWidget
-from ..AppController.ExceptionHandler import ExceptionFilterMode, WorkingThreads, exceptionFilter
+from ..AppController.ExceptionHandler import ExceptionFilterMode, exceptionFilter
+from ..AppController.Utils import WorkingThreads
 from ..AppController.SettingsController import getStyleSheetFromFile, cfg
 
 from ..Resources import *  # noqa: F403 F401
@@ -16,18 +16,29 @@ from qmaterialwidgets import (
     SplashScreen,
     FluentIcon as FIF,
     MessageBox,
-    setTheme,
     isDarkTheme,
+    setTheme,
     BottomNavMaterialTitleBar,
-    FilledLineEdit,
-    TextPushButton,
 )
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QSize, QThreadPool, Qt
-from PyQt5.QtWidgets import QApplication, QDialogButtonBox
+from PyQt5.QtCore import QSize, QThreadPool
+from PyQt5.QtWidgets import QApplication
 
 from .. import VERSION
 from .HomePage import HomePage
+
+
+class METitleBar(BottomNavMaterialTitleBar):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.setQss()
+
+    def setQss(self):
+        self.setStyleSheet(
+            getStyleSheetFromFile(
+                f":/built-InQss/title_bar_{'dark' if isDarkTheme() else 'light'}.qss"
+            )
+        )
 
 
 class MEMainWindow(BottomNavMaterialWindow):
@@ -36,8 +47,9 @@ class MEMainWindow(BottomNavMaterialWindow):
 
         self.oldHook = sys.excepthook
         sys.excepthook = self.catchExceptions
+        self.titleBar.setParent(None)
         self.titleBar.deleteLater()
-        self.titleBar = BottomNavMaterialTitleBar(self)
+        self.setTitleBar(METitleBar(self))
         self.initWindow()
         self.mySetTheme()
         self.initNavigation()
@@ -45,13 +57,7 @@ class MEMainWindow(BottomNavMaterialWindow):
 
     def initWindow(self):
         """初始化窗口"""
-
-        self.setWindowTitle(f"镜缘映射 MEFrp 启动器 {VERSION} - Qt!")
-        self.titleBar.titleLabel.setStyleSheet(
-            getStyleSheetFromFile(
-                f":/built-InQss/title_bar_{'dark' if isDarkTheme() else 'light'}.qss"
-            )
-        )
+        self.setWindowTitle(f"镜缘映射 ME Frp 启动器 {VERSION}")
         self.setWindowIcon(QIcon(":/built-InIcons/MEFrp.ico"))
 
         # create splash screen
@@ -64,6 +70,7 @@ class MEMainWindow(BottomNavMaterialWindow):
         self.resize(int(w // 1.5), int(h // 1.5))
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
         self.show()
+        cfg.themeChanged.connect(self.titleBar.setQss)
         QApplication.processEvents()
 
     def initNavigation(self):
@@ -71,6 +78,15 @@ class MEMainWindow(BottomNavMaterialWindow):
         self.addSubInterface(
             interface=self.homePage, icon=FIF.HOME, text="主页", selectedIcon=FIF.HOME_FILL
         )
+
+        # from .Multiplex.FirstGuide import GuideInterface
+
+        # self.guideInterface = GuideInterface(self)
+        # self.addSubInterface(
+        #     interface=self.guideInterface,
+        #     icon=FIF.ROBOT,
+        #     text="引导",
+        # )
         self.navigationInterface.setCurrentItem(self.homePage.objectName())
 
     def mySetTheme(self):
@@ -83,9 +99,12 @@ class MEMainWindow(BottomNavMaterialWindow):
 
     def finishSetup(self):
         # from time import sleep
+
         # sleep(2)
+        # del sleep
         self.splashScreen.finish()
-        self.checkLogin()
+        if not cfg.get(cfg.isFirstGuideFinished):
+            self.runFirstGuide()
 
     def closeEvent(self, a0) -> None:
         # close thread pool
@@ -140,29 +159,15 @@ class MEMainWindow(BottomNavMaterialWindow):
             box.exec_()
             return self.oldHook(ty, value, _traceback)
 
-    def checkLogin(self):
-        if not cfg.get(cfg.isLoggedIn):
-            w = MessageBox(title="登录到 ME Frp", content="", parent=self, icon=FIF.VPN)
+    def runFirstGuide(self):
+        """
+        运行首次使用引导
+        """
+        from .Multiplex.FirstGuide import GuideInterface
 
-            userNameEdit = FilledLineEdit(w)
-            userNameEdit.setLabel("邮箱或用户名")
-
-            pwdEdit = FilledLineEdit(w)
-            pwdEdit.setLabel("密码")
-
-            registerBtn = TextPushButton(w)
-            registerBtn.setText("注册")
-            registerBtn.setAttribute(Qt.WidgetAttribute.WA_LayoutUsesWidgetRect)
-
-            forgotPwdBtn = TextPushButton(w)
-            forgotPwdBtn.setText("找回密码")
-            forgotPwdBtn.setAttribute(Qt.WidgetAttribute.WA_LayoutUsesWidgetRect)
-
-            w.contentLabel.setParent(None)
-            w.textLayout.addWidget(userNameEdit)
-            w.textLayout.addWidget(pwdEdit)
-            w.cancelButton.setText("取消")
-            w.yesButton.setText("登录")
-            w.buttonGroup.addButton(registerBtn, QDialogButtonBox.ActionRole)
-            w.buttonGroup.addButton(forgotPwdBtn, QDialogButtonBox.ActionRole)
-            w.exec_()
+        self.guideInterface = GuideInterface(self)
+        self.guideInterface.show()
+        self.guideInterface.raise_()
+        self.resize(self.width() - 1, self.height() - 1)
+        self.resize(self.width() + 1, self.height() + 1)
+        self.titleBar.raise_()

@@ -17,7 +17,6 @@ pdm.toml
 .vscode/**
 
 # build
-MCSL2.egg-info/**
 build
 Tools/OfflineBuild/**
 Servers/**
@@ -26,41 +25,21 @@ QtUI/*/*.py
 QtUI/*.py
 Icons/*.py
 Qss/*.py
+*.egg-info
+Icons/icons_rc.py
+*.whl
 
 # runtime
-MCSL2/Downloads/**
-MCSL2/Logs/**
-MCSL2/MCSL2_Config.json
-MCSL2/Aria2/aria2.conf
-MCSL2/Aria2/aria2.session
-MCSL2/MCSL2_DetectedJava.json
-MCSL2/MCSL2_ServerList.json
-Plugins/**
-mcslapi.json
+MEFrp-Launcher-Settings.json
+frpc/**
 
 # debug
 .ruff_cache
 result.json
 
-Icons/icons_rc.py
-
 # Just __pycache__
 *__pycache__*
-
-# tools
-/PyQt-Fluent-Widgets/
 
 # test
 tmp.py
 1.py
-
-# useless egg info
-*.egg-info
-
-# secret
-Tools/verification.py
-Tools/MCSL Preview Permission Manager.exe
-
-frpc/**
-
-MEFrp-Launcher-Settings.json
