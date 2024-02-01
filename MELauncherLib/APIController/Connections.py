@@ -21,7 +21,7 @@ from MEFrpLib import (
     me_get_setting,
 )
 from MEFrpLib.models import JSONReturnModel, TextReturnModel
-
+from ..AppController.Settings import cfg
 
 class BaseJSONThread(QThread):
     returnSlot = pyqtSignal(JSONReturnModel)
@@ -44,52 +44,52 @@ class BaseTextThread(QThread):
 
 
 class GetUserInfoThread(BaseJSONThread):
-    def __init__(self, authorization: str, bypass_proxy: bool = False):
-        super().__init__()
+    def __init__(self, authorization: str, parent=None):
+        super().__init__(parent)
         self.authorization = authorization
-        self.bypass_proxy = bypass_proxy
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
         self.returnSlot.emit(me_get_user_info(self.authorization, self.bypass_proxy))
 
 
 class UserSignThread(BaseJSONThread):
-    def __init__(self, authorization: str, bypass_proxy: bool = False):
-        super().__init__()
+    def __init__(self, authorization: str, parent=None):
+        super().__init__(parent)
         self.authorization = authorization
-        self.bypass_proxy = bypass_proxy
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
         self.returnSlot.emit(me_user_sign(self.authorization, self.bypass_proxy))
 
 
 class RefreshUserTokenThread(BaseJSONThread):
-    def __init__(self, authorization: str, bypass_proxy: bool = False):
-        super().__init__()
+    def __init__(self, authorization: str, parent=None):
+        super().__init__(parent)
         self.authorization = authorization
-        self.bypass_proxy = bypass_proxy
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
         self.returnSlot.emit(me_refresh_user_token(self.authorization, self.bypass_proxy))
 
 
 class GetRealnameStatusThread(BaseJSONThread):
-    def __init__(self, authorization: str, bypass_proxy: bool = False):
-        super().__init__()
+    def __init__(self, authorization: str, parent=None):
+        super().__init__(parent)
         self.authorization = authorization
-        self.bypass_proxy = bypass_proxy
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
         self.returnSlot.emit(me_get_realname_status(self.authorization, self.bypass_proxy))
 
 
 class PostRealnameThread(BaseJSONThread):
-    def __init__(self, authorization: str, idcard: str, name: str, bypass_proxy: bool = False):
-        super().__init__()
+    def __init__(self, authorization: str, idcard: str, name: str, parent=None):
+        super().__init__(parent)
         self.authorization = authorization
         self.idcard = idcard
         self.name = name
-        self.bypass_proxy = bypass_proxy
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
         self.returnSlot.emit(
@@ -98,21 +98,21 @@ class PostRealnameThread(BaseJSONThread):
 
 
 class GetTunnelListThread(BaseJSONThread):
-    def __init__(self, authorization: str, bypass_proxy: bool = False):
-        super().__init__()
+    def __init__(self, authorization: str, parent=None):
+        super().__init__(parent)
         self.authorization = authorization
-        self.bypass_proxy = bypass_proxy
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
         self.returnSlot.emit(me_get_tunnel_list(self.authorization, self.bypass_proxy))
 
 
 class GetTunnelConfigNodeThread(BaseTextThread):
-    def __init__(self, authorization: str, node: int, bypass_proxy: bool = False):
-        super().__init__()
+    def __init__(self, authorization: str, node: int, parent=None):
+        super().__init__(parent)
         self.authorization = authorization
         self.node = node
-        self.bypass_proxy = bypass_proxy
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
         self.returnSlot.emit(
@@ -121,11 +121,11 @@ class GetTunnelConfigNodeThread(BaseTextThread):
 
 
 class GetTunnelConfigIdThread(BaseTextThread):
-    def __init__(self, authorization: str, id: int, bypass_proxy: bool = False):
-        super().__init__()
+    def __init__(self, authorization: str, id: int, parent=None):
+        super().__init__(parent)
         self.authorization = authorization
         self.id = id
-        self.bypass_proxy = bypass_proxy
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
         self.returnSlot.emit(
@@ -143,9 +143,9 @@ class CreateTunnelThread(BaseJSONThread):
         local_port: int,
         remote_port: int,
         proxy_name: str,
-        bypass_proxy: bool = False,
+        parent=None,
     ):
-        super().__init__()
+        super().__init__(parent)
         self.authorization = authorization
         self.node = node
         self.proxy_type = proxy_type
@@ -153,7 +153,7 @@ class CreateTunnelThread(BaseJSONThread):
         self.local_port = local_port
         self.remote_port = remote_port
         self.proxy_name = proxy_name
-        self.bypass_proxy = bypass_proxy
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
         self.returnSlot.emit(
@@ -171,11 +171,11 @@ class CreateTunnelThread(BaseJSONThread):
 
 
 class DeleteTunnelThread(BaseJSONThread):
-    def __init__(self, authorization: str, tunnel_id: int, bypass_proxy: bool = False):
-        super().__init__()
+    def __init__(self, authorization: str, tunnel_id: int, parent=None):
+        super().__init__(parent)
         self.authorization = authorization
         self.tunnel_id = tunnel_id
-        self.bypass_proxy = bypass_proxy
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
         self.returnSlot.emit(
@@ -184,11 +184,11 @@ class DeleteTunnelThread(BaseJSONThread):
 
 
 class GetTunnelInfoThread(BaseJSONThread):
-    def __init__(self, authorization: str, tunnel_id: int, bypass_proxy: bool = False):
-        super().__init__()
+    def __init__(self, authorization: str, tunnel_id: int, parent=None):
+        super().__init__(parent)
         self.authorization = authorization
         self.tunnel_id = tunnel_id
-        self.bypass_proxy = bypass_proxy
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
         self.returnSlot.emit(
@@ -197,39 +197,39 @@ class GetTunnelInfoThread(BaseJSONThread):
 
 
 class NodeListThread(BaseJSONThread):
-    def __init__(self, authorization: str, bypass_proxy: bool = False):
-        super().__init__()
+    def __init__(self, authorization: str, parent=None):
+        super().__init__(parent)
         self.authorization = authorization
-        self.bypass_proxy = bypass_proxy
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
         self.returnSlot.emit(me_node_list(self.authorization, self.bypass_proxy))
 
 
 class LoginThread(BaseJSONThread):
-    def __init__(self, username: str, password: str, bypass_proxy: bool = False):
-        super().__init__()
+    def __init__(self, username: str, password: str, parent=None):
+        super().__init__(parent)
         self.username = username
         self.password = password
-        self.bypass_proxy = bypass_proxy
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
         self.returnSlot.emit(me_login(self.username, self.password, self.bypass_proxy))
 
 
 class GetSponsorThread(BaseJSONThread):
-    def __init__(self, bypass_proxy: bool = False):
-        super().__init__()
-        self.bypass_proxy = bypass_proxy
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
         self.returnSlot.emit(me_get_sponsor(self.bypass_proxy))
 
 
 class GetStatisticsThread(BaseJSONThread):
-    def __init__(self, bypass_proxy: bool = False):
-        super().__init__()
-        self.bypass_proxy = bypass_proxy
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
         self.returnSlot.emit(me_get_statistics(self.bypass_proxy))
@@ -237,14 +237,14 @@ class GetStatisticsThread(BaseJSONThread):
 
 class RegisterThread(BaseJSONThread):
     def __init__(
-        self, email: str, username: str, password: str, code: str, bypass_proxy: bool = False
+        self, email: str, username: str, password: str, code: str, parent=None
     ):
-        super().__init__()
+        super().__init__(parent)
         self.email = email
         self.username = username
         self.password = password
         self.code = code
-        self.bypass_proxy = bypass_proxy
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
         self.returnSlot.emit(
@@ -253,30 +253,30 @@ class RegisterThread(BaseJSONThread):
 
 
 class SendRegisterEmailThread(BaseJSONThread):
-    def __init__(self, email: str, bypass_proxy: bool = False):
-        super().__init__()
+    def __init__(self, email: str, parent=None):
+        super().__init__(parent)
         self.email = email
-        self.bypass_proxy = bypass_proxy
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
         self.returnSlot.emit(me_send_register_email(self.email, self.bypass_proxy))
 
 
 class ForgotPasswordThread(BaseJSONThread):
-    def __init__(self, email: str, username: str, bypass_proxy: bool = False):
-        super().__init__()
+    def __init__(self, email: str, username: str, parent=None):
+        super().__init__(parent)
         self.email = email
         self.username = username
-        self.bypass_proxy = bypass_proxy
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
         self.returnSlot.emit(me_forgot_password(self.email, self.username, self.bypass_proxy))
 
 
 class GetSettingThread(BaseJSONThread):
-    def __init__(self, bypass_proxy: bool = False):
-        super().__init__()
-        self.bypass_proxy = bypass_proxy
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
         self.returnSlot.emit(me_get_setting(self.bypass_proxy))
