@@ -12,7 +12,7 @@ from PyQt5.QtCore import Qt, QRect, QSize, QObject, pyqtSlot
 
 from ..AppController.Utils import check24HoursPassed
 from ..AppController.encrypt import updateToken
-from ..APIController.Connections import (
+from ..APIController import (
     GetUserInfoThread,
     UserSignThread,
     UserGetSignInfoThread,
@@ -63,6 +63,7 @@ class HomePage(QWidget, HomeAPI):
         super().__init__(parent)
         self.setObjectName("HomePage")
 
+        self.setContentsMargins(8, 8, 8, 8)
         self.gridLayout = QGridLayout(self)
         self.gridLayout.setObjectName("gridLayout")
         spacerItem = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)

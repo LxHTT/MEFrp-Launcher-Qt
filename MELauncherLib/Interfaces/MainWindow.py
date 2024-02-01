@@ -2,7 +2,11 @@ import sys
 from platform import system as systemName, version as systemVersion
 from traceback import format_exception
 from types import TracebackType
-from typing import Type
+from typing import Type, Union
+
+from qmaterialwidgets.common.icon import MaterialIconBase
+from qmaterialwidgets.components.navigation import NavigationPushButton
+
 
 from ..FrpcController.completer import checkFrpc, downloadFrpc
 
@@ -11,7 +15,7 @@ from ..AppController.ExceptionHandler import ExceptionFilterMode, exceptionFilte
 from ..AppController.Utils import WorkingThreads
 from ..AppController.Settings import getStyleSheetFromFile, cfg
 from ..AppController.encrypt import getUser, getPassword, saveUser, updateToken
-from ..APIController.Connections import JSONReturnModel
+from ..APIController import JSONReturnModel
 
 from ..Resources import *  # noqa: F403 F401
 
@@ -28,10 +32,11 @@ from qmaterialwidgets import (
 )
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize, QThreadPool, pyqtSlot
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QWidget
 
 from .. import VERSION
 from .HomePage import HomePage
+from .CreateTunnelPage import CreateTunnelPage
 from .Multiplex.FirstGuide import GuideAPI
 
 
@@ -67,24 +72,27 @@ class MEMainWindow(BottomNavMaterialWindow):
         self.setWindowTitle(f"镜缘映射 ME Frp 启动器 {VERSION}")
         self.setWindowIcon(QIcon(":/built-InIcons/MEFrp.ico"))
 
-        self.splashScreen = SplashScreen(self.windowIcon(), self)
-        self.splashScreen.setIconSize(QSize(106, 106))
-        self.splashScreen.raise_()
+        # self.splashScreen = SplashScreen(self.windowIcon(), self)
+        # self.splashScreen.setIconSize(QSize(106, 106))
+        # self.splashScreen.raise_()
 
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()
-        self.resize(int(w // 2.5), int(h // 1.7))
-        self.setMinimumSize(int(w // 2.5), int(h // 1.7))
+        self.resize(int(w // 1.5), int(h // 1.5))
+        self.setMinimumSize(int(w // 1.5), int(h // 1.7))
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
         self.show()
         cfg.themeChanged.connect(self.titleBar.setQss)
         QApplication.processEvents()
 
     def initNavigation(self):
+        self.stackedWidget.currentChanged.connect(self.pageChangedEvent)
         self.homePage = HomePage(self)
+        self.createTunnelPage = CreateTunnelPage(self)
         self.addSubInterface(
             interface=self.homePage, icon=FIF.HOME, text="主页", selectedIcon=FIF.HOME_FILL
         )
+        self.addSubInterface(interface=self.createTunnelPage, icon=FIF.ADD, text="新建隧道")
 
         self.navigationInterface.setCurrentItem(self.homePage.objectName())
 
@@ -98,6 +106,7 @@ class MEMainWindow(BottomNavMaterialWindow):
 
     def finishSetup(self):
         from time import sleep
+
         w = False
         if not checkFrpc(False):
             try:
@@ -108,12 +117,12 @@ class MEMainWindow(BottomNavMaterialWindow):
             w = False
             sleep(1.5)
         del sleep
-        self.splashScreen.finish()
+        # self.splashScreen.finish()
         if w:
             w = MessageBox(
                 "Frpc补全失败",
                 "MEFrp-Launcher无法获取您对应系统的Frpc。\n请手动下载Frpc并解压到frpc目录。\n",
-                self
+                self,
             )
             w.cancelButton.setParent(None)
             w.exec_()
@@ -125,6 +134,10 @@ class MEMainWindow(BottomNavMaterialWindow):
             self.runReLogin()
         self.homePage.getSysSettingFunc()
         self.homePage.frpcStatusContent.setText(checkFrpc(True))
+
+    def pageChangedEvent(self):
+        if self.stackedWidget.currentIndex() == 1:
+            self.createTunnelPage.refreshNodeBtn.click()
 
     def closeEvent(self, a0) -> None:
         # close thread pool
