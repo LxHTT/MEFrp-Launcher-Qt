@@ -1,7 +1,8 @@
 import hashlib
 from os import makedirs, path as osp
 from typing import Optional, Iterable, Callable, Dict, List
-from time import sleep
+from time import sleep, time
+from datetime import datetime
 from requests import get, head
 from concurrent.futures import ThreadPoolExecutor, wait
 
@@ -63,6 +64,15 @@ def checkSHA1(fileAndSha1: Iterable, _filter: Callable[[str, str], bool] = None)
             rv.append({"file": file, "result": True})
     return rv
 
+def unixTimeStampToTime(timeStamp):
+    return datetime.fromtimestamp(timeStamp)
+
+def check24HoursPassed(timeStamp):
+    current_timestamp = int(time())
+    if current_timestamp > (timeStamp + 86400):
+        return True
+    else:
+        return False
 
 class WorkingThreads:
     threads = {}

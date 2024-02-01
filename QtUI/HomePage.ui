@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>696</width>
-    <height>461</height>
+    <height>564</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,30 +30,32 @@
      </property>
     </spacer>
    </item>
-   <item row="0" column="0">
-    <widget class="TitleLabel" name="TitleLabel">
+   <item row="7" column="1">
+    <widget class="OutlinedCardWidget" name="frpcStatusWidget">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="text">
-      <string> 主页</string>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>100</height>
+      </size>
      </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="OutlinedCardWidget" name="announcementWidget">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>100</height>
+      </size>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QHBoxLayout" name="frpcStatusLayout">
+      <property name="leftMargin">
+       <number>25</number>
+      </property>
       <item>
-       <widget class="SubtitleLabel" name="announcementTitle">
+       <widget class="SubtitleLabel" name="frpcStatusTitle">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -61,12 +63,12 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string> 公告</string>
+         <string>Frpc客户端状态</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="BodyLabel" name="announcementContent">
+       <widget class="BodyLabel" name="frpcStatusContent">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -81,7 +83,89 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0" rowspan="2">
+   <item row="0" column="0">
+    <widget class="TitleLabel" name="TitleLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string> 主页</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="OutlinedCardWidget" name="userSignWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>270</width>
+       <height>200</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>200</height>
+      </size>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <property name="leftMargin">
+       <number>9</number>
+      </property>
+      <property name="bottomMargin">
+       <number>11</number>
+      </property>
+      <item row="1" column="0" rowspan="2">
+       <widget class="BodyLabel" name="userSignContent">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="TonalPushButton" name="userSignBtn">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>签到</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="SubtitleLabel" name="userSignTitle">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string> 签到</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0" rowspan="5">
     <widget class="OutlinedCardWidget" name="userInfoWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
@@ -93,6 +177,12 @@
       <size>
        <width>270</width>
        <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>270</width>
+       <height>16777215</height>
       </size>
      </property>
      <layout class="QVBoxLayout" name="userInfoWidgetLayout">
@@ -135,41 +225,43 @@
            <x>0</x>
            <y>0</y>
            <width>252</width>
-           <height>330</height>
+           <height>227</height>
           </rect>
          </property>
+         <layout class="QVBoxLayout" name="userInfoSCFakeLayout">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <layout class="QVBoxLayout" name="userInfoSCRealLayout"/>
+          </item>
+         </layout>
         </widget>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="3" column="1">
-    <widget class="OutlinedCardWidget" name="frpcStatusWidget">
+   <item row="2" column="1" rowspan="5">
+    <widget class="OutlinedCardWidget" name="announcementWidget">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>100</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>100</height>
-      </size>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="leftMargin">
-       <number>25</number>
-      </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="SubtitleLabel" name="frpcStatusTitle">
+       <widget class="SubtitleLabel" name="announcementTitle">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -177,12 +269,12 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Frpc客户端状态</string>
+         <string> 公告</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="BodyLabel" name="frpcStatusContent">
+       <widget class="BodyLabel" name="announcementContent">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -192,6 +284,9 @@
         <property name="text">
          <string/>
         </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+        </property>
        </widget>
       </item>
      </layout>
@@ -200,6 +295,16 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>TonalPushButton</class>
+   <extends>FilledPushButton</extends>
+   <header>qmaterialwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>FilledPushButton</class>
+   <extends>QPushButton</extends>
+   <header>qmaterialwidgets</header>
+  </customwidget>
   <customwidget>
    <class>CardWidget</class>
    <extends>QFrame</extends>

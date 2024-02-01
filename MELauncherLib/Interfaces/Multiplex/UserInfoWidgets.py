@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QSizePolicy, QHBoxLayout
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QPixmap
-from qmaterialwidgets import BodyLabel, ImageLabel, StrongBodyLabel, FilledPushButton
+from qmaterialwidgets import BodyLabel, ImageLabel, StrongBodyLabel, TonalPushButton
 from ...Resources import *  # noqa: F403 F401
 
 class UserInfoWidget(QWidget):
@@ -97,7 +97,7 @@ class UserInfoPushWidget(QWidget):
         self.titleLabel.setSizePolicy(sizePolicy)
         self.titleLabel.setObjectName("titleLabel")
         self.horizontalLayout.addWidget(self.titleLabel)
-        self.actionBtn = FilledPushButton(self)
+        self.actionBtn = TonalPushButton(self)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)

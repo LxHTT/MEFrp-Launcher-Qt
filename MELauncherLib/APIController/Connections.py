@@ -1,6 +1,7 @@
 from PyQt5.QtCore import pyqtSignal, QThread
 from MEFrpLib import (
     me_get_user_info,
+    me_user_get_sign_info,
     me_user_sign,
     me_refresh_user_token,
     me_get_realname_status,
@@ -52,6 +53,15 @@ class GetUserInfoThread(BaseJSONThread):
     def run(self):
         self.returnSlot.emit(me_get_user_info(self.authorization, self.bypass_proxy))
 
+
+class UserGetSignInfoThread(BaseJSONThread):
+    def __init__(self, authorization: str, parent=None):
+        super().__init__(parent)
+        self.authorization = authorization
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
+
+    def run(self):
+        self.returnSlot.emit(me_user_get_sign_info(self.authorization, self.bypass_proxy))
 
 class UserSignThread(BaseJSONThread):
     def __init__(self, authorization: str, parent=None):

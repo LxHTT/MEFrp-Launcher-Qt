@@ -187,6 +187,7 @@ class MEMainWindow(BottomNavMaterialWindow):
 
         self.guideInterface = GuideInterface(self)
         self.guideInterface.finish.connect(self.homePage.getUserInfoFunc)
+        self.guideInterface.finish.connect(self.homePage.userGetSignInfoFunc)
         self.guideInterface.show()
         self.guideInterface.raise_()
         self.resize(self.width() - 1, self.height() - 1)
@@ -219,3 +220,4 @@ class MEMainWindow(BottomNavMaterialWindow):
             updateToken(model.data["access_token"])
             saveUser(getUser(), getPassword())
             self.homePage.getUserInfoFunc()
+            self.homePage.userGetSignInfoFunc()
