@@ -30,7 +30,7 @@ from ...APIController.Connections import (
     SendRegisterEmailThread,
     JSONReturnModel,
 )
-from ...AppController.SettingsController import cfg
+from ...AppController.Settings import cfg
 from .StackedWidget import ChildStackedWidget
 from typing import List
 

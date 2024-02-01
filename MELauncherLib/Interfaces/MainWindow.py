@@ -4,10 +4,14 @@ from traceback import format_exception
 from types import TracebackType
 from typing import Type
 
+from ..FrpcController.completer import checkFrpc, downloadFrpc
+
 from .Multiplex.ExceptionWidget import ExceptionWidget
 from ..AppController.ExceptionHandler import ExceptionFilterMode, exceptionFilter
 from ..AppController.Utils import WorkingThreads
-from ..AppController.SettingsController import getStyleSheetFromFile, cfg
+from ..AppController.Settings import getStyleSheetFromFile, cfg
+from ..AppController.encrypt import getUser, getPassword, saveUser, refreshToken
+from ..APIController.Connections import JSONReturnModel
 
 from ..Resources import *  # noqa: F403 F401
 
@@ -19,13 +23,16 @@ from qmaterialwidgets import (
     isDarkTheme,
     setTheme,
     BottomNavMaterialTitleBar,
+    InfoBar,
+    InfoBarPosition,
 )
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QSize, QThreadPool
+from PyQt5.QtCore import QSize, QThreadPool, pyqtSlot
 from PyQt5.QtWidgets import QApplication
 
 from .. import VERSION
 from .HomePage import HomePage
+from .Multiplex.FirstGuide import GuideAPI
 
 
 class METitleBar(BottomNavMaterialTitleBar):
@@ -67,7 +74,8 @@ class MEMainWindow(BottomNavMaterialWindow):
 
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()
-        self.resize(int(w // 1.5), int(h // 1.5))
+        self.resize(int(w // 2.5), int(h // 1.7))
+        self.setMinimumSize(int(w // 2.5), int(h // 1.7))
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
         self.show()
         cfg.themeChanged.connect(self.titleBar.setQss)
@@ -79,14 +87,6 @@ class MEMainWindow(BottomNavMaterialWindow):
             interface=self.homePage, icon=FIF.HOME, text="主页", selectedIcon=FIF.HOME_FILL
         )
 
-        # from .Multiplex.FirstGuide import GuideInterface
-
-        # self.guideInterface = GuideInterface(self)
-        # self.addSubInterface(
-        #     interface=self.guideInterface,
-        #     icon=FIF.ROBOT,
-        #     text="引导",
-        # )
         self.navigationInterface.setCurrentItem(self.homePage.objectName())
 
     def mySetTheme(self):
@@ -98,13 +98,31 @@ class MEMainWindow(BottomNavMaterialWindow):
         setTheme(cfg.theme)
 
     def finishSetup(self):
-        # from time import sleep
-
-        # sleep(2)
-        # del sleep
         self.splashScreen.finish()
+        from time import sleep
+        w = False
+        if not checkFrpc():
+            try:
+                downloadFrpc()
+            except LookupError:
+                w = True
+        else:
+            w = False
+            sleep(1.5)
+        del sleep
+        if w:
+            w = MessageBox(
+                "Frpc补全失败",
+                "MEFrp-Launcher无法获取您对应系统的Frpc。\n请手动下载Frpc并解压到frpc目录。\n",
+                self
+            )
+            w.cancelButton.setParent(None)
+            w.exec_()
         if not cfg.get(cfg.isFirstGuideFinished):
             self.runFirstGuide()
+        else:
+            self.runReLogin()
+            self.homePage.getSysSettingFunc()
 
     def closeEvent(self, a0) -> None:
         # close thread pool
@@ -166,8 +184,37 @@ class MEMainWindow(BottomNavMaterialWindow):
         from .Multiplex.FirstGuide import GuideInterface
 
         self.guideInterface = GuideInterface(self)
+        self.guideInterface.finish.connect(self.homePage.getUserInfoFunc)
+        self.guideInterface.finish.connect(self.homePage.getSysSettingFunc)
         self.guideInterface.show()
         self.guideInterface.raise_()
         self.resize(self.width() - 1, self.height() - 1)
         self.resize(self.width() + 1, self.height() + 1)
         self.titleBar.raise_()
+
+    def runReLogin(self):
+        self.loginThread = GuideAPI(self).loginAPI(getUser(), getPassword())
+        self.loginThread.returnSlot.connect(self.reLoginParser)
+        self.loginThread.start()
+
+    @pyqtSlot(JSONReturnModel)
+    def reLoginParser(self, model: JSONReturnModel):
+        attr = "success"
+        if model.status != 200 or model.data == 0:
+            attr = "error"
+        else:
+            pass
+
+        getattr(InfoBar, attr)(
+            title="错误" if attr == "error" else "成功",
+            content="自动登录失败，请在设置页重新登录。"
+            if attr == "error"
+            else "已自动登录，欢迎回来。",
+            duration=1500,
+            position=InfoBarPosition.TOP,
+            parent=self,
+        )
+        if attr == "success":
+            refreshToken(model.data["access_token"])
+            saveUser(getUser(), getPassword())
+            self.homePage.getUserInfoFunc()

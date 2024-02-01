@@ -1,1 +1,2 @@
 VERSION = "0.1.0"
+FRPC_VERSION = "0.51.3"

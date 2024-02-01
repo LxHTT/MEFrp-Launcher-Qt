@@ -1,10 +1,17 @@
 import hashlib
 from os import makedirs, path as osp
 from typing import Optional, Iterable, Callable, Dict, List
+from time import sleep
+from requests import get, head
+from concurrent.futures import ThreadPoolExecutor, wait
+
 
 import psutil
-from PyQt5.QtCore import QUrl, QThread, QThreadPool
+from PyQt5.QtCore import QUrl, QThread, QThreadPool, QObject, pyqtSignal
 from PyQt5.QtGui import QDesktopServices
+
+from .. import VERSION
+
 
 def initMELauncher():
     """
@@ -120,3 +127,114 @@ class WorkingThreads:
 
     def __call__(self, *args, **kwargs):
         raise RuntimeError("This class is not allowed to be instantiated.")
+
+
+class Downloader(QObject):
+    msg = pyqtSignal(str)
+    finishSignal = pyqtSignal()
+
+    def __init__(self, url, threadCnt, fileName, parent=None):
+        super().__init__(parent)
+        self.url = url
+        self.threadCnt = threadCnt
+        self.fileName = fileName
+        self.getSize = 0
+        self.info = {
+            "main": {"progress": 0, "speed": ""},
+            "sub": {
+                "progress": [0 for i in range(threadCnt)],  # 子线程状态
+                "stat": [1 for i in range(threadCnt)],  # 下载状态
+            },
+        }
+        r = head(
+            self.url,
+            headers={
+                "User-Agent": f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36 Edg/93.0.961.47 MEFrpLauncher/{VERSION}",  # noqa
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",  # noqa
+            },
+        )
+        # 状态码显示302则迭代寻找文件
+        while r.status_code == 302:
+            self.url = r.headers["Location"]
+            r = head(self.url)
+        self.size = int(r.headers["Content-Length"])
+        # self.msg.emit("该文件大小为: {} B".format(self.size))
+
+    def down(self, start, end, threadId, chunkSize=10240):
+        rawStart = start
+        for _ in range(10):
+            try:
+                headers = {
+                    "User-Agent": f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36 Edg/93.0.961.47 MEFrpLauncher/{VERSION}",  # noqa
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",  # noqa
+                    "Range": "bytes={}-{}".format(start, end),
+                }
+                r = get(self.url, headers=headers, timeout=10, stream=True)
+                size = 0
+                with open(self.fileName, "rb+") as fp:
+                    fp.seek(start)
+                    for chunk in r.iter_content(chunk_size=chunkSize):
+                        if chunk:
+                            self.getSize += chunkSize
+                            fp.write(chunk)
+                            start += chunkSize
+                            size += chunkSize
+                            progress = round(size / (end - rawStart) * 100, 2)
+                            self.info["sub"]["progress"][threadId - 1] = progress
+                            self.info["sub"]["stat"][threadId - 1] = 1
+                return
+            except Exception:
+                self.down(start, end, threadId)
+        # self.msg.emit(f"{start}-{end} 下载失败")
+        self.info["sub"]["start"][threadId - 1] = 0
+
+    def show(self):
+        self.t = DownloaderThread(self.getSize, self.size, self.info, self.parent())
+        self.t.msg.connect(self.msg.emit)
+        self.t.start()
+
+    def run(self):
+        fp = open(self.fileName, "wb")
+        # self.msg.emit(f"正在初始化下载文件: {self.fileName}")
+        fp.truncate(self.size)
+        fp.close()
+        part = self.size // self.threadCnt
+        pool = ThreadPoolExecutor(max_workers=self.threadCnt + 1)
+        futures = []
+        for i in range(self.threadCnt):
+            start = part * i
+            if i == self.threadCnt - 1:
+                end = self.size
+            else:
+                end = start + part - 1
+            futures.append(pool.submit(self.down, start, end, i + 1))
+        futures.append(pool.submit(self.show))
+        # print(f"正在使用{self.threadCnt}个线程进行下载...")
+        wait(futures)
+        self.finishSignal.emit()
+        # print(f"{self.fileName} 下载完成")
+
+
+class DownloaderThread(QThread):
+    msg = pyqtSignal(str)
+
+    def __init__(self, getSize, size, info, parent=None):
+        super().__init__(parent)
+        self.getSize = getSize
+        self.size = size
+        self.info = info
+
+    def run(self):
+        speed = self.getSize
+        sleep(0.5)
+        speed = int((self.getSize - speed) * 2 / 1024)
+        if speed > 1024:
+            speed = f"{round(speed / 1024, 2)} M/s"
+        else:
+            speed = f"{speed} KB/s"
+        progress = round(self.getSize / self.size * 100, 2)
+        self.info["main"]["progress"] = progress
+        self.info["main"]["speed"] = speed
+        # self.msg.emit("下载进度: {}% 速度: {}".format(progress, speed))
+        if progress >= 100:
+            self.terminate()

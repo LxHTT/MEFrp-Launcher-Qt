@@ -1,5 +1,4 @@
 import sys
-from os import path as osp
 from PyQt5.QtCore import Qt, QLocale, QObject, QEvent
 from PyQt5.QtWidgets import QApplication
 
@@ -22,7 +21,7 @@ if __name__ == "__main__":
     initMELauncher()
     del initMELauncher
 
-    from MELauncherLib.AppController.SettingsController import initMELauncherConfig
+    from MELauncherLib.AppController.Settings import initMELauncherConfig
     initMELauncherConfig()
     del initMELauncherConfig
 

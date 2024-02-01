@@ -28,10 +28,12 @@ Qss/*.py
 *.egg-info
 Icons/icons_rc.py
 *.whl
+encrypt.pyi
 
 # runtime
 MEFrp-Launcher-Settings.json
 frpc/**
+*.zip*
 
 # debug
 .ruff_cache
@@ -43,3 +45,6 @@ result.json
 # test
 tmp.py
 1.py
+
+$ secrets
+encrypt.py

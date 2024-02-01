@@ -14,8 +14,9 @@ dependencies = [
     # 构建需要
     "lib-not-dr[nuitka]>=0.3",
     "nuitka>=1.9.5",
-    "MEFrpLib>=1.0.1",
+    "MEFrpLib>=2.0.1",
     "PyQt-Material-Widgets @ file:///${PROJECT_ROOT}/PyQt_Material_Widgets-0.9.11-py3-none-any.whl",
+    "pyDes>=2.0.1",
 ]
 requires-python = ">=3.8,<3.9"
 readme = "README.md"
@@ -29,6 +30,7 @@ all = ["tomli>=2.0.1", "ruff>=0.1.6", "pyqt5-stubs>=5.15.6.0"]
 
 [tool.pdm.scripts]
 main = "python MEFrp-Launcher.py"
+build_encrypt = "python -m nuitka --module MELauncherLib/AppController/encrypt.py"
 build = "python -m lndl_nuitka . -y"
 build_github = "python -m lndl_nuitka . -y -- --disable-console"
 
