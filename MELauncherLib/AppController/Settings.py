@@ -10,11 +10,12 @@ from qmaterialwidgets import QConfig, qconfig, Theme, ConfigItem, BoolValidator
 class Config(QConfig):
     """MEFrp Launcher Configuration"""
 
-    isLoggedIn = ConfigItem("User", "isLoggedIn", False, BoolValidator())
     userName = ConfigItem("User", "userName", "", "")
-    userPassword = ConfigItem("User", "userToken", "", "")
-    isFirstGuideFinished = ConfigItem("Launcher", "isFirstGuideFinished", True, BoolValidator())
+    userPassword = ConfigItem("User", "userPassword", "", "")
+    userAuthorization = ConfigItem("User", "userAuthorization", "", "")
+    isFirstGuideFinished = ConfigItem("Launcher", "isFirstGuideFinished", False, BoolValidator())
     oldExecuteable = ConfigItem("Launcher", "oldExecuteable", "", "")
+    bypassProxy = ConfigItem("Launcher", "bypassProxy", False, BoolValidator())
 
 
 cfg = Config()
@@ -30,14 +31,13 @@ def getStyleSheetFromFile(file: Union[str, QFile]):
 
 
 def initMELauncherConfig():
-    if osp.exists("MEFrp-Launcher-Settings.json"):
-        qconfig.load("MEFrp-Launcher-Settings.json", cfg)
-        return
     qconfig.load("MEFrp-Launcher-Settings.json", cfg)
-    cfg.set(cfg.isFirstGuideFinished, True)
+    if cfg.get(cfg.isFirstGuideFinished):
+        return
+    cfg.set(cfg.isFirstGuideFinished, False)
     cfg.set(cfg.oldExecuteable, osp.basename(sys.executable))
-    cfg.set(cfg.isLoggedIn, False)
     cfg.set(cfg.userName, "")
     cfg.set(cfg.userPassword, "")
     cfg.set(cfg.themeColor, QColor("#6750A4"))
     cfg.set(cfg.themeMode, Theme.AUTO)
+

@@ -1,10 +1,9 @@
-from PyQt5.QtCore import QSize, Qt, QEvent
+from PyQt5.QtCore import QSize, Qt, QEvent, QObject, pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QColor, QPainter
 from PyQt5.QtWidgets import (
     QGridLayout,
     QWidget,
     QSizePolicy,
-    QStackedWidget,
     QSpacerItem,
     QHBoxLayout,
     QLineEdit,
@@ -19,19 +18,51 @@ from qmaterialwidgets import (
     TonalPushButton,
     isDarkTheme,
     FluentIcon as FIF,
+    InfoBar,
+    InfoBarPosition,
 )
 
+from ...AppController.encrypt import saveUser, refreshToken
+from ...APIController.Connections import (
+    LoginThread,
+    ForgotPasswordThread,
+    RegisterThread,
+    SendRegisterEmailThread,
+    JSONReturnModel,
+)
+from ...AppController.SettingsController import cfg
 from .StackedWidget import ChildStackedWidget
+from typing import List
 
 
-class GuideInterface(QWidget):
+class GuideAPI(QObject):
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
+    def loginAPI(self, username: str, password: str) -> LoginThread:
+        return LoginThread(username=username, password=password, parent=self)
+
+    def forgotPasswordAPI(self, email: str, username: str) -> ForgotPasswordThread:
+        return ForgotPasswordThread(email=email, username=username, parent=self)
+
+    def registerAPI(self, email: str, username: str, password: str, code: str) -> RegisterThread:
+        return RegisterThread(
+            email=email, username=username, password=password, code=code, parent=self
+        )
+
+    def sendRegisterEmailAPI(self, email: str) -> SendRegisterEmailThread:
+        return SendRegisterEmailThread(email=email, parent=self)
+
+
+class GuideInterface(QWidget, GuideAPI):
+    finish = pyqtSignal()
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
         self.setObjectName("WelcomeWidget")
         self.gridLayout = QGridLayout(self)
 
-        self.stackedWidget = QStackedWidget(self)
+        self.stackedWidget = ChildStackedWidget(self)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -555,3 +586,77 @@ class GuideInterface(QWidget):
                 QLineEdit.Password if self.registerShowPwdBtn.isChecked() else QLineEdit.Normal
             )
         )
+        self.loginBtn.clicked.connect(self.loginFunc)
+        self.finishSetupBtn.clicked.connect(self.kill)
+
+    def kill(self):
+        try:
+            self.close()
+        except Exception:
+            pass
+        try:
+            self.setParent(None)
+        except Exception:
+            pass
+        try:
+            self.deleteLater()
+        except Exception:
+            pass
+        cfg.set(cfg.isFirstGuideFinished, True)
+        self.finish.emit()
+
+    def textInputChecker(self, lineEditList: List[LineEdit]):
+        isOk = True
+        for lineEdit in lineEditList:
+            if lineEdit.text() == "":
+                lineEdit.setError(True)
+                isOk = False
+                lineEdit.textChanged.connect(self.killFocusChecker)
+        if not isOk:
+            InfoBar.error(
+                title="错误",
+                content="请完整填写所有信息",
+                duration=1500,
+                position=InfoBarPosition.TOP,
+                parent=self,
+            )
+        return isOk
+
+    def killFocusChecker(self):
+        try:
+            if self.sender().text() != "":
+                self.sender().setError(False)
+                self.sender().textChanged.disconnect()
+            else:
+                return
+        except Exception:
+            pass
+
+    def loginFunc(self):
+        if not self.textInputChecker([self.usernameEdit, self.loginPwdEdit]):
+            return
+        self.loginThread = self.loginAPI(
+            username=self.usernameEdit.text(), password=self.loginPwdEdit.text()
+        )
+        self.loginThread.returnSlot.connect(self.loginAPIParser)
+        self.loginThread.start()
+
+    @pyqtSlot(JSONReturnModel)
+    def loginAPIParser(self, model: JSONReturnModel):
+        attr = "success"
+        if model.status != 200 or model.data == 0:
+            attr = "error"
+        else:
+            pass
+
+        getattr(InfoBar, attr)(
+            title="错误" if attr == "error" else "成功",
+            content=model.message,
+            duration=1500,
+            position=InfoBarPosition.TOP,
+            parent=self,
+        )
+        if attr == "success":
+            self.stackedWidget.setCurrentWidget(self.finishPage)
+            refreshToken(model.data["access_token"])
+            saveUser(self.usernameEdit.text(), self.loginPwdEdit.text())
