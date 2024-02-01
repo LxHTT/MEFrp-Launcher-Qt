@@ -67,7 +67,7 @@ class UserInfoAvatarWidget(QWidget):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.userName.sizePolicy().hasHeightForWidth())
         self.userName.setSizePolicy(sizePolicy)
-        self.userName.setText(username)
+        self.userName.setText(f"  {username}")
         self.userName.setAlignment(Qt.AlignLeading | Qt.AlignLeft | Qt.AlignTop)
         self.userName.setObjectName("userName")
         self.horizontalLayout.addWidget(self.userName)

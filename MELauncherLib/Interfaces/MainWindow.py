@@ -67,7 +67,6 @@ class MEMainWindow(BottomNavMaterialWindow):
         self.setWindowTitle(f"镜缘映射 ME Frp 启动器 {VERSION}")
         self.setWindowIcon(QIcon(":/built-InIcons/MEFrp.ico"))
 
-        # create splash screen
         self.splashScreen = SplashScreen(self.windowIcon(), self)
         self.splashScreen.setIconSize(QSize(106, 106))
         self.splashScreen.raise_()
@@ -98,10 +97,9 @@ class MEMainWindow(BottomNavMaterialWindow):
         setTheme(cfg.theme)
 
     def finishSetup(self):
-        self.splashScreen.finish()
         from time import sleep
         w = False
-        if not checkFrpc():
+        if not checkFrpc(False):
             try:
                 downloadFrpc()
             except LookupError:
@@ -110,6 +108,7 @@ class MEMainWindow(BottomNavMaterialWindow):
             w = False
             sleep(1.5)
         del sleep
+        self.splashScreen.finish()
         if w:
             w = MessageBox(
                 "Frpc补全失败",
@@ -118,11 +117,14 @@ class MEMainWindow(BottomNavMaterialWindow):
             )
             w.cancelButton.setParent(None)
             w.exec_()
+        else:
+            pass
         if not cfg.get(cfg.isFirstGuideFinished):
             self.runFirstGuide()
         else:
             self.runReLogin()
-            self.homePage.getSysSettingFunc()
+        self.homePage.getSysSettingFunc()
+        self.homePage.frpcStatusContent.setText(checkFrpc(True))
 
     def closeEvent(self, a0) -> None:
         # close thread pool
@@ -185,7 +187,6 @@ class MEMainWindow(BottomNavMaterialWindow):
 
         self.guideInterface = GuideInterface(self)
         self.guideInterface.finish.connect(self.homePage.getUserInfoFunc)
-        self.guideInterface.finish.connect(self.homePage.getSysSettingFunc)
         self.guideInterface.show()
         self.guideInterface.raise_()
         self.resize(self.width() - 1, self.height() - 1)

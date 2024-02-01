@@ -212,6 +212,7 @@ class Downloader(QObject):
         # print(f"正在使用{self.threadCnt}个线程进行下载...")
         wait(futures)
         self.finishSignal.emit()
+        self.deleteLater()
         # print(f"{self.fileName} 下载完成")
 
 

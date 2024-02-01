@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import (
     QSizePolicy,
     QFrame,
     QGridLayout,
+    QHBoxLayout,
     QApplication,
 )
 from PyQt5.QtCore import Qt, QRect, QSize, QObject, pyqtSlot
@@ -121,12 +122,42 @@ class HomePage(QWidget, HomeAPI):
         self.userInfoSC.setObjectName("userInfoSC")
         self.userInfoScrollArea.setWidget(self.userInfoSC)
         self.userInfoWidgetLayout.addWidget(self.userInfoScrollArea)
-        self.gridLayout.addWidget(self.userInfoWidget, 2, 0, 1, 1)
+        self.gridLayout.addWidget(self.userInfoWidget, 2, 0, 2, 1)
+        self.frpcStatusWidget = OutlinedCardWidget(self)
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.frpcStatusWidget.sizePolicy().hasHeightForWidth())
+        self.frpcStatusWidget.setSizePolicy(sizePolicy)
+        self.frpcStatusWidget.setMinimumSize(QSize(0, 100))
+        self.frpcStatusWidget.setMaximumSize(QSize(16777215, 100))
+        self.frpcStatusWidget.setObjectName("frpcStatusWidget")
+        self.horizontalLayout = QHBoxLayout(self.frpcStatusWidget)
+        self.horizontalLayout.setContentsMargins(25, -1, -1, -1)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.frpcStatusTitle = SubtitleLabel(self.frpcStatusWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.frpcStatusTitle.sizePolicy().hasHeightForWidth())
+        self.frpcStatusTitle.setSizePolicy(sizePolicy)
+        self.frpcStatusTitle.setObjectName("frpcStatusTitle")
+        self.horizontalLayout.addWidget(self.frpcStatusTitle)
+        self.frpcStatusContent = BodyLabel(self.frpcStatusWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.frpcStatusContent.sizePolicy().hasHeightForWidth())
+        self.frpcStatusContent.setSizePolicy(sizePolicy)
+        self.frpcStatusContent.setText("")
+        self.frpcStatusContent.setObjectName("frpcStatusContent")
+        self.horizontalLayout.addWidget(self.frpcStatusContent)
+        self.gridLayout.addWidget(self.frpcStatusWidget, 3, 1, 1, 1)
 
         self.TitleLabel.setText(" 主页")
         self.announcementTitle.setText(" 公告")
-        self.announcementContent.setText("")
         self.userInfoTitle.setText(" 用户信息")
+        self.frpcStatusTitle.setText("Frpc客户端状态")
         self.spacerItem = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
     def getUserInfoFunc(self):

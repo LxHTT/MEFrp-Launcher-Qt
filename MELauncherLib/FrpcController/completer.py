@@ -1,5 +1,6 @@
 from ..AppController.Utils import Downloader
 from os import path as osp, remove
+from shutil import move, rmtree
 from platform import system, architecture
 from PyQt5.QtCore import QProcess
 from zipfile import ZipFile
@@ -41,16 +42,30 @@ def extractFrpc(file):
         frpcArchive.extract(
             f"{file.replace('.zip', '').replace('.tar.gz', '')}/{frpcProcessName}", "frpc"
         )
+    remove(file)
+    move(
+        f"frpc/{file.replace('.zip', '').replace('.tar.gz', '')}/{frpcProcessName}",
+        f"frpc/{frpcProcessName}",
+    )
+    rmtree(f"frpc/{file.replace('.zip', '').replace('.tar.gz', '')}")
 
 
-def checkFrpc() -> bool:
-    if not osp.exists("./Plugins/OpenFRP_Plugin/frpc/frpc.exe"):
-        return False
+def checkFrpc(getVersion):
+    frpcProcessName = "frpc.exe" if system().lower() == "windows" else "frpc"
+    if not osp.exists(f"frpc/{frpcProcessName}"):
+        return "未安装" if getVersion else False
     else:
         frpc = QProcess()
-        frpc.setProgram("./Plugins/OpenFRP_Plugin/frpc/frpc.exe")
+        frpc.setProgram(f"frpc/{frpcProcessName}")
         frpc.setArguments(["-v"])
-        frpc.setWorkingDirectory("./Plugins/OpenFRP_Plugin/frpc")
+        frpc.setWorkingDirectory("frpc")
         frpc.start()
         frpc.waitForFinished()
-        return bool(frpc.readAll().data().decode("utf-8").split("_")[1] == FRPC_VERSION)
+        frpcVersion = (
+            frpc.readAll().data().decode("utf-8").replace("MirrorEdgeFrp_", "").replace("\n", "")
+        )
+        return (
+            "已安装，版本 {frpcVersion}".format(frpcVersion=frpcVersion)
+            if getVersion
+            else bool(frpcVersion == FRPC_VERSION)
+        )
