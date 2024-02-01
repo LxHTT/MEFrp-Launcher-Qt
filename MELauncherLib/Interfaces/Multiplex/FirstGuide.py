@@ -22,7 +22,7 @@ from qmaterialwidgets import (
     InfoBarPosition,
 )
 
-from ...AppController.encrypt import saveUser, refreshToken
+from ...AppController.encrypt import saveUser, updateToken
 from ...APIController.Connections import (
     LoginThread,
     ForgotPasswordThread,
@@ -658,5 +658,5 @@ class GuideInterface(QWidget, GuideAPI):
         )
         if attr == "success":
             self.stackedWidget.setCurrentWidget(self.finishPage)
-            refreshToken(model.data["access_token"])
+            updateToken(model.data["access_token"])
             saveUser(self.usernameEdit.text(), self.loginPwdEdit.text())

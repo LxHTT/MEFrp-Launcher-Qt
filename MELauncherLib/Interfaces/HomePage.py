@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import (
     QApplication,
 )
 from PyQt5.QtCore import Qt, QRect, QSize, QObject, pyqtSlot
-
+from ..AppController.encrypt import updateToken
 from ..APIController.Connections import (
     GetUserInfoThread,
     GetSettingThread,
@@ -17,7 +17,7 @@ from ..APIController.Connections import (
     JSONReturnModel,
 )
 from ..Resources import *  # noqa: F403 F401
-from ..AppController.encrypt import getAuthorization
+from ..AppController.encrypt import getToken
 from .Multiplex.ScollArea import NormalSmoothScrollArea
 from .Multiplex.UserInfoWidgets import UserInfoAvatarWidget, UserInfoPushWidget, UserInfoWidget
 
@@ -38,13 +38,13 @@ class HomeAPI(QObject):
         super().__init__(parent=parent)
 
     def getUserInfoAPI(self) -> GetUserInfoThread:
-        return GetUserInfoThread(getAuthorization(), parent=self)
+        return GetUserInfoThread(getToken(), parent=self)
 
     def getSysSettingAPI(self) -> GetSettingThread:
         return GetSettingThread(parent=self)
 
-    def refreshUserTokenAPI(self, authorization: str) -> RefreshUserTokenThread:
-        return RefreshUserTokenThread(authorization, parent=self)
+    def refreshUserTokenAPI(self) -> RefreshUserTokenThread:
+        return RefreshUserTokenThread(getToken(), parent=self)
 
 
 class HomePage(QWidget, HomeAPI):
@@ -263,8 +263,27 @@ class HomePage(QWidget, HomeAPI):
 
     def refreshUserTokenFunc(self):
         self.refreshUserTokenThread = self.refreshUserTokenAPI()
-        self.refreshUserTokenThread.finished.connect(self.getUserInfoFunc)
+        self.refreshUserTokenThread.returnSlot.connect(self.refreshUserTokenAPIParser)
         self.refreshUserTokenThread.start()
+
+    @pyqtSlot(JSONReturnModel)
+    def refreshUserTokenAPIParser(self, model: JSONReturnModel):
+        attr = "success"
+        if model.status != 200 or model.message != "Token更新成功":
+            attr = "error"
+        else:
+            pass
+
+        getattr(InfoBar, attr)(
+            title="错误" if attr == "error" else "成功",
+            content=model.message,
+            duration=1500,
+            position=InfoBarPosition.TOP,
+            parent=self,
+        )
+        if attr == "success":
+            updateToken(model.data["newToken"])
+            self.getUserInfoFunc()
 
     def getSysSettingFunc(self):
         self.getSysSettingThread = self.getSysSettingAPI()

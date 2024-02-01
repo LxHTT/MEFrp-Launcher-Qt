@@ -10,7 +10,7 @@ from .Multiplex.ExceptionWidget import ExceptionWidget
 from ..AppController.ExceptionHandler import ExceptionFilterMode, exceptionFilter
 from ..AppController.Utils import WorkingThreads
 from ..AppController.Settings import getStyleSheetFromFile, cfg
-from ..AppController.encrypt import getUser, getPassword, saveUser, refreshToken
+from ..AppController.encrypt import getUser, getPassword, saveUser, updateToken
 from ..APIController.Connections import JSONReturnModel
 
 from ..Resources import *  # noqa: F403 F401
@@ -208,7 +208,7 @@ class MEMainWindow(BottomNavMaterialWindow):
 
         getattr(InfoBar, attr)(
             title="错误" if attr == "error" else "成功",
-            content="自动登录失败，请在设置页重新登录。"
+            content=f"自动登录失败，请在设置页重新登录。\nAPI提示：{model.message}"
             if attr == "error"
             else "已自动登录，欢迎回来。",
             duration=1500,
@@ -216,6 +216,6 @@ class MEMainWindow(BottomNavMaterialWindow):
             parent=self,
         )
         if attr == "success":
-            refreshToken(model.data["access_token"])
+            updateToken(model.data["access_token"])
             saveUser(getUser(), getPassword())
             self.homePage.getUserInfoFunc()
