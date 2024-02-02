@@ -43,19 +43,19 @@ class HomeAPI(QObject):
         super().__init__(parent=parent)
 
     def getUserInfoAPI(self) -> GetUserInfoThread:
-        return GetUserInfoThread(getToken(), parent=self)
+        return GetUserInfoThread(authorization=getToken(), parent=self)
 
     def getSysSettingAPI(self) -> GetSettingThread:
         return GetSettingThread(parent=self)
 
     def refreshUserTokenAPI(self) -> RefreshUserTokenThread:
-        return RefreshUserTokenThread(getToken(), parent=self)
+        return RefreshUserTokenThread(authorization=getToken(), parent=self)
 
     def userSignAPI(self) -> UserSignThread:
-        return UserSignThread(getToken(), parent=self)
+        return UserSignThread(authorization=getToken(), parent=self)
 
     def userGetSignInfoAPI(self) -> UserGetSignInfoThread:
-        return UserGetSignInfoThread(getToken(), parent=self)
+        return UserGetSignInfoThread(authorization=getToken(), parent=self)
 
 
 class HomePage(QWidget, HomeAPI):
