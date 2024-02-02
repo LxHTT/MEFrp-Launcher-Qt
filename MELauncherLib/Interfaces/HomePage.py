@@ -370,7 +370,9 @@ class HomePage(QWidget, HomeAPI):
                     .wrap(
                         "  \n\n".join([
                             str(content).replace("，", "，\n")
-                            for content in (item["content"] for item in model.data["announce"])
+                            for content in (
+                                item[1]["content"] for item in model.data["announce"].items()
+                            )
                         ]),
                         400,
                         False,
@@ -398,7 +400,7 @@ class HomePage(QWidget, HomeAPI):
     @pyqtSlot(JSONReturnModel)
     def userGetSignInfoAPIParser(self, model: JSONReturnModel):
         if model.status == 200 or model.message == "Success!":
-            text = "  用户ID：{id}\n  用户名：{username}\n  总签到次数：{totalsign}\n  总获得流量：{totaltraffic}".format(
+            text = "  用户ID：{id}\n  用户名：{username}\n  总签到次数：{totalsign}\n  总获得流量：{totaltraffic}".format(  # noqa: E501
                 id=model.data["id"],
                 username=model.data["username"],
                 totalsign=model.data["totalsign"],
