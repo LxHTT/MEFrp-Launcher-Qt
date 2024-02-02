@@ -1,7 +1,15 @@
 from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import QSizePolicy, QVBoxLayout
 
-from qmaterialwidgets import BodyLabel, CardWidget, InfoBadge, SubtitleLabel, InfoLevel
+from qmaterialwidgets import (
+    BodyLabel,
+    CardWidget,
+    InfoBadge,
+    SubtitleLabel,
+    InfoLevel,
+    InfoBar,
+    InfoBarPosition,
+)
 
 
 class NodeWidget(CardWidget):
@@ -85,3 +93,14 @@ class NodeWidget(CardWidget):
             self.statusBadge.setLevel(InfoLevel.SUCCESS)
         else:
             self.statusBadge.setLevel(InfoLevel.ERROR)
+        if self.property("status") != 200:
+            self.clicked.connect(
+                lambda: InfoBar.warning(
+                    title="提示",
+                    content="此节点当前状态异常，不建议选择",
+                    isClosable=True,
+                    duration=1500,
+                    position=InfoBarPosition.TOP,
+                    parent=self.window(),
+                )
+            )
