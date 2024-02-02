@@ -35,6 +35,7 @@ from qmaterialwidgets import (
     InfoBarPosition,
     TextWrap,
     TonalPushButton,
+    FluentIcon as FIF,
 )
 
 
@@ -314,8 +315,9 @@ class HomePage(QWidget, HomeAPI):
 
     def refreshUserTokenPreFunc(self):
         w = MessageBox(
-            "确认重置Token？",
-            "确认重置 Token 吗？这将使当前 Token 失效并生成新的 Token。",
+            title="确认重置Token？",
+            content="确认重置 Token 吗？这将使当前 Token 失效并生成新的 Token。",
+            icon=FIF.FINGERPRINT,
             parent=self,
         )
         w.yesButton.setText("确定")
@@ -360,16 +362,23 @@ class HomePage(QWidget, HomeAPI):
             if model.data["alert"]["error"]["title"] != "null":
                 alertText += f"  运行异常！\n  {model.data['alert']['error']['content']}\n"
             else:
-                alertText += f"  运行正常\n  {model.data['alert']['success']['content']}\n"
+                alertText += f"  运行正常\n  {model.data['alert']['info']['content']}\n"
             self.announcementContent.setText(
-                "  "
-                + TextWrap()
-                .wrap(
-                    str(model.data["announce"][0]["content"]).replace("，", "，\n"),
-                    400,
-                    False,
-                )[0]
-                .replace("\n", "\n  ")
+                (
+                    "  "
+                    + TextWrap()
+                    .wrap(
+                        "  \n\n".join([
+                            str(content).replace("，", "，\n")
+                            for content in (item["content"] for item in model.data["announce"])
+                        ]),
+                        400,
+                        False,
+                    )[0]
+                    .replace("\n", "\n  ")
+                    if model.data["announce"] is not None
+                    else "  暂无公告"
+                )
                 + alertText
             )
         else:

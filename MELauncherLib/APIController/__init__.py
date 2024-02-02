@@ -19,6 +19,7 @@ from .Connections import (
     SendRegisterEmailThread,  # noqa: F401
     ForgotPasswordThread,  # noqa: F401
     GetSettingThread,  # noqa: F401
+    GetFreePortThread,  # noqa: F401
     JSONReturnModel,  # noqa: F401
     TextReturnModel,  # noqa: F401
 )

@@ -27,7 +27,7 @@ class NodeWidget(CardWidget):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
         self.setSizePolicy(sizePolicy)
-        self.setFixedHeight(160)
+        self.setFixedHeight(170)
         self.setMinimumWidth(320)
         self.verticalLayout = QVBoxLayout(self)
         self.verticalLayout.setContentsMargins(12, 4, 0, 4)
@@ -74,6 +74,7 @@ class NodeWidget(CardWidget):
         self.verticalLayout.addWidget(self.statusBadge)
 
     def setUpData(self):
+        self.setProperty("id", self.config["id"])
         self.setProperty("name", self.config["name"])
         self.setProperty("group", self.config["group"].split(";"))
         self.setProperty("allow_port", self.config["allow_port"][:-1].strip().split("-"))

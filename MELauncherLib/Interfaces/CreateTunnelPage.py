@@ -1,3 +1,4 @@
+from random import randint
 from PyQt5.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -21,7 +22,9 @@ from qmaterialwidgets import (
     InfoBar,
     InfoBarIcon,
     TonalPushButton,
+    FilterChip,
 )
+from MELauncherLib.APIController import CreateTunnelThread
 
 from MELauncherLib.Interfaces.Multiplex.NodeWidget import NodeWidget
 
@@ -31,6 +34,7 @@ from ..APIController import (
     CreateTunnelThread,
     JSONReturnModel,
     GetRealnameStatusThread,
+    GetFreePortThread,
 )
 
 from ..AppController.encrypt import getToken
@@ -45,6 +49,9 @@ class CreateTunnelAPI(QObject):
 
     def getRealnameStatusAPI(self) -> GetRealnameStatusThread:
         return GetRealnameStatusThread(authorization=getToken(), parent=self)
+
+    def getFreePortAPI(self, id: int, protocol: str) -> GetFreePortThread:
+        return GetFreePortThread(authorization=getToken(), id=id, protocol=protocol, parent=self)
 
     def createTunnelAPI(
         self,
@@ -168,12 +175,12 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         self.localPortSpinBox.setObjectName("localPortSpinBox")
         self.localPortLayout.addWidget(self.localPortSpinBox)
         self.proxySettingsRealLayout.addLayout(self.localPortLayout, 5, 0, 1, 1)
-        self.tunnelNameEdit = FilledLineEdit(self.tunnelSettingsWidget)
-        self.tunnelNameEdit.setObjectName("tunnelNameEdit")
-        self.proxySettingsRealLayout.addWidget(self.tunnelNameEdit, 3, 0, 1, 4)
         self.localAddrEdit = FilledLineEdit(self.tunnelSettingsWidget)
         self.localAddrEdit.setObjectName("localAddrEdit")
-        self.proxySettingsRealLayout.addWidget(self.localAddrEdit, 2, 0, 1, 4)
+        self.proxySettingsRealLayout.addWidget(self.localAddrEdit, 3, 0, 1, 4)
+        self.tunnelNameEdit = FilledLineEdit(self.tunnelSettingsWidget)
+        self.tunnelNameEdit.setObjectName("tunnelNameEdit")
+        self.proxySettingsRealLayout.addWidget(self.tunnelNameEdit, 2, 0, 1, 4)
         self.remotePortLayout = QGridLayout()
         self.remotePortLayout.setHorizontalSpacing(10)
         self.remotePortLayout.setObjectName("remotePortLayout")
@@ -239,8 +246,8 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         self.remotePortLabel.setText("远程端口")
         self.createTunnelBtn.setText("创建隧道")
         self.localPortLabel.setText("本地端口")
-        self.tunnelNameEdit.setLabel("本地地址（一般为127.0.0.1）")
-        self.localAddrEdit.setLabel("隧道名称（支持英文、数字）")
+        self.localAddrEdit.setLabel("本地地址（一般为127.0.0.1）")
+        self.tunnelNameEdit.setLabel("隧道名称（支持英文、数字）")
         self.protocolComboBox.setLabel("选择协议")
         self.randomRemotePortBtn.setText("随机端口")
         self.refreshNodeBtn.setText("刷新")
@@ -249,10 +256,34 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         self.localPortSpinBox.setMaximum(65535)
         self.remotePortSpinBox.setMaximum(65535)
         self.localPortSpinBox.setValue(25565)
-        self.spacerItem = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.protocolComboBox.sizePolicy().hasHeightForWidth())
+        self.protocolComboBox.setSizePolicy(sizePolicy)
+
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.tunnelNameEdit.sizePolicy().hasHeightForWidth())
+        self.tunnelNameEdit.setSizePolicy(sizePolicy)
+
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.localAddrEdit.sizePolicy().hasHeightForWidth())
+        self.localAddrEdit.setSizePolicy(sizePolicy)
+
+        self.spacerItem = QSpacerItem(20, 10, QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.realnameStatusSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.onlyAvailableNodeBtn = FilterChip(self.refreshNodeWidget)
+        self.onlyAvailableNodeBtn.setText("仅显示可用节点")
+        self.onlyAvailableNodeBtn.clicked.connect(self.toggleVisibleNode)
         self.refreshNodeBtn.clicked.connect(self.getNodeListFunc)
+        self.refreshNodeBtn.setIcon(FIF.UPDATE)
         self.tunnelSettingsWidget.setEnabled(False)
+        self.randomRemotePortBtn.clicked.connect(self.getFreePortFunc)
+        self.createTunnelBtn.clicked.connect(self.createTunnelFunc)
 
     def getRealnameStatusFunc(self):
         self.getRealnameStatusThread = self.getRealnameStatusAPI()
@@ -294,6 +325,7 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         )
         self.refreshNodeLayout.addWidget(self.realnameStatusInfoBar)
         self.refreshNodeLayout.addItem(self.realnameStatusSpacer)
+        self.refreshNodeLayout.addWidget(self.onlyAvailableNodeBtn)
         self.refreshNodeLayout.addWidget(self.refreshNodeBtn)
 
     def getNodeListFunc(self):
@@ -325,27 +357,88 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
                 NodeWidget(config=node, slot=self.setSelectedNode, parent=self.tunnelsSC)
             )
         self.tunnelsRealLayout.addItem(self.spacerItem)
+        self.toggleVisibleNode()
         self.getRealnameStatusFunc()
+
+    def toggleVisibleNode(self):
+        for i in reversed(range(self.tunnelsRealLayout.count())):
+            try:
+                if not isinstance(self.tunnelsRealLayout.itemAt(i), QSpacerItem):
+                    if self.tunnelsRealLayout.itemAt(i).widget().property("status") != 200:
+                        self.tunnelsRealLayout.itemAt(i).widget().setVisible(
+                            not self.onlyAvailableNodeBtn.isChecked()
+                        )
+                    else:
+                        self.tunnelsRealLayout.itemAt(i).widget().setVisible(True)
+                else:
+                    continue
+            except AttributeError:
+                pass
 
     def setSelectedNode(self):
         self.selectedNodeLabel.setText(f"已选择节点：{self.sender().property('name')}")
+        self.id = self.sender().property("id")
+        self.allow_port = self.sender().property("allow_port")
+        self.allow_type = self.sender().property("allow_type")
         self.tunnelSettingsWidget.setEnabled(True)
         self.protocolComboBox.clear()
-        self.protocolComboBox.addItems(self.sender().property("allow_type"))
+        self.protocolComboBox.addItems(self.allow_type)
+        self.remotePortSpinBox.setMinimum(int(self.allow_port[0]))
+        self.remotePortSpinBox.setMaximum(int(self.allow_port[1]))
+        self.getFreePortFunc()
 
+    def getFreePortFunc(self):
+        self.randomRemotePortBtn.setEnabled(False)
+        self.getFreePortThread = self.getFreePortAPI(
+            id=self.id, protocol=str(self.allow_type[self.protocolComboBox.currentIndex()])
+        )
+        self.getFreePortThread.returnSlot.connect(self.getFreePortAPIParser)
+        self.getFreePortThread.start()
 
-    # def tunnelCreationChecker(self):
-    #     isOk = True
-    #     if lineEdit.text() == "":
-    #         lineEdit.setError(True)
-    #         isOk = False
-    #         lineEdit.textChanged.connect(self.killFocusChecker)
-    #     if not isOk:
-    #         InfoBar.error(
-    #             title="错误",
-    #             content="请完整填写所有信息",
-    #             duration=1500,
-    #             position=InfoBarPosition.TOP,
-    #             parent=self,
-    #         )
-    #     return isOk
+    @pyqtSlot(JSONReturnModel)
+    def getFreePortAPIParser(self, model: JSONReturnModel):
+        self.randomRemotePortBtn.setEnabled(True)
+        if model.status == 200 or model.message == "获取成功":
+            self.remotePortSpinBox.setValue(model.data["free_port"])
+        else:
+            self.remotePortSpinBox.setValue(
+                randint(int(self.allow_port[0]), int(self.allow_port[1]))
+            )
+            InfoBar.warning(
+                title="警告",
+                content="API无法返回有效可用端口！\n端口将由MEFrp-Launcher随机抽取，无法保证100%不被占用。\n若有占用请更换端口。",
+                orient=Qt.Horizontal,
+                isClosable=True,
+                duration=1500,
+                position=InfoBarPosition.TOP,
+                parent=self,
+            )
+
+    def createTunnelFunc(self):
+        self.createTunnelBtn.setEnabled(False)
+        self.createTunnelThread = self.createTunnelAPI(
+            node=self.id,
+            proxy_type=str(self.allow_type[self.protocolComboBox.currentIndex()]),
+            local_ip=self.localAddrEdit.text(),
+            local_port=self.localPortSpinBox.value(),
+            remote_port=self.remotePortSpinBox.value(),
+            proxy_name=self.tunnelNameEdit.text(),
+        )
+        self.createTunnelThread.returnSlot.connect(self.createTunnelAPIParser)
+        self.createTunnelThread.start()
+
+    @pyqtSlot(JSONReturnModel)
+    def createTunnelAPIParser(self, model: JSONReturnModel):
+        self.createTunnelBtn.setEnabled(True)
+        attr = "success"
+        if model.status == 200 or model.message == "创建成功":
+            attr = "success"
+        else:
+            attr = "error"
+        getattr(InfoBar, attr)(
+            title="错误" if attr == "error" else "成功",
+            content=model.message,
+            duration=1500,
+            position=InfoBarPosition.TOP,
+            parent=self,
+        )

@@ -2,10 +2,7 @@ import sys
 from platform import system as systemName, version as systemVersion
 from traceback import format_exception
 from types import TracebackType
-from typing import Type, Union
-
-from qmaterialwidgets.common.icon import MaterialIconBase
-from qmaterialwidgets.components.navigation import NavigationPushButton
+from typing import Type
 
 
 from ..FrpcController.completer import checkFrpc, downloadFrpc
@@ -32,7 +29,7 @@ from qmaterialwidgets import (
 )
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize, QThreadPool, pyqtSlot
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QApplication
 
 from .. import VERSION
 from .HomePage import HomePage
@@ -72,9 +69,9 @@ class MEMainWindow(BottomNavMaterialWindow):
         self.setWindowTitle(f"镜缘映射 ME Frp 启动器 {VERSION}")
         self.setWindowIcon(QIcon(":/built-InIcons/MEFrp.ico"))
 
-        # self.splashScreen = SplashScreen(self.windowIcon(), self)
-        # self.splashScreen.setIconSize(QSize(106, 106))
-        # self.splashScreen.raise_()
+        self.splashScreen = SplashScreen(self.windowIcon(), self)
+        self.splashScreen.setIconSize(QSize(106, 106))
+        self.splashScreen.raise_()
 
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()
@@ -117,12 +114,13 @@ class MEMainWindow(BottomNavMaterialWindow):
             w = False
             sleep(1.5)
         del sleep
-        # self.splashScreen.finish()
+        self.splashScreen.finish()
         if w:
             w = MessageBox(
-                "Frpc补全失败",
-                "MEFrp-Launcher无法获取您对应系统的Frpc。\n请手动下载Frpc并解压到frpc目录。\n",
-                self,
+                title="Frpc补全失败",
+                content="MEFrp-Launcher无法获取您对应系统的Frpc。\n请手动下载Frpc并解压到frpc目录。\n",
+                icon=FIF.APPLICATION,
+                parent=self,
             )
             w.cancelButton.setParent(None)
             w.exec_()
@@ -176,7 +174,10 @@ class MEMainWindow(BottomNavMaterialWindow):
             # MCSL2Logger.error(msg=tracebackString)
             exceptionWidget = ExceptionWidget(tracebackString)
             box = MessageBox(
-                title=self.tr("程序出现异常"), content="", parent=self, icon=FIF.QUESTION
+                title=self.tr("MEFrp-Launcher出现异常"),
+                content="",
+                icon=FIF.QUESTION,
+                parent=self,
             )
             box.yesButton.setText(self.tr("确认并复制到剪切板"))
             box.cancelButton.setText(self.tr("知道了"))

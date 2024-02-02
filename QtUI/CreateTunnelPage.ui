@@ -55,6 +55,13 @@
            </spacer>
           </item>
           <item>
+           <widget class="FilterChip" name="onlyAvailableNodeBtn">
+            <property name="text">
+             <string>仅显示可用节点</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="TonalPushButton" name="refreshNodeBtn">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -234,14 +241,14 @@
            </layout>
           </item>
           <item row="3" column="0" colspan="4">
-           <widget class="FilledLineEdit" name="tunnelNameEdit">
+           <widget class="FilledLineEdit" name="localAddrEdit">
             <property name="label">
              <string>本地地址（一般为127.0.0.1）</string>
             </property>
            </widget>
           </item>
           <item row="2" column="0" colspan="4">
-           <widget class="FilledLineEdit" name="localAddrEdit">
+           <widget class="FilledLineEdit" name="tunnelNameEdit">
             <property name="label">
              <string>隧道名称（支持英文、数字）</string>
             </property>
@@ -421,6 +428,11 @@
    <header>qmaterialwidgets</header>
   </customwidget>
   <customwidget>
+   <class>OutlinedPushButton</class>
+   <extends>QPushButton</extends>
+   <header>qmaterialwidgets</header>
+  </customwidget>
+  <customwidget>
    <class>TonalPushButton</class>
    <extends>FilledPushButton</extends>
    <header>qmaterialwidgets</header>
@@ -433,6 +445,11 @@
   <customwidget>
    <class>SecondaryFloatingActionButton</class>
    <extends>QToolButton</extends>
+   <header>qmaterialwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>FilterChip</class>
+   <extends>OutlinedPushButton</extends>
    <header>qmaterialwidgets</header>
   </customwidget>
   <customwidget>
