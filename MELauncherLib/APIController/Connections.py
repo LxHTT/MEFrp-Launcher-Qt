@@ -24,6 +24,7 @@ from MEFrpLib import (
 )
 from MEFrpLib.models import JSONReturnModel, TextReturnModel
 from ..AppController.Settings import cfg
+from .. import USER_AGENT
 
 
 class BaseJSONThread(QThread):
@@ -54,7 +55,9 @@ class GetUserInfoThread(BaseJSONThread):
 
     def run(self):
         self.returnSlot.emit(
-            me_get_user_info(authorization=self.authorization, bypass_proxy=self.bypass_proxy)
+            me_get_user_info(
+                authorization=self.authorization, bypass_proxy=self.bypass_proxy, ua=USER_AGENT
+            )
         )
 
 
@@ -66,7 +69,9 @@ class UserGetSignInfoThread(BaseJSONThread):
 
     def run(self):
         self.returnSlot.emit(
-            me_user_get_sign_info(authorization=self.authorization, bypass_proxy=self.bypass_proxy)
+            me_user_get_sign_info(
+                authorization=self.authorization, bypass_proxy=self.bypass_proxy, ua=USER_AGENT
+            )
         )
 
 
@@ -78,7 +83,9 @@ class UserSignThread(BaseJSONThread):
 
     def run(self):
         self.returnSlot.emit(
-            me_user_sign(authorization=self.authorization, bypass_proxy=self.bypass_proxy)
+            me_user_sign(
+                authorization=self.authorization, bypass_proxy=self.bypass_proxy, ua=USER_AGENT
+            )
         )
 
 
@@ -90,7 +97,9 @@ class RefreshUserTokenThread(BaseJSONThread):
 
     def run(self):
         self.returnSlot.emit(
-            me_refresh_user_token(authorization=self.authorization, bypass_proxy=self.bypass_proxy)
+            me_refresh_user_token(
+                authorization=self.authorization, bypass_proxy=self.bypass_proxy, ua=USER_AGENT
+            )
         )
 
 
@@ -102,7 +111,9 @@ class GetRealnameStatusThread(BaseJSONThread):
 
     def run(self):
         self.returnSlot.emit(
-            me_get_realname_status(authorization=self.authorization, bypass_proxy=self.bypass_proxy)
+            me_get_realname_status(
+                authorization=self.authorization, bypass_proxy=self.bypass_proxy, ua=USER_AGENT
+            )
         )
 
 
@@ -121,6 +132,7 @@ class PostRealnameThread(BaseJSONThread):
                 idcard=self.idcard,
                 name=self.name,
                 bypass_proxy=self.bypass_proxy,
+                ua=USER_AGENT,
             )
         )
 
@@ -133,7 +145,9 @@ class GetTunnelListThread(BaseJSONThread):
 
     def run(self):
         self.returnSlot.emit(
-            me_get_tunnel_list(authorization=self.authorization, bypass_proxy=self.bypass_proxy)
+            me_get_tunnel_list(
+                authorization=self.authorization, bypass_proxy=self.bypass_proxy, ua=USER_AGENT
+            )
         )
 
 
@@ -147,7 +161,10 @@ class GetTunnelConfigNodeThread(BaseTextThread):
     def run(self):
         self.returnSlot.emit(
             me_get_tunnel_config_node(
-                authorization=self.authorization, node=self.node, bypass_proxy=self.bypass_proxy
+                authorization=self.authorization,
+                node=self.node,
+                bypass_proxy=self.bypass_proxy,
+                ua=USER_AGENT,
             )
         )
 
@@ -162,7 +179,10 @@ class GetTunnelConfigIdThread(BaseTextThread):
     def run(self):
         self.returnSlot.emit(
             me_get_tunnel_config_id(
-                authorization=self.authorization, id=self.id, bypass_proxy=self.bypass_proxy
+                authorization=self.authorization,
+                id=self.id,
+                bypass_proxy=self.bypass_proxy,
+                ua=USER_AGENT,
             )
         )
 
@@ -200,6 +220,7 @@ class CreateTunnelThread(BaseJSONThread):
                 remote_port=self.remote_port,
                 proxy_name=self.proxy_name,
                 bypass_proxy=self.bypass_proxy,
+                ua=USER_AGENT,
             )
         )
 
@@ -217,6 +238,7 @@ class DeleteTunnelThread(BaseJSONThread):
                 authorization=self.authorization,
                 tunnel_id=self.tunnel_id,
                 bypass_proxy=self.bypass_proxy,
+                ua=USER_AGENT,
             )
         )
 
@@ -234,6 +256,7 @@ class GetTunnelInfoThread(BaseJSONThread):
                 authorization=self.authorization,
                 tunnel_id=self.tunnel_id,
                 bypass_proxy=self.bypass_proxy,
+                ua=USER_AGENT,
             )
         )
 
@@ -246,7 +269,9 @@ class NodeListThread(BaseJSONThread):
 
     def run(self):
         self.returnSlot.emit(
-            me_node_list(authorization=self.authorization, bypass_proxy=self.bypass_proxy)
+            me_node_list(
+                authorization=self.authorization, bypass_proxy=self.bypass_proxy, ua=USER_AGENT
+            )
         )
 
 
@@ -259,7 +284,12 @@ class LoginThread(BaseJSONThread):
 
     def run(self):
         self.returnSlot.emit(
-            me_login(username=self.username, password=self.password, bypass_proxy=self.bypass_proxy)
+            me_login(
+                username=self.username,
+                password=self.password,
+                bypass_proxy=self.bypass_proxy,
+                ua=USER_AGENT,
+            )
         )
 
 
@@ -269,7 +299,7 @@ class GetSponsorThread(BaseJSONThread):
         self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
-        self.returnSlot.emit(me_get_sponsor(bypass_proxy=self.bypass_proxy))
+        self.returnSlot.emit(me_get_sponsor(bypass_proxy=self.bypass_proxy, ua=USER_AGENT))
 
 
 class GetStatisticsThread(BaseJSONThread):
@@ -278,7 +308,7 @@ class GetStatisticsThread(BaseJSONThread):
         self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
-        self.returnSlot.emit(me_get_statistics(bypass_proxy=self.bypass_proxy))
+        self.returnSlot.emit(me_get_statistics(bypass_proxy=self.bypass_proxy, ua=USER_AGENT))
 
 
 class RegisterThread(BaseJSONThread):
@@ -298,6 +328,7 @@ class RegisterThread(BaseJSONThread):
                 password=self.password,
                 code=self.code,
                 bypass_proxy=self.bypass_proxy,
+                ua=USER_AGENT,
             )
         )
 
@@ -310,7 +341,7 @@ class SendRegisterEmailThread(BaseJSONThread):
 
     def run(self):
         self.returnSlot.emit(
-            me_send_register_email(email=self.email, bypass_proxy=self.bypass_proxy)
+            me_send_register_email(email=self.email, bypass_proxy=self.bypass_proxy, ua=USER_AGENT)
         )
 
 
@@ -324,7 +355,10 @@ class ForgotPasswordThread(BaseJSONThread):
     def run(self):
         self.returnSlot.emit(
             me_forgot_password(
-                email=self.email, username=self.username, bypass_proxy=self.bypass_proxy
+                email=self.email,
+                username=self.username,
+                bypass_proxy=self.bypass_proxy,
+                ua=USER_AGENT,
             )
         )
 
@@ -335,7 +369,7 @@ class GetSettingThread(BaseJSONThread):
         self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
-        self.returnSlot.emit(me_get_setting(bypass_proxy=self.bypass_proxy))
+        self.returnSlot.emit(me_get_setting(bypass_proxy=self.bypass_proxy, ua=USER_AGENT))
 
 
 class GetFreePortThread(BaseJSONThread):
@@ -353,5 +387,6 @@ class GetFreePortThread(BaseJSONThread):
                 id=self.id,
                 protocol=self.protocol,
                 bypass_proxy=self.bypass_proxy,
+                ua=USER_AGENT,
             )
         )
