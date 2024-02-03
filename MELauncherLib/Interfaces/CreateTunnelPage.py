@@ -24,7 +24,6 @@ from qmaterialwidgets import (
     TonalPushButton,
     FilterChip,
 )
-from MELauncherLib.APIController import CreateTunnelThread
 
 from MELauncherLib.Interfaces.Multiplex.NodeWidget import NodeWidget
 
@@ -202,7 +201,6 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         self.remotePortLayout.addWidget(self.randomRemotePortBtn, 1, 1, 1, 1)
         self.proxySettingsRealLayout.addLayout(self.remotePortLayout, 5, 2, 1, 1)
         self.protocolComboBox = FilledComboBox(self.tunnelSettingsWidget)
-        self.protocolComboBox.setObjectName("protocolComboBox")
         self.proxySettingsRealLayout.addWidget(self.protocolComboBox, 1, 0, 1, 4)
         spacerItem1 = QSpacerItem(40, 20, QSizePolicy.Fixed, QSizePolicy.Minimum)
         self.proxySettingsRealLayout.addItem(spacerItem1, 5, 1, 1, 1)
@@ -256,6 +254,7 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         self.localPortSpinBox.setMaximum(65535)
         self.remotePortSpinBox.setMaximum(65535)
         self.localPortSpinBox.setValue(25565)
+        self.localAddrEdit.setText("127.0.0.1")
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -281,7 +280,8 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         self.onlyAvailableNodeBtn.clicked.connect(self.toggleVisibleNode)
         self.refreshNodeBtn.clicked.connect(self.getNodeListFunc)
         self.refreshNodeBtn.setIcon(FIF.UPDATE)
-        self.tunnelSettingsWidget.setEnabled(False)
+        # self.tunnelSettingsWidget.setEnabled(False)
+        self.protocolComboBox.addItems(["TCP", "UDP"])
         self.randomRemotePortBtn.clicked.connect(self.getFreePortFunc)
         self.createTunnelBtn.clicked.connect(self.createTunnelFunc)
 
