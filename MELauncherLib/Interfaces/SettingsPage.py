@@ -366,7 +366,7 @@ class SettingsPage(QWidget):
         self.launcherSettingsLayout.addWidget(self.manualCheckUpdateWidget)
         self.settingsLayout.addWidget(self.launcherSettingsWidget)
         spacerItem7 = QSpacerItem(20, 80, QSizePolicy.Minimum, QSizePolicy.Expanding)
-        self.launcherSettingsLayout.addItem(spacerItem7)
+        self.settingsLayout.addItem(spacerItem7)
         self.settingsScrollArea.setWidget(self.settingsSC)
         self.gridLayout.addWidget(self.settingsScrollArea, 2, 0, 1, 1)
 

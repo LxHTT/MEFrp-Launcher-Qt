@@ -67,9 +67,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-144</y>
+        <y>-154</y>
         <width>676</width>
-        <height>629</height>
+        <height>639</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="settingsLayout">
@@ -771,21 +771,24 @@
             </layout>
            </widget>
           </item>
-          <item>
-           <spacer name="verticalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
          </layout>
         </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
