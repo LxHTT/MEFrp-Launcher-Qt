@@ -15,7 +15,7 @@ class Config(QConfig):
     userAuthorization = ConfigItem("User", "userAuthorization", "", "")
     isFirstGuideFinished = ConfigItem("Launcher", "isFirstGuideFinished", False, BoolValidator())
     oldExecuteable = ConfigItem("Launcher", "oldExecuteable", "", "")
-    bypassProxy = ConfigItem("Launcher", "bypassProxy", False, BoolValidator())
+    bypassProxy = ConfigItem("Launcher", "bypassProxy", True, BoolValidator())
 
 
 cfg = Config()

@@ -1,0 +1,863 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SettingsPage</class>
+ <widget class="QWidget" name="SettingsPage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>710</width>
+    <height>564</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string/>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>8</number>
+   </property>
+   <property name="topMargin">
+    <number>8</number>
+   </property>
+   <property name="rightMargin">
+    <number>8</number>
+   </property>
+   <property name="bottomMargin">
+    <number>8</number>
+   </property>
+   <item row="1" column="0" colspan="2">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>10</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="0">
+    <widget class="TitleLabel" name="TitleLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>设置</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="SmoothScrollArea" name="settingsScrollArea">
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAsNeeded</enum>
+     </property>
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="settingsSC">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>-144</y>
+        <width>676</width>
+        <height>629</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="settingsLayout">
+       <property name="spacing">
+        <number>10</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="SubtitleLabel" name="frpcSettingsTitle">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Frpc 设置</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="OutlinedCardWidget" name="frpcSettingsWidget">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>175</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>175</height>
+          </size>
+         </property>
+         <layout class="QVBoxLayout" name="frpcSettingsLayout">
+          <item>
+           <widget class="CardWidget" name="runFrpcWidget">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>70</height>
+             </size>
+            </property>
+            <layout class="QGridLayout" name="runFrpcLayout">
+             <property name="leftMargin">
+              <number>16</number>
+             </property>
+             <property name="topMargin">
+              <number>16</number>
+             </property>
+             <property name="rightMargin">
+              <number>16</number>
+             </property>
+             <property name="bottomMargin">
+              <number>16</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="StrongBodyLabel" name="runFrpcTitle">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Frpc 启动方式</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1" rowspan="2">
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="1" column="0">
+              <widget class="BodyLabel" name="runFrpcTip">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>注意：选择 frpc.ini 启动时，高级配置选项才会生效。</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2" rowspan="2">
+              <widget class="QWidget" name="runFrpcRadioWidget" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="RadioButton" name="runFrpcEZRadioBtn">
+                  <property name="text">
+                   <string>使用快捷参数启动</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="RadioButton" name="runFrpcConfigRadioBtn">
+                  <property name="text">
+                   <string>使用 frpc.ini 启动</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="CardWidget" name="frpcVersionWidget">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>70</height>
+             </size>
+            </property>
+            <layout class="QGridLayout" name="frpcVersionLayout">
+             <property name="leftMargin">
+              <number>16</number>
+             </property>
+             <property name="topMargin">
+              <number>16</number>
+             </property>
+             <property name="rightMargin">
+              <number>16</number>
+             </property>
+             <property name="bottomMargin">
+              <number>16</number>
+             </property>
+             <item row="1" column="0">
+              <widget class="BodyLabel" name="frpcVersionTip">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>MEFrp-Launcher 会在每次启动时自动检查并更新 Frpc，您无需操心。</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="StrongBodyLabel" name="frpcVersionTitle">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Frpc 版本</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1" rowspan="2">
+              <spacer name="frpcVresionSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="2" rowspan="2">
+              <widget class="BodyLabel" name="frpcVresionLabel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>[Version]</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="SubtitleLabel" name="launcherSettingsTitle">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>启动器设置</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="OutlinedCardWidget" name="launcherSettingsWidget">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>350</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>350</height>
+          </size>
+         </property>
+         <layout class="QVBoxLayout" name="launcherSettingsLayout">
+          <item>
+           <widget class="CardWidget" name="bypassSystemProxyWidget">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>75</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>75</height>
+             </size>
+            </property>
+            <layout class="QGridLayout" name="bypassSystemProxyLayout">
+             <property name="leftMargin">
+              <number>16</number>
+             </property>
+             <property name="topMargin">
+              <number>16</number>
+             </property>
+             <property name="rightMargin">
+              <number>16</number>
+             </property>
+             <property name="bottomMargin">
+              <number>16</number>
+             </property>
+             <item row="0" column="2" rowspan="2">
+              <widget class="QWidget" name="bypassSystemProxySwitchWidget" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <layout class="QHBoxLayout" name="bypassSystemProxySwitchLayout">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="SwitchButton" name="bypassSystemProxySwitchBtn">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="StrongBodyLabel" name="bypassSystemProxyTitle">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>绕过系统代理</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1" rowspan="2">
+              <spacer name="bypassSystemProxySpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>171</width>
+                 <height>50</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="1" column="0">
+              <widget class="BodyLabel" name="bypassSystemProxyTip">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>当开启系统代理，MEFrp-Launcher 无法正常连接网络时请尝试开启此项。</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="CardWidget" name="launcherThemeWidget">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>75</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>75</height>
+             </size>
+            </property>
+            <layout class="QGridLayout" name="programThemeLayout">
+             <property name="leftMargin">
+              <number>16</number>
+             </property>
+             <property name="topMargin">
+              <number>16</number>
+             </property>
+             <property name="rightMargin">
+              <number>16</number>
+             </property>
+             <property name="bottomMargin">
+              <number>16</number>
+             </property>
+             <item row="1" column="0">
+              <widget class="StrongBodyLabel" name="launcherThemeTitle">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>主题</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2" rowspan="3">
+              <spacer name="launcherThemeSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>107</width>
+                 <height>50</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="1" column="3" rowspan="3">
+              <widget class="QWidget" name="launcherThemeComboWidget" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <layout class="QHBoxLayout" name="launcherThemeComboLayout">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="ComboBox" name="launcherThemeComboBox"/>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="2" column="0" rowspan="2">
+              <widget class="BodyLabel" name="launcherThemeTip">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>随你所好。</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="CardWidget" name="autoCheckUpdateWidget">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>75</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>75</height>
+             </size>
+            </property>
+            <layout class="QGridLayout" name="autoCheckUpdateLayout">
+             <property name="leftMargin">
+              <number>16</number>
+             </property>
+             <property name="topMargin">
+              <number>16</number>
+             </property>
+             <property name="rightMargin">
+              <number>16</number>
+             </property>
+             <property name="bottomMargin">
+              <number>16</number>
+             </property>
+             <item row="0" column="1" rowspan="2">
+              <spacer name="autoCheckUpdateSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>171</width>
+                 <height>50</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="2" rowspan="2">
+              <widget class="QWidget" name="autoCheckUpdateSwitchWidget" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <layout class="QHBoxLayout" name="autoCheckUpdateSwitchLayout">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="SwitchButton" name="autoCheckUpdateSwitchBtn">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="BodyLabel" name="autoCheckUpdateTip">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>开启后，MEFrp-Launcher将在每次启动时检查更新。</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="StrongBodyLabel" name="autoCheckUpdateTitle">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>自动检查更新</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="CardWidget" name="manualCheckUpdateWidget">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>75</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>75</height>
+             </size>
+            </property>
+            <layout class="QGridLayout" name="manualCheckUpdateLayout">
+             <property name="leftMargin">
+              <number>16</number>
+             </property>
+             <property name="topMargin">
+              <number>16</number>
+             </property>
+             <property name="rightMargin">
+              <number>16</number>
+             </property>
+             <property name="bottomMargin">
+              <number>16</number>
+             </property>
+             <item row="1" column="2" rowspan="3">
+              <spacer name="manualCheckUpdateSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>107</width>
+                 <height>50</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="2" column="0" rowspan="2">
+              <widget class="BodyLabel" name="manualCheckUpdateTip">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>尚未完成，点了也不为所动。</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="3" rowspan="3">
+              <widget class="FilledPushButton" name="manualCheckUpdateBtn">
+               <property name="text">
+                <string>检查更新</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" colspan="2">
+              <widget class="StrongBodyLabel" name="manualCheckUpdateTitle">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>检查更新</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ComboBox</class>
+   <extends>LineEdit</extends>
+   <header>qmaterialwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>FilledPushButton</class>
+   <extends>QPushButton</extends>
+   <header>qmaterialwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>SwitchButton</class>
+   <extends>QWidget</extends>
+   <header>qmaterialwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>RadioButton</class>
+   <extends>QRadioButton</extends>
+   <header>qmaterialwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>CardWidget</class>
+   <extends>QFrame</extends>
+   <header>qmaterialwidgets</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>OutlinedCardWidget</class>
+   <extends>CardWidget</extends>
+   <header>qmaterialwidgets</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SmoothScrollArea</class>
+   <extends>QScrollArea</extends>
+   <header>qmaterialwidgets</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>BodyLabel</class>
+   <extends>QLabel</extends>
+   <header>qmaterialwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>StrongBodyLabel</class>
+   <extends>QLabel</extends>
+   <header>qmaterialwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>SubtitleLabel</class>
+   <extends>QLabel</extends>
+   <header>qmaterialwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>TitleLabel</class>
+   <extends>QLabel</extends>
+   <header>qmaterialwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>LineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qmaterialwidgets</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

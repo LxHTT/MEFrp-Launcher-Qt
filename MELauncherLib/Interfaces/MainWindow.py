@@ -34,6 +34,7 @@ from PyQt5.QtWidgets import QApplication
 from .. import VERSION
 from .HomePage import HomePage
 from .CreateTunnelPage import CreateTunnelPage
+from .SettingsPage import SettingsPage
 from .Multiplex.FirstGuide import GuideAPI
 
 
@@ -86,10 +87,12 @@ class MEMainWindow(BottomNavMaterialWindow):
         self.stackedWidget.currentChanged.connect(self.pageChangedEvent)
         self.homePage = HomePage(self)
         self.createTunnelPage = CreateTunnelPage(self)
+        self.settingsPage = SettingsPage(self)
         self.addSubInterface(
             interface=self.homePage, icon=FIF.HOME, text="主页", selectedIcon=FIF.HOME_FILL
         )
         self.addSubInterface(interface=self.createTunnelPage, icon=FIF.ADD, text="新建隧道")
+        self.addSubInterface(interface=self.settingsPage, icon=FIF.SETTING, text="设置")
 
         self.navigationInterface.setCurrentItem(self.homePage.objectName())
 
@@ -132,6 +135,7 @@ class MEMainWindow(BottomNavMaterialWindow):
             self.runReLogin()
         self.homePage.getSysSettingFunc()
         self.homePage.frpcStatusContent.setText(checkFrpc(True))
+        self.settingsPage.frpcVresionLabel.setText(self.homePage.frpcStatusContent.text())
 
     def pageChangedEvent(self):
         if self.stackedWidget.currentIndex() == 1:
