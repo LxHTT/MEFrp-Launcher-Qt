@@ -240,7 +240,7 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         self.TitleLabel.setObjectName("TitleLabel")
         self.gridLayout.addWidget(self.TitleLabel, 0, 0, 1, 1)
 
-        self.TitleLabel.setText(" 创建隧道")
+        self.TitleLabel.setText("创建隧道")
         self.remotePortLabel.setText("远程端口")
         self.createTunnelBtn.setText("创建隧道")
         self.localPortLabel.setText("本地端口")

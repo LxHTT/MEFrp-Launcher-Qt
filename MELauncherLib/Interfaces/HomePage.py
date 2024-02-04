@@ -212,7 +212,7 @@ class HomePage(QWidget, HomeAPI):
         self.verticalLayout.addWidget(self.announcementContent)
         self.gridLayout.addWidget(self.announcementWidget, 2, 1, 5, 1)
 
-        self.TitleLabel.setText(" 主页")
+        self.TitleLabel.setText("主页")
         self.announcementTitle.setText(" 公告")
         self.userInfoTitle.setText(" 用户信息")
         self.frpcStatusTitle.setText("Frpc客户端状态")

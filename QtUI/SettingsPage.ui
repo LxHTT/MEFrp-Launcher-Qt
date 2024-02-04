@@ -69,7 +69,7 @@
         <x>0</x>
         <y>-154</y>
         <width>676</width>
-        <height>639</height>
+        <height>719</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="settingsLayout">
@@ -350,13 +350,13 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>350</height>
+           <height>430</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>350</height>
+           <height>430</height>
           </size>
          </property>
          <layout class="QVBoxLayout" name="launcherSettingsLayout">
@@ -424,6 +424,9 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -578,6 +581,111 @@
            </widget>
           </item>
           <item>
+           <widget class="CardWidget" name="navigationPositionWidget">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>75</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>75</height>
+             </size>
+            </property>
+            <layout class="QGridLayout" name="navigationPositionLayout">
+             <property name="leftMargin">
+              <number>16</number>
+             </property>
+             <property name="topMargin">
+              <number>16</number>
+             </property>
+             <property name="rightMargin">
+              <number>16</number>
+             </property>
+             <property name="bottomMargin">
+              <number>16</number>
+             </property>
+             <item row="1" column="2" rowspan="3">
+              <spacer name="navigationPositionSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>107</width>
+                 <height>50</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="2" column="0" rowspan="2">
+              <widget class="BodyLabel" name="navigationPositionTip">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>遥遥领先 遥遥领先！</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" colspan="2">
+              <widget class="StrongBodyLabel" name="navigationPositionTitle">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>导航栏位置</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="3" rowspan="3">
+              <widget class="QWidget" name="navigationPositionComboWidget" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <layout class="QHBoxLayout" name="navigationPositionComboLayout">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="ComboBox" name="navigationPositionComboBox"/>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
            <widget class="CardWidget" name="autoCheckUpdateWidget">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -669,7 +777,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>开启后，MEFrp-Launcher将在每次启动时检查更新。</string>
+                <string>开启后，MEFrp-Launcher 将在每次启动时检查更新。</string>
                </property>
               </widget>
              </item>

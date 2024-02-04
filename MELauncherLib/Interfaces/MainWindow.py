@@ -17,15 +17,15 @@ from ..APIController import JSONReturnModel
 from ..Resources import *  # noqa: F403 F401
 
 from qmaterialwidgets import (
-    BottomNavMaterialWindow,
     SplashScreen,
     FluentIcon as FIF,
     MessageBox,
     isDarkTheme,
     setTheme,
-    BottomNavMaterialTitleBar,
+    MaterialTitleBar,
     InfoBar,
     InfoBarPosition,
+    NavigationItemPosition,
 )
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize, QThreadPool, pyqtSlot
@@ -37,8 +37,13 @@ from .CreateTunnelPage import CreateTunnelPage
 from .SettingsPage import SettingsPage
 from .Multiplex.FirstGuide import GuideAPI
 
+if cfg.get(cfg.navigationPosition) == "Bottom":
+    from qmaterialwidgets import BottomNavMaterialWindow as BaseWindowClass
+else:
+    from qmaterialwidgets import MaterialWindow as BaseWindowClass
 
-class METitleBar(BottomNavMaterialTitleBar):
+
+class METitleBar(MaterialTitleBar):
     def __init__(self, parent):
         super().__init__(parent)
         self.setQss()
@@ -51,7 +56,7 @@ class METitleBar(BottomNavMaterialTitleBar):
         )
 
 
-class MEMainWindow(BottomNavMaterialWindow):
+class MEMainWindow(BaseWindowClass):
     def __init__(self) -> None:
         super().__init__()
 
@@ -67,7 +72,7 @@ class MEMainWindow(BottomNavMaterialWindow):
 
     def initWindow(self):
         """初始化窗口"""
-        self.setWindowTitle(f"镜缘映射 ME Frp 启动器 {VERSION}")
+        self.setWindowTitle(f"MEFrp-Launcher-Qt v{VERSION}")
         self.setWindowIcon(QIcon(":/built-InIcons/MEFrp.ico"))
 
         self.splashScreen = SplashScreen(self.windowIcon(), self)
@@ -92,7 +97,15 @@ class MEMainWindow(BottomNavMaterialWindow):
             interface=self.homePage, icon=FIF.HOME, text="主页", selectedIcon=FIF.HOME_FILL
         )
         self.addSubInterface(interface=self.createTunnelPage, icon=FIF.ADD, text="新建隧道")
-        self.addSubInterface(interface=self.settingsPage, icon=FIF.SETTING, text="设置")
+        if cfg.get(cfg.navigationPosition) == "Bottom":
+            self.addSubInterface(interface=self.settingsPage, icon=FIF.SETTING, text="设置")
+        else:
+            self.addSubInterface(
+                interface=self.settingsPage,
+                icon=FIF.SETTING,
+                text="设置",
+                position=NavigationItemPosition.BOTTOM,
+            )
 
         self.navigationInterface.setCurrentItem(self.homePage.objectName())
 
