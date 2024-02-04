@@ -78,7 +78,7 @@ class NodeWidget(CardWidget):
         self.setProperty("group", self.config["group"].split(";"))
         self.setProperty("allow_port", self.config["allow_port"][:-1].strip().split("-"))
         self.setProperty("allow_type", self.config["allow_type"][:-1].strip().split(";"))
-        self.setProperty("status", self.config["Status"])
+        self.setProperty("status", self.config["status"])
         self.bandwidthLabel.setText(
             (bandwidth := self.property("name").replace(" 节点", "").split(" ")[-1])
         )
