@@ -523,3 +523,17 @@ class SettingsPage(QWidget, SettingsController):
         self.launcherThemeComboBox.currentIndexChanged.connect(self.launcherThemeControl)
         self.navigationPositionComboBox.currentIndexChanged.connect(self.navigationPositionControl)
         self.autoCheckUpdateSwitchBtn.checkedChanged.connect(self.autoCheckUpdateControl)
+        self.bypassSystemProxyWidget.clicked.connect(
+            lambda: self.bypassSystemProxySwitchBtn.setChecked(
+                bool(not self.bypassSystemProxySwitchBtn.isChecked())
+            )
+        )
+        self.launcherThemeWidget.clicked.connect(self.launcherThemeComboBox._toggleComboMenu)
+        self.navigationPositionWidget.clicked.connect(
+            self.navigationPositionComboBox._toggleComboMenu
+        )
+        self.autoCheckUpdateWidget.clicked.connect(
+            lambda: self.autoCheckUpdateSwitchBtn.setChecked(
+                bool(not self.autoCheckUpdateSwitchBtn.isChecked())
+            )
+        )
