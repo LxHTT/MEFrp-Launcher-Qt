@@ -76,9 +76,9 @@ class MEMainWindow(BaseWindowClass):
         self.setWindowTitle(f"MEFrp-Launcher-Qt v{VERSION}")
         self.setWindowIcon(QIcon(":/built-InIcons/MEFrp.ico"))
 
-        # self.splashScreen = SplashScreen(self.windowIcon(), self)
-        # self.splashScreen.setIconSize(QSize(106, 106))
-        # self.splashScreen.raise_()
+        self.splashScreen = SplashScreen(self.windowIcon(), self)
+        self.splashScreen.setIconSize(QSize(106, 106))
+        self.splashScreen.raise_()
 
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()
@@ -132,7 +132,7 @@ class MEMainWindow(BaseWindowClass):
             w = False
             sleep(1.5)
         del sleep
-        # self.splashScreen.finish()
+        self.splashScreen.finish()
         if w:
             w = MessageBox(
                 title="Frpc补全失败",
