@@ -67,8 +67,8 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-154</y>
-        <width>676</width>
+        <y>0</y>
+        <width>684</width>
         <height>719</height>
        </rect>
       </property>
@@ -196,9 +196,9 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
-               <layout class="QHBoxLayout" name="horizontalLayout">
+               <layout class="QHBoxLayout" name="runFrpcRadioLayout">
                 <property name="spacing">
-                 <number>0</number>
+                 <number>8</number>
                 </property>
                 <property name="leftMargin">
                  <number>0</number>

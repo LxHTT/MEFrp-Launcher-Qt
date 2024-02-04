@@ -26,6 +26,7 @@ from qmaterialwidgets import (
     InfoBar,
     InfoBarPosition,
     NavigationItemPosition,
+    MaterialStyleSheet,
 )
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize, QThreadPool, pyqtSlot
@@ -75,9 +76,9 @@ class MEMainWindow(BaseWindowClass):
         self.setWindowTitle(f"MEFrp-Launcher-Qt v{VERSION}")
         self.setWindowIcon(QIcon(":/built-InIcons/MEFrp.ico"))
 
-        self.splashScreen = SplashScreen(self.windowIcon(), self)
-        self.splashScreen.setIconSize(QSize(106, 106))
-        self.splashScreen.raise_()
+        # self.splashScreen = SplashScreen(self.windowIcon(), self)
+        # self.splashScreen.setIconSize(QSize(106, 106))
+        # self.splashScreen.raise_()
 
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()
@@ -115,7 +116,8 @@ class MEMainWindow(BaseWindowClass):
                 self.windowEffect.setMicaEffect(self.winId(), isDarkMode=isDarkTheme())
             else:
                 pass
-        setTheme(cfg.theme)
+        setTheme(cfg.get(cfg.themeMode))
+        cfg.themeChanged.connect(lambda: MaterialStyleSheet.MATERIAL_WINDOW.apply(self))
 
     def finishSetup(self):
         from time import sleep
@@ -130,11 +132,11 @@ class MEMainWindow(BaseWindowClass):
             w = False
             sleep(1.5)
         del sleep
-        self.splashScreen.finish()
+        # self.splashScreen.finish()
         if w:
             w = MessageBox(
                 title="Frpc补全失败",
-                content="MEFrp-Launcher无法获取您对应系统的Frpc。\n请手动下载Frpc并解压到frpc目录。\n",
+                content="MEFrp-Launcher 无法获取您对应系统的Frpc。\n请手动下载Frpc并解压到frpc目录。\n",
                 icon=FIF.APPLICATION,
                 parent=self,
             )
@@ -179,19 +181,16 @@ class MEMainWindow(BaseWindowClass):
         mode = exceptionFilter(ty, value, _traceback)
 
         if mode == ExceptionFilterMode.PASS:
-            # MCSL2Logger.info(f"忽略了异常：{ty} {value} {_traceback}")
             return
 
         elif mode == ExceptionFilterMode.RAISE:
-            # MCSL2Logger.error(msg=f"捕捉到异常：{ty} {value} {_traceback}")
             return self.oldHook(ty, value, _traceback)
 
         elif mode == ExceptionFilterMode.RAISE_AND_PRINT:
             tracebackString = "".join(format_exception(ty, value, _traceback))
-            # MCSL2Logger.error(msg=tracebackString)
             exceptionWidget = ExceptionWidget(tracebackString)
             box = MessageBox(
-                title=self.tr("MEFrp-Launcher出现异常"),
+                title=self.tr("MEFrp-Launcher 出现未经处理的异常"),
                 content="",
                 icon=FIF.QUESTION,
                 parent=self,

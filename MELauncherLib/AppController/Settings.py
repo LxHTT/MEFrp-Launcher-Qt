@@ -22,14 +22,19 @@ class Config(QConfig):
     userPassword = ConfigItem("User", "userPassword", "", "")
     userAuthorization = ConfigItem("User", "userAuthorization", "", "")
 
-    runFrpcType = OptionsConfigItem("Frpc", "runFrpcType", "EZ", OptionsValidator(["EZ", "INI"]))
+    runFrpcType = OptionsConfigItem(
+        "Frpc", "runFrpcType", "Easy", OptionsValidator(["Easy", "Config"])
+    )
 
     isFirstGuideFinished = ConfigItem("Launcher", "isFirstGuideFinished", False, BoolValidator())
+
     oldExecuteable = ConfigItem("Launcher", "oldExecuteable", "", "")
+
     bypassProxy = ConfigItem("Launcher", "bypassProxy", True, BoolValidator())
     navigationPosition = OptionsConfigItem(
         "Launcher", "navigationPosition", "Bottom", OptionsValidator(["Bottom", "Left"])
     )
+    autoCheckUpdate = ConfigItem("Launcher", "autoCheckUpdate", True, BoolValidator())
 
 
 cfg = Config()
@@ -52,6 +57,8 @@ def initMELauncherConfig():
     cfg.set(cfg.oldExecuteable, osp.basename(sys.executable))
     cfg.set(cfg.userName, "")
     cfg.set(cfg.userPassword, "")
+    cfg.set(cfg.userAuthorization, "")
+    cfg.set(cfg.runFrpcType, "Easy")
     cfg.set(cfg.themeColor, QColor("#6750A4"))
     cfg.set(cfg.themeMode, Theme.AUTO)
     cfg.set(cfg.navigationPosition, "Bottom")

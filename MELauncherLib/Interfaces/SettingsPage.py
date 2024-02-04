@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import (
     QGridLayout,
     QHBoxLayout,
 )
-from PyQt5.QtCore import Qt, QRect
+from PyQt5.QtCore import Qt, QRect, QObject
 
 from ..Resources import *  # noqa: F403 F401
 
@@ -21,12 +21,43 @@ from qmaterialwidgets import (
     SubtitleLabel,
     SwitchButton,
     TitleLabel,
-    # FluentIcon as FIF,
+    FluentIcon as FIF,
+    Theme,
+    setTheme,
+    InfoBar,
+    InfoBarPosition,
 )
 from .Multiplex.ScollArea import NormalSmoothScrollArea
+from ..AppController.Settings import cfg
 
 
-class SettingsPage(QWidget):
+class SettingsController(QObject):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def runFrpcTypeControl(self):
+        cfg.set(cfg.runFrpcType, self.sender().property("runFrpcType"), save=True)
+
+    def bypassSystemProxyControl(self):
+        cfg.set(cfg.bypassProxy, self.sender().isChecked(), save=True)
+
+    def launcherThemeControl(self):
+        themeList = [Theme.AUTO, Theme.DARK, Theme.LIGHT]
+        cfg.set(cfg.themeMode, themeList[self.sender().currentIndex()], save=True)
+        setTheme(themeList[self.sender().currentIndex()])
+
+    def navigationPositionControl(self):
+        navigationPositionList = ["Bottom", "Left"]
+        cfg.appRestartSig.emit()
+        cfg.set(
+            cfg.navigationPosition, navigationPositionList[self.sender().currentIndex()], save=True
+        )
+
+    def autoCheckUpdateControl(self):
+        cfg.set(cfg.autoCheckUpdate, self.sender().isChecked(), save=True)
+
+
+class SettingsPage(QWidget, SettingsController):
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -110,17 +141,17 @@ class SettingsPage(QWidget):
         sizePolicy.setHeightForWidth(self.runFrpcRadioWidget.sizePolicy().hasHeightForWidth())
         self.runFrpcRadioWidget.setSizePolicy(sizePolicy)
         self.runFrpcRadioWidget.setObjectName("runFrpcRadioWidget")
-        self.horizontalLayout = QHBoxLayout(self.runFrpcRadioWidget)
-        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout.setSpacing(0)
-        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.runFrpcRadioLayout = QHBoxLayout(self.runFrpcRadioWidget)
+        self.runFrpcRadioLayout.setContentsMargins(0, 0, 0, 0)
+        self.runFrpcRadioLayout.setSpacing(8)
+        self.runFrpcRadioLayout.setObjectName("runFrpcRadioLayout")
         self.runFrpcEZRadioBtn = RadioButton(self.runFrpcRadioWidget)
         self.runFrpcEZRadioBtn.setChecked(True)
         self.runFrpcEZRadioBtn.setObjectName("runFrpcEZRadioBtn")
-        self.horizontalLayout.addWidget(self.runFrpcEZRadioBtn)
+        self.runFrpcRadioLayout.addWidget(self.runFrpcEZRadioBtn)
         self.runFrpcConfigRadioBtn = RadioButton(self.runFrpcRadioWidget)
         self.runFrpcConfigRadioBtn.setObjectName("runFrpcConfigRadioBtn")
-        self.horizontalLayout.addWidget(self.runFrpcConfigRadioBtn)
+        self.runFrpcRadioLayout.addWidget(self.runFrpcConfigRadioBtn)
         self.runFrpcLayout.addWidget(self.runFrpcRadioWidget, 0, 2, 2, 1)
         self.frpcSettingsLayout.addWidget(self.runFrpcWidget)
         self.frpcVersionWidget = CardWidget(self.frpcSettingsWidget)
@@ -176,7 +207,7 @@ class SettingsPage(QWidget):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.launcherSettingsWidget.sizePolicy().hasHeightForWidth())
         self.launcherSettingsWidget.setSizePolicy(sizePolicy)
-        self.launcherSettingsWidget.setFixedHeight(350)
+        self.launcherSettingsWidget.setFixedHeight(430)
         self.launcherSettingsWidget.setObjectName("launcherSettingsWidget")
         self.launcherSettingsLayout = QVBoxLayout(self.launcherSettingsWidget)
         self.launcherSettingsLayout.setObjectName("launcherSettingsLayout")
@@ -279,6 +310,53 @@ class SettingsPage(QWidget):
         self.launcherThemeTip.setObjectName("launcherThemeTip")
         self.programThemeLayout.addWidget(self.launcherThemeTip, 2, 0, 2, 1)
         self.launcherSettingsLayout.addWidget(self.launcherThemeWidget)
+        self.navigationPositionWidget = CardWidget(self.launcherSettingsWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.navigationPositionWidget.sizePolicy().hasHeightForWidth())
+        self.navigationPositionWidget.setSizePolicy(sizePolicy)
+        self.navigationPositionWidget.setFixedHeight(75)
+        self.navigationPositionWidget.setObjectName("navigationPositionWidget")
+        self.navigationPositionLayout = QGridLayout(self.navigationPositionWidget)
+        self.navigationPositionLayout.setContentsMargins(16, 16, 16, 16)
+        self.navigationPositionLayout.setObjectName("navigationPositionLayout")
+        spacerItem5 = QSpacerItem(107, 50, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.navigationPositionLayout.addItem(spacerItem5, 1, 2, 3, 1)
+        self.navigationPositionTip = BodyLabel(self.navigationPositionWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.navigationPositionTip.sizePolicy().hasHeightForWidth())
+        self.navigationPositionTip.setSizePolicy(sizePolicy)
+        self.navigationPositionTip.setObjectName("navigationPositionTip")
+        self.navigationPositionLayout.addWidget(self.navigationPositionTip, 2, 0, 2, 1)
+        self.navigationPositionTitle = StrongBodyLabel(self.navigationPositionWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.navigationPositionTitle.sizePolicy().hasHeightForWidth())
+        self.navigationPositionTitle.setSizePolicy(sizePolicy)
+        self.navigationPositionTitle.setObjectName("navigationPositionTitle")
+        self.navigationPositionLayout.addWidget(self.navigationPositionTitle, 1, 0, 1, 2)
+        self.navigationPositionComboWidget = QWidget(self.navigationPositionWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.navigationPositionComboWidget.sizePolicy().hasHeightForWidth()
+        )
+        self.navigationPositionComboWidget.setSizePolicy(sizePolicy)
+        self.navigationPositionComboWidget.setObjectName("navigationPositionComboWidget")
+        self.navigationPositionComboLayout = QHBoxLayout(self.navigationPositionComboWidget)
+        self.navigationPositionComboLayout.setContentsMargins(0, 0, 0, 0)
+        self.navigationPositionComboLayout.setSpacing(0)
+        self.navigationPositionComboLayout.setObjectName("navigationPositionComboLayout")
+        self.navigationPositionComboBox = ComboBox(self.navigationPositionComboWidget)
+        self.navigationPositionComboBox.setObjectName("navigationPositionComboBox")
+        self.navigationPositionComboLayout.addWidget(self.navigationPositionComboBox)
+        self.navigationPositionLayout.addWidget(self.navigationPositionComboWidget, 1, 3, 3, 1)
+        self.launcherSettingsLayout.addWidget(self.navigationPositionWidget)
         self.autoCheckUpdateWidget = CardWidget(self.launcherSettingsWidget)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -371,6 +449,7 @@ class SettingsPage(QWidget):
         self.gridLayout.addWidget(self.settingsScrollArea, 2, 0, 1, 1)
 
         self.bypassSystemProxySwitchBtn.setChecked(True)
+        self.manualCheckUpdateBtn.setIcon(FIF.UPDATE)
         self.TitleLabel.setText("设置")
         self.frpcSettingsTitle.setText("Frpc 设置")
         self.runFrpcTitle.setText("Frpc 启动方式")
@@ -390,10 +469,57 @@ class SettingsPage(QWidget):
 
         self.launcherThemeTitle.setText("主题")
         self.launcherThemeTip.setText("随你所好。")
-        self.autoCheckUpdateTip.setText("开启后，MEFrp-Launcher将在每次启动时检查更新。")
+        self.autoCheckUpdateTip.setText("开启后，MEFrp-Launcher 将在每次启动时检查更新。")
         self.autoCheckUpdateTitle.setText("自动检查更新")
         self.manualCheckUpdateTip.setText("尚未完成，点了也不为所动。")
         self.manualCheckUpdateBtn.setText("检查更新")
         self.manualCheckUpdateTitle.setText("检查更新")
+        self.navigationPositionTip.setText("遥遥领先 遥遥领先！")
+        self.navigationPositionTitle.setText("导航栏位置")
         self.launcherThemeComboBox.addItems(["跟随系统", "深色模式", "浅色模式"])
+        self.navigationPositionComboBox.addItems(["底部", "左侧"])
         self.launcherThemeComboBox.setCurrentIndex(0)
+
+        self.runFrpcEZRadioBtn.setProperty("runFrpcType", "Easy")
+        self.runFrpcConfigRadioBtn.setProperty("runFrpcType", "Config")
+        cfg.appRestartSig.connect(self.showRestartTip)
+        self.initSettingsInterface()
+
+    def showRestartTip(self):
+        InfoBar.success(
+            title="成功",
+            content="此设置将在重启 MEFrp-Launcher 后生效",
+            duration=1500,
+            position=InfoBarPosition.TOP,
+            parent=self,
+        )
+
+    def initSettingsInterface(self):
+        self.runFrpcEZRadioBtn.setProperty("runFrpcType", "Easy")
+        self.runFrpcEZRadioBtn.setChecked(bool(cfg.get(cfg.runFrpcType) == "Easy"))
+
+        self.runFrpcConfigRadioBtn.setProperty("runFrpcType", "Config")
+        self.runFrpcConfigRadioBtn.setChecked(bool(not cfg.get(cfg.runFrpcType) == "Easy"))
+
+        self.bypassSystemProxySwitchBtn.setChecked(cfg.get(cfg.bypassProxy))
+
+        themeList = [Theme.AUTO, Theme.DARK, Theme.LIGHT]
+        self.launcherThemeComboBox.setCurrentIndex(themeList.index(cfg.get(cfg.themeMode)))
+        del themeList
+
+        navigationPositionList = ["Bottom", "Left"]
+        self.navigationPositionComboBox.setCurrentIndex(
+            navigationPositionList.index(cfg.get(cfg.navigationPosition))
+        )
+        del navigationPositionList
+
+        self.autoCheckUpdateSwitchBtn.setChecked(cfg.get(cfg.autoCheckUpdate))
+        self.connectSettingsSlot()
+
+    def connectSettingsSlot(self):
+        self.runFrpcEZRadioBtn.clicked.connect(self.runFrpcTypeControl)
+        self.runFrpcConfigRadioBtn.clicked.connect(self.runFrpcTypeControl)
+        self.bypassSystemProxySwitchBtn.checkedChanged.connect(self.bypassSystemProxyControl)
+        self.launcherThemeComboBox.currentIndexChanged.connect(self.launcherThemeControl)
+        self.navigationPositionComboBox.currentIndexChanged.connect(self.navigationPositionControl)
+        self.autoCheckUpdateSwitchBtn.checkedChanged.connect(self.autoCheckUpdateControl)
