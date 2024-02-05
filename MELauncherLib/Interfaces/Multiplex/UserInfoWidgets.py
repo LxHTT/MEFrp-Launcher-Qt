@@ -1,3 +1,16 @@
+#                    Copyright 2024, LxHTT and Aehxy.
+#
+#     Part of "MEFrp-Launcher-Qt", a frpc launcher for ME Frp.
+#
+#     Licensed under the GNU General Public License, Version 3.0, with our
+#     additional agreements. (the "License");
+#     you may not use this file except in compliance with the License.
+#     You may obtain a copy of the License at
+#
+#        https://github.com/LxHTT/MEFrp-Launcher-Qt/raw/master/LICENSE
+#
+################################################################################
+
 from PyQt5.QtWidgets import QWidget, QSizePolicy, QHBoxLayout
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QPixmap

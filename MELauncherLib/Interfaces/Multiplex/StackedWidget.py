@@ -1,3 +1,16 @@
+#                    Copyright 2024, LxHTT and Aehxy.
+#
+#     Part of "MEFrp-Launcher-Qt", a frpc launcher for ME Frp.
+#
+#     Licensed under the GNU General Public License, Version 3.0, with our
+#     additional agreements. (the "License");
+#     you may not use this file except in compliance with the License.
+#     You may obtain a copy of the License at
+#
+#        https://github.com/LxHTT/MEFrp-Launcher-Qt/raw/master/LICENSE
+#
+################################################################################
+
 from typing import List  # noqa: F401
 from PyQt5.QtCore import (
     QEasingCurve,

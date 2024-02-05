@@ -1,3 +1,16 @@
+#                    Copyright 2024, LxHTT and Aehxy.
+#
+#     Part of "MEFrp-Launcher-Qt", a frpc launcher for ME Frp.
+#
+#     Licensed under the GNU General Public License, Version 3.0, with our
+#     additional agreements. (the "License");
+#     you may not use this file except in compliance with the License.
+#     You may obtain a copy of the License at
+#
+#        https://github.com/LxHTT/MEFrp-Launcher-Qt/raw/master/LICENSE
+#
+################################################################################
+
 import sys
 from platform import system as systemName, version as systemVersion
 from traceback import format_exception
@@ -36,6 +49,7 @@ from .. import VERSION
 from .HomePage import HomePage
 from .CreateTunnelPage import CreateTunnelPage
 from .SettingsPage import SettingsPage
+from .AboutPage import AboutPage
 from .Multiplex.FirstGuide import GuideAPI
 
 if cfg.get(cfg.navigationPosition) == "Bottom":
@@ -94,17 +108,29 @@ class MEMainWindow(BaseWindowClass):
         self.homePage = HomePage(self)
         self.createTunnelPage = CreateTunnelPage(self)
         self.settingsPage = SettingsPage(self)
+        self.aboutPage = AboutPage(self)
         self.addSubInterface(
             interface=self.homePage, icon=FIF.HOME, text="主页", selectedIcon=FIF.HOME_FILL
         )
         self.addSubInterface(interface=self.createTunnelPage, icon=FIF.ADD, text="新建隧道")
         if cfg.get(cfg.navigationPosition) == "Bottom":
             self.addSubInterface(interface=self.settingsPage, icon=FIF.SETTING, text="设置")
+            self.addSubInterface(
+                interface=self.aboutPage,
+                icon=FIF.INFO,
+                text="关于",
+            )
         else:
             self.addSubInterface(
                 interface=self.settingsPage,
                 icon=FIF.SETTING,
                 text="设置",
+                position=NavigationItemPosition.BOTTOM,
+            )
+            self.addSubInterface(
+                interface=self.aboutPage,
+                icon=FIF.INFO,
+                text="关于",
                 position=NavigationItemPosition.BOTTOM,
             )
 
