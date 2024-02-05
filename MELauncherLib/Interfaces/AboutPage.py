@@ -31,11 +31,10 @@ from ..AppController.Utils import openWebUrl
 class AboutPage(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setObjectName("AboutPage")
 
         self.setContentsMargins(8, 8, 8, 8)
+        self.setObjectName("AboutPage")
         self.gridLayout = QGridLayout(self)
-        self.gridLayout.setContentsMargins(8, 8, 8, 8)
         self.gridLayout.setObjectName("gridLayout")
         spacerItem = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
         self.gridLayout.addItem(spacerItem, 1, 0, 1, 2)

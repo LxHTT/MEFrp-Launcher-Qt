@@ -48,6 +48,8 @@ from PyQt5.QtWidgets import QApplication
 from .. import VERSION
 from .HomePage import HomePage
 from .CreateTunnelPage import CreateTunnelPage
+from .TunnelManagerPage import TunnelManagerPage
+from .FrpcLogPage import FrpcLogPage
 from .SettingsPage import SettingsPage
 from .AboutPage import AboutPage
 from .Multiplex.FirstGuide import GuideAPI
@@ -90,9 +92,9 @@ class MEMainWindow(BaseWindowClass):
         self.setWindowTitle(f"MEFrp-Launcher-Qt v{VERSION}")
         self.setWindowIcon(QIcon(":/built-InIcons/MEFrp.ico"))
 
-        self.splashScreen = SplashScreen(self.windowIcon(), self)
-        self.splashScreen.setIconSize(QSize(106, 106))
-        self.splashScreen.raise_()
+        # self.splashScreen = SplashScreen(self.windowIcon(), self)
+        # self.splashScreen.setIconSize(QSize(106, 106))
+        # self.splashScreen.raise_()
 
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()
@@ -107,12 +109,18 @@ class MEMainWindow(BaseWindowClass):
         self.stackedWidget.currentChanged.connect(self.pageChangedEvent)
         self.homePage = HomePage(self)
         self.createTunnelPage = CreateTunnelPage(self)
+        self.tunnelManagerPage = TunnelManagerPage(self)
+        self.frpcLogPage = FrpcLogPage(self)
         self.settingsPage = SettingsPage(self)
         self.aboutPage = AboutPage(self)
         self.addSubInterface(
             interface=self.homePage, icon=FIF.HOME, text="主页", selectedIcon=FIF.HOME_FILL
         )
         self.addSubInterface(interface=self.createTunnelPage, icon=FIF.ADD, text="新建隧道")
+        self.addSubInterface(
+            interface=self.tunnelManagerPage, icon=FIF.LIBRARY_FILL, text="隧道管理"
+        )
+        self.addSubInterface(interface=self.frpcLogPage, icon=FIF.COMMAND_PROMPT, text="Frpc日志")
         if cfg.get(cfg.navigationPosition) == "Bottom":
             self.addSubInterface(interface=self.settingsPage, icon=FIF.SETTING, text="设置")
             self.addSubInterface(
@@ -158,7 +166,7 @@ class MEMainWindow(BaseWindowClass):
             w = False
             sleep(1.5)
         del sleep
-        self.splashScreen.finish()
+        # self.splashScreen.finish()
         if w:
             w = MessageBox(
                 title="Frpc补全失败",

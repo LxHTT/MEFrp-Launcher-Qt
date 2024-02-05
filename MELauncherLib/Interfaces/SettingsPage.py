@@ -77,7 +77,6 @@ class SettingsPage(QWidget, SettingsController):
         self.setContentsMargins(8, 8, 8, 8)
         self.setObjectName("SettingsPage")
         self.gridLayout = QGridLayout(self)
-        self.gridLayout.setContentsMargins(8, 8, 8, 8)
         self.gridLayout.setObjectName("gridLayout")
         spacerItem = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
         self.gridLayout.addItem(spacerItem, 1, 0, 1, 2)

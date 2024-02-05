@@ -91,9 +91,9 @@ class CreateTunnelAPI(QObject):
 class CreateTunnelPage(QWidget, CreateTunnelAPI):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setObjectName("CreateTunnelPage")
 
         self.setContentsMargins(8, 8, 8, 8)
+        self.setObjectName("CreateTunnelPage")
         self.gridLayout = QGridLayout(self)
         self.gridLayout.setObjectName("gridLayout")
         self.createTunnelPageScrollArea = NormalSmoothScrollArea(self)
@@ -213,6 +213,11 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         self.remotePortLayout.addWidget(self.remotePortLabel, 0, 0, 1, 1)
         self.randomRemotePortBtn = TonalPushButton(self.tunnelSettingsWidget)
         self.randomRemotePortBtn.setObjectName("randomRemotePortBtn")
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.randomRemotePortBtn.sizePolicy().hasHeightForWidth())
+        self.randomRemotePortBtn.setSizePolicy(sizePolicy)
         self.remotePortLayout.addWidget(self.randomRemotePortBtn, 1, 1, 1, 1)
         self.proxySettingsRealLayout.addLayout(self.remotePortLayout, 6, 2, 1, 1)
         self.protocolComboBox = FilledComboBox(self.tunnelSettingsWidget)
@@ -302,6 +307,7 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         self.refreshNodeBtn.clicked.connect(self.getNodeListFunc)
         self.refreshNodeBtn.setIcon(FIF.UPDATE)
         self.tunnelSettingsWidget.setEnabled(False)
+        self.domainEdit.setEnabled(False)
         self.randomRemotePortBtn.clicked.connect(self.getFreePortFunc)
         self.createTunnelBtn.clicked.connect(self.createTunnelFunc)
         self.protocolComboBox.currentIndexChanged.connect(

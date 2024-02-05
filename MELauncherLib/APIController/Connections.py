@@ -23,6 +23,7 @@ from MEFrpLib import (
     me_get_tunnel_config_node,
     me_get_tunnel_config_id,
     me_create_tunnel,
+    me_edit_tunnel,
     me_close_tunnel,
     me_delete_tunnel,
     me_get_tunnel_info,
@@ -256,13 +257,46 @@ class CreateTunnelThread(BaseJSONThread):
                 )
             )
 
+
+class EditTunnelThread(BaseJSONThread):
+    def __init__(
+        self,
+        authorization: str,
+        tunnel_id: int,
+        tunnel_name: str,
+        local_port: str,
+        local_ip: str,
+        parent=None,
+    ):
+        super().__init__(parent)
+        self.authorization = authorization
+        self.tunnel_id = tunnel_id
+        self.tunnel_name = tunnel_name
+        self.local_port = local_port
+        self.local_ip = local_ip
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
+
+    def run(self):
+        self.returnSlot.emit(
+            me_edit_tunnel(
+                authorization=self.authorization,
+                tunnel_id=self.tunnel_id,
+                tunnel_name=self.tunnel_name,
+                local_port=self.local_port,
+                local_ip=self.local_ip,
+                bypass_proxy=self.bypass_proxy,
+                ua=USER_AGENT,
+            )
+        )
+
+
 class KillTunnelAPIThread(BaseJSONThread):
     def __init__(self, authorization: str, tunnel_id: int, parent=None):
         super().__init__(parent)
         self.authorization = authorization
         self.tunnel_id = tunnel_id
         self.bypass_proxy = cfg.get(cfg.bypassProxy)
-    
+
     def run(self):
         self.returnSlot.emit(
             me_close_tunnel(
@@ -272,6 +306,7 @@ class KillTunnelAPIThread(BaseJSONThread):
                 ua=USER_AGENT,
             )
         )
+
 
 class DeleteTunnelThread(BaseJSONThread):
     def __init__(self, authorization: str, tunnel_id: int, parent=None):

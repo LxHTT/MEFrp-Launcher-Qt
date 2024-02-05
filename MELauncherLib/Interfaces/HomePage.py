@@ -75,9 +75,9 @@ class HomeAPI(QObject):
 class HomePage(QWidget, HomeAPI):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setObjectName("HomePage")
 
         self.setContentsMargins(8, 8, 8, 8)
+        self.setObjectName("HomePage")
         self.gridLayout = QGridLayout(self)
         self.gridLayout.setObjectName("gridLayout")
         spacerItem = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
@@ -127,7 +127,7 @@ class HomePage(QWidget, HomeAPI):
         sizePolicy.setHeightForWidth(self.userSignWidget.sizePolicy().hasHeightForWidth())
         self.userSignWidget.setSizePolicy(sizePolicy)
         self.userSignWidget.setMinimumSize(QSize(270, 200))
-        self.userSignWidget.setMaximumSize(QSize(16777215, 200))
+        self.userSignWidget.setMaximumSize(QSize(270, 200))
         self.userSignWidget.setObjectName("userSignWidget")
         self.gridLayout_2 = QGridLayout(self.userSignWidget)
         self.gridLayout_2.setContentsMargins(9, -1, -1, 11)
@@ -138,7 +138,6 @@ class HomePage(QWidget, HomeAPI):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.userSignContent.sizePolicy().hasHeightForWidth())
         self.userSignContent.setSizePolicy(sizePolicy)
-        self.userSignContent.setText("")
         self.userSignContent.setObjectName("userSignContent")
         self.gridLayout_2.addWidget(self.userSignContent, 1, 0, 2, 1)
         self.userSignBtn = TonalPushButton(self.userSignWidget)
