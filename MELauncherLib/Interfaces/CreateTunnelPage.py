@@ -236,7 +236,7 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         sizePolicy.setHeightForWidth(self.selectedNodeLabel.sizePolicy().hasHeightForWidth())
         self.selectedNodeLabel.setSizePolicy(sizePolicy)
         self.selectedNodeLabel.setObjectName("selectedNodeLabel")
-        self.proxySettingsRealLayout.addWidget(self.selectedNodeLabel, 0, 0, 1, 1)
+        self.proxySettingsRealLayout.addWidget(self.selectedNodeLabel, 0, 0, 1, 4)
         self.proxySettingsFakeLayout.addWidget(self.tunnelSettingsWidget)
         spacerItem3 = QSpacerItem(20, 54, QSizePolicy.Minimum, QSizePolicy.Expanding)
         self.proxySettingsFakeLayout.addItem(spacerItem3)
