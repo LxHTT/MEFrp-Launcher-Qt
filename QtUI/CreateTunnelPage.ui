@@ -14,6 +14,35 @@
    <string/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="TitleLabel" name="TitleLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string> 创建隧道</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>10</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
    <item row="2" column="0">
     <widget class="SmoothScrollArea" name="createTunnelPageScrollArea">
      <property name="widgetResizable">
@@ -25,7 +54,7 @@
         <x>0</x>
         <y>0</y>
         <width>716</width>
-        <height>721</height>
+        <height>801</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="proxySettingsFakeLayout">
@@ -182,7 +211,7 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>440</height>
+           <height>520</height>
           </size>
          </property>
          <layout class="QGridLayout" name="proxySettingsRealLayout">
@@ -201,7 +230,27 @@
           <property name="verticalSpacing">
            <number>18</number>
           </property>
-          <item row="5" column="0">
+          <item row="0" column="0" colspan="4">
+           <widget class="SubtitleLabel" name="selectedNodeLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>[Selected Node]</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" colspan="4">
+           <widget class="FilledLineEdit" name="localAddrEdit">
+            <property name="label">
+             <string>本地地址（一般为127.0.0.1）</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
            <layout class="QVBoxLayout" name="localPortLayout">
             <item>
              <widget class="SubtitleLabel" name="localPortLabel">
@@ -240,21 +289,27 @@
             </item>
            </layout>
           </item>
-          <item row="3" column="0" colspan="4">
-           <widget class="FilledLineEdit" name="localAddrEdit">
+          <item row="1" column="0" colspan="4">
+           <widget class="FilledComboBox" name="protocolComboBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="label">
-             <string>本地地址（一般为127.0.0.1）</string>
+             <string>选择协议</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0" colspan="4">
-           <widget class="FilledLineEdit" name="tunnelNameEdit">
+          <item row="4" column="0" colspan="4">
+           <widget class="FilledLineEdit" name="domainEdit">
             <property name="label">
-             <string>隧道名称（支持英文、数字）</string>
+             <string>域名</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="2">
+          <item row="6" column="2">
            <layout class="QGridLayout" name="remotePortLayout">
             <property name="horizontalSpacing">
              <number>10</number>
@@ -296,30 +351,7 @@
             </item>
            </layout>
           </item>
-          <item row="1" column="0" colspan="4">
-           <widget class="FilledComboBox" name="protocolComboBox">
-            <property name="label">
-             <string>选择协议</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="6" column="0" colspan="3">
+          <item row="7" column="0" colspan="3">
            <widget class="FilledPushButton" name="createTunnelBtn">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -344,7 +376,7 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="3">
+          <item row="6" column="3">
            <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -357,16 +389,26 @@
             </property>
            </spacer>
           </item>
-          <item row="0" column="0" colspan="4">
-           <widget class="SubtitleLabel" name="selectedNodeLabel">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+          <item row="6" column="1">
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
             </property>
-            <property name="text">
-             <string>[Selected Node]</string>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="2" column="0" colspan="4">
+           <widget class="FilledLineEdit" name="tunnelNameEdit">
+            <property name="label">
+             <string>隧道名称（支持英文、数字）</string>
             </property>
            </widget>
           </item>
@@ -388,35 +430,6 @@
        </item>
       </layout>
      </widget>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="2">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>10</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="0">
-    <widget class="TitleLabel" name="TitleLabel">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string> 创建隧道</string>
-     </property>
     </widget>
    </item>
   </layout>

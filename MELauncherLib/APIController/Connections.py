@@ -23,6 +23,7 @@ from MEFrpLib import (
     me_get_tunnel_config_node,
     me_get_tunnel_config_id,
     me_create_tunnel,
+    me_close_tunnel,
     me_delete_tunnel,
     me_get_tunnel_info,
     me_node_list,
@@ -210,6 +211,7 @@ class CreateTunnelThread(BaseJSONThread):
         local_port: int,
         remote_port: int,
         proxy_name: str,
+        domain: str,
         parent=None,
     ):
         super().__init__(parent)
@@ -220,23 +222,56 @@ class CreateTunnelThread(BaseJSONThread):
         self.local_port = local_port
         self.remote_port = remote_port
         self.proxy_name = proxy_name
+        self.domain = domain
         self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
     def run(self):
+        if "http" not in self.proxy_type:
+            self.returnSlot.emit(
+                me_create_tunnel(
+                    authorization=self.authorization,
+                    node=self.node,
+                    proxy_type=self.proxy_type,
+                    local_ip=self.local_ip,
+                    local_port=self.local_port,
+                    remote_port=self.remote_port,
+                    proxy_name=self.proxy_name,
+                    bypass_proxy=self.bypass_proxy,
+                    ua=USER_AGENT,
+                )
+            )
+        else:
+            self.returnSlot.emit(
+                me_create_tunnel(
+                    authorization=self.authorization,
+                    node=self.node,
+                    proxy_type=self.proxy_type,
+                    local_ip=self.local_ip,
+                    local_port=self.local_port,
+                    remote_port=self.remote_port,
+                    proxy_name=self.proxy_name,
+                    domain=self.domain,
+                    bypass_proxy=self.bypass_proxy,
+                    ua=USER_AGENT,
+                )
+            )
+
+class KillTunnelAPIThread(BaseJSONThread):
+    def __init__(self, authorization: str, tunnel_id: int, parent=None):
+        super().__init__(parent)
+        self.authorization = authorization
+        self.tunnel_id = tunnel_id
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
+    
+    def run(self):
         self.returnSlot.emit(
-            me_create_tunnel(
+            me_close_tunnel(
                 authorization=self.authorization,
-                node=self.node,
-                proxy_type=self.proxy_type,
-                local_ip=self.local_ip,
-                local_port=self.local_port,
-                remote_port=self.remote_port,
-                proxy_name=self.proxy_name,
+                tunnel_id=self.tunnel_id,
                 bypass_proxy=self.bypass_proxy,
                 ua=USER_AGENT,
             )
         )
-
 
 class DeleteTunnelThread(BaseJSONThread):
     def __init__(self, authorization: str, tunnel_id: int, parent=None):

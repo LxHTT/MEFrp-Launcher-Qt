@@ -73,6 +73,7 @@ class CreateTunnelAPI(QObject):
         local_port: int,
         remote_port: int,
         proxy_name: str,
+        domain: str,
     ) -> CreateTunnelThread:
         return CreateTunnelThread(
             authorization=getToken(),
@@ -82,6 +83,7 @@ class CreateTunnelAPI(QObject):
             local_port=local_port,
             remote_port=remote_port,
             proxy_name=proxy_name,
+            domain=(domain if "http" in proxy_type else ""),
             parent=self,
         )
 
@@ -165,7 +167,7 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.tunnelSettingsWidget.sizePolicy().hasHeightForWidth())
         self.tunnelSettingsWidget.setSizePolicy(sizePolicy)
-        self.tunnelSettingsWidget.setMinimumSize(QSize(0, 440))
+        self.tunnelSettingsWidget.setMinimumSize(QSize(0, 520))
         self.tunnelSettingsWidget.setObjectName("tunnelSettingsWidget")
         self.proxySettingsRealLayout = QGridLayout(self.tunnelSettingsWidget)
         self.proxySettingsRealLayout.setContentsMargins(18, 18, 18, 18)
@@ -186,7 +188,7 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         self.localPortSpinBox.setMaximumSize(QSize(16777215, 43))
         self.localPortSpinBox.setObjectName("localPortSpinBox")
         self.localPortLayout.addWidget(self.localPortSpinBox)
-        self.proxySettingsRealLayout.addLayout(self.localPortLayout, 5, 0, 1, 1)
+        self.proxySettingsRealLayout.addLayout(self.localPortLayout, 6, 0, 1, 1)
         self.localAddrEdit = FilledLineEdit(self.tunnelSettingsWidget)
         self.localAddrEdit.setObjectName("localAddrEdit")
         self.proxySettingsRealLayout.addWidget(self.localAddrEdit, 3, 0, 1, 4)
@@ -212,7 +214,7 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         self.randomRemotePortBtn = TonalPushButton(self.tunnelSettingsWidget)
         self.randomRemotePortBtn.setObjectName("randomRemotePortBtn")
         self.remotePortLayout.addWidget(self.randomRemotePortBtn, 1, 1, 1, 1)
-        self.proxySettingsRealLayout.addLayout(self.remotePortLayout, 5, 2, 1, 1)
+        self.proxySettingsRealLayout.addLayout(self.remotePortLayout, 6, 2, 1, 1)
         self.protocolComboBox = FilledComboBox(self.tunnelSettingsWidget)
         self.proxySettingsRealLayout.addWidget(self.protocolComboBox, 1, 0, 1, 4)
         spacerItem1 = QSpacerItem(40, 20, QSizePolicy.Fixed, QSizePolicy.Minimum)
@@ -226,7 +228,7 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         self.createTunnelBtn.setMinimumSize(QSize(110, 0))
         self.createTunnelBtn.setMaximumSize(QSize(16777215, 16777215))
         self.createTunnelBtn.setObjectName("createTunnelBtn")
-        self.proxySettingsRealLayout.addWidget(self.createTunnelBtn, 6, 0, 1, 3)
+        self.proxySettingsRealLayout.addWidget(self.createTunnelBtn, 7, 0, 1, 3)
         spacerItem2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.proxySettingsRealLayout.addItem(spacerItem2, 5, 3, 1, 1)
         self.selectedNodeLabel = SubtitleLabel(self.tunnelSettingsWidget)
@@ -237,6 +239,9 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         self.selectedNodeLabel.setSizePolicy(sizePolicy)
         self.selectedNodeLabel.setObjectName("selectedNodeLabel")
         self.proxySettingsRealLayout.addWidget(self.selectedNodeLabel, 0, 0, 1, 4)
+        self.domainEdit = FilledLineEdit(self.tunnelSettingsWidget)
+        self.domainEdit.setObjectName("domainEdit")
+        self.proxySettingsRealLayout.addWidget(self.domainEdit, 4, 0, 1, 4)
         self.proxySettingsFakeLayout.addWidget(self.tunnelSettingsWidget)
         spacerItem3 = QSpacerItem(20, 54, QSizePolicy.Minimum, QSizePolicy.Expanding)
         self.proxySettingsFakeLayout.addItem(spacerItem3)
@@ -263,16 +268,19 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         self.randomRemotePortBtn.setText("随机端口")
         self.refreshNodeBtn.setText("刷新")
         self.selectedNodeLabel.setText("已选择节点：未选择")
+        self.domainEdit.setLabel("域名")
         self.randomRemotePortBtn.setIcon(FIF.ROTATE)
         self.localPortSpinBox.setMaximum(65535)
         self.remotePortSpinBox.setMaximum(65535)
         self.localPortSpinBox.setValue(25565)
         self.localAddrEdit.setText("127.0.0.1")
-        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.protocolComboBox.sizePolicy().hasHeightForWidth())
-        self.protocolComboBox.setSizePolicy(sizePolicy)
+        self.comboBoxSizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.comboBoxSizePolicy.setHorizontalStretch(1)
+        self.comboBoxSizePolicy.setVerticalStretch(0)
+        self.comboBoxSizePolicy.setHeightForWidth(
+            self.protocolComboBox.sizePolicy().hasHeightForWidth()
+        )
+        self.protocolComboBox.setSizePolicy(self.comboBoxSizePolicy)
 
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -293,10 +301,27 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         self.onlyAvailableNodeBtn.clicked.connect(self.toggleVisibleNode)
         self.refreshNodeBtn.clicked.connect(self.getNodeListFunc)
         self.refreshNodeBtn.setIcon(FIF.UPDATE)
-        # self.tunnelSettingsWidget.setEnabled(False)
-        self.protocolComboBox.addItems(["TCP", "UDP"])
+        self.tunnelSettingsWidget.setEnabled(False)
         self.randomRemotePortBtn.clicked.connect(self.getFreePortFunc)
         self.createTunnelBtn.clicked.connect(self.createTunnelFunc)
+        self.protocolComboBox.currentIndexChanged.connect(
+            lambda: self.domainEdit.setEnabled(bool("http" in self.protocolComboBox.text()))
+        )
+        self.protocolComboBox.currentIndexChanged.connect(
+            lambda: self.domainEdit.setText(
+                self.domainEdit.text() if bool("http" in self.protocolComboBox.text()) else ""
+            )
+        )
+        self.protocolComboBox.currentIndexChanged.connect(
+            lambda: self.randomRemotePortBtn.setEnabled(
+                bool("http" not in self.protocolComboBox.text())
+            )
+        )
+        self.protocolComboBox.currentIndexChanged.connect(
+            lambda: self.remotePortSpinBox.setEnabled(
+                bool("http" not in self.protocolComboBox.text())
+            )
+        )
 
     def getRealnameStatusFunc(self):
         self.getRealnameStatusThread = self.getRealnameStatusAPI()
@@ -321,11 +346,11 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
                 pass
         self.realnameStatusInfoBar = InfoBar(
             icon=InfoBarIcon.SUCCESS
-            if model.data["code"] == 200 or model.data["realname"] == "已实名认证"
+            if model.data["realname"] == "已实名认证" or model.data["realname"] == "管理员"
             else InfoBarIcon.ERROR,
             title="提示",
             content="您已完成实名认证，可使用所有节点"
-            if model.data["realname"] == "已实名认证"
+            if model.data["realname"] == "已实名认证" or model.data["realname"] == "管理员"
             else "您还未实名认证，将只能使用境外节点\n实名认证后，您将可以使用境内节点带宽限制将提升至30Mbps",  # noqa: E501
             orient=Qt.Horizontal,
             isClosable=False,
@@ -334,7 +359,9 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
             parent=self.refreshNodeWidget,
         )
         self.realnameStatusInfoBar.setFixedWidth(
-            327 if model.data["realname"] == "已实名认证" else 494
+            327
+            if model.data["realname"] == "已实名认证" or model.data["realname"] == "管理员"
+            else 494
         )
         self.refreshNodeLayout.addWidget(self.realnameStatusInfoBar)
         self.refreshNodeLayout.addItem(self.realnameStatusSpacer)
@@ -401,6 +428,9 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         self.getFreePortFunc()
 
     def getFreePortFunc(self):
+        if "http" in self.protocolComboBox.text():
+            self.remotePortSpinBox.setValue(self.remotePortSpinBox.minimum())
+            return
         self.randomRemotePortBtn.setEnabled(False)
         self.getFreePortThread = self.getFreePortAPI(
             id=self.id, protocol=str(self.allow_type[self.protocolComboBox.currentIndex()])
@@ -436,6 +466,7 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
             local_port=self.localPortSpinBox.value(),
             remote_port=self.remotePortSpinBox.value(),
             proxy_name=self.tunnelNameEdit.text(),
+            domain=self.domainEdit.text(),
         )
         self.createTunnelThread.returnSlot.connect(self.createTunnelAPIParser)
         self.createTunnelThread.start()

@@ -97,7 +97,7 @@ class MEMainWindow(BaseWindowClass):
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()
         self.resize(int(w // 1.5), int(h // 1.5))
-        self.setMinimumSize(int(w // 1.5), int(h // 1.7))
+        self.setMinimumSize(int(w // 2.3), int(h // 1.7))
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
         self.show()
         cfg.themeChanged.connect(self.titleBar.setQss)
