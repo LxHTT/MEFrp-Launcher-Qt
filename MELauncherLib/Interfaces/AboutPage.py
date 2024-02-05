@@ -11,7 +11,14 @@
 #
 ################################################################################
 
-from qmaterialwidgets import BodyLabel, CardWidget, SubtitleLabel, TitleLabel, TonalPushButton
+from qmaterialwidgets import (
+    BodyLabel,
+    CardWidget,
+    SubtitleLabel,
+    TitleLabel,
+    TonalPushButton,
+    FluentIcon as FIF,
+)
 
 from PyQt5.QtCore import Qt, QSize, QRect
 from PyQt5.QtWidgets import QGridLayout, QSpacerItem, QSizePolicy, QWidget, QVBoxLayout, QHBoxLayout
@@ -405,3 +412,5 @@ class AboutPage(QWidget):
         self.openLauncherRepoBtn.clicked.connect(
             lambda: openWebUrl("https://github.com/LxHTT/MEFrp-Launcher-Qt")
         )
+        self.openMEFrpWebBtn.setIcon(FIF.GLOBE)
+        self.openLauncherRepoBtn.setIcon(FIF.GITHUB)
