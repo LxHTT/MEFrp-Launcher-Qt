@@ -1,4 +1,4 @@
-#                    Copyright 2024, LxHTT and Aehxy.
+#                    Copyright 2024, LxHTT.
 #
 #     Part of "MEFrp-Launcher-Qt", a frpc launcher for ME Frp.
 #
@@ -381,7 +381,7 @@ class AboutPage(QWidget):
         self.TitleLabel.setText("关于")
         self.launcherTitle.setText("MEFrp-Launcher-Qt")
         self.versionLabel.setText(f"当前版本：{VERSION}")
-        self.copyrightLabel.setText("Copyright © 2024 LxHTT and Aehxy.")
+        self.copyrightLabel.setText("Copyright © 2024 LxHTT.")
         self.openMEFrpWebBtn.setText("打开 ME Frp 官网")
         self.openLauncherRepoBtn.setText("打开 GitHub 仓库")
         self.authorTitle.setText("作者")

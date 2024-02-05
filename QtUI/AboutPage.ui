@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2024, LxHTT and Aehxy.
+<!-- Copyright 2024, LxHTT.
 
      Part of "MEFrp-Launcher-Qt", a frpc launcher for ME Frp.
 
@@ -134,7 +134,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Copyright © 2024 LxHTT and Aehxy.</string>
+          <string>Copyright © 2024 LxHTT.</string>
          </property>
         </widget>
        </item>

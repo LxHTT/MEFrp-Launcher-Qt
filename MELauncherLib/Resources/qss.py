@@ -1,4 +1,4 @@
-#                    Copyright 2024, LxHTT and Aehxy.
+#                    Copyright 2024, LxHTT.
 #
 #     Part of "MEFrp-Launcher-Qt", a frpc launcher for ME Frp.
 #
