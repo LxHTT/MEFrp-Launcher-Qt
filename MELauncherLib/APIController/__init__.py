@@ -9,8 +9,10 @@ from .Connections import (
     GetTunnelConfigNodeThread,  # noqa: F401
     GetTunnelConfigIdThread,  # noqa: F401
     CreateTunnelThread,  # noqa: F401
+    EditTunnelThread,  # noqa: F401
+    # KillTunnelAPIThread,  # noqa: F401
     DeleteTunnelThread,  # noqa: F401
-    GetTunnelInfoThread,  # noqa: F401
+    # GetTunnelInfoThread,  # noqa: F401
     NodeListThread,  # noqa: F401
     LoginThread,  # noqa: F401
     GetSponsorThread,  # noqa: F401

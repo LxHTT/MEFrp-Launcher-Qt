@@ -326,22 +326,22 @@ class DeleteTunnelThread(BaseJSONThread):
         )
 
 
-class GetTunnelInfoThread(BaseJSONThread):
-    def __init__(self, authorization: str, tunnel_id: int, parent=None):
-        super().__init__(parent)
-        self.authorization = authorization
-        self.tunnel_id = tunnel_id
-        self.bypass_proxy = cfg.get(cfg.bypassProxy)
+# class GetTunnelInfoThread(BaseJSONThread):
+#     def __init__(self, authorization: str, tunnel_id: int, parent=None):
+#         super().__init__(parent)
+#         self.authorization = authorization
+#         self.tunnel_id = tunnel_id
+#         self.bypass_proxy = cfg.get(cfg.bypassProxy)
 
-    def run(self):
-        self.returnSlot.emit(
-            me_get_tunnel_info(
-                authorization=self.authorization,
-                tunnel_id=self.tunnel_id,
-                bypass_proxy=self.bypass_proxy,
-                ua=USER_AGENT,
-            )
-        )
+#     def run(self):
+#         self.returnSlot.emit(
+#             me_get_tunnel_info(
+#                 authorization=self.authorization,
+#                 tunnel_id=self.tunnel_id,
+#                 bypass_proxy=self.bypass_proxy,
+#                 ua=USER_AGENT,
+#             )
+#         )
 
 
 class NodeListThread(BaseJSONThread):

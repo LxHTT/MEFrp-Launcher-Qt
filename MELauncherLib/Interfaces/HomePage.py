@@ -236,6 +236,9 @@ class HomePage(QWidget, HomeAPI):
         self.spacerItem = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
     def getUserInfoFunc(self):
+        if hasattr(self, "getUserInfoThread"):
+            if self.getUserInfoThread.isRunning():
+                return
         self.getUserInfoThread = self.getUserInfoAPI()
         self.getUserInfoThread.returnSlot.connect(self.getUserInfoAPIParser)
         self.getUserInfoThread.start()
@@ -338,6 +341,9 @@ class HomePage(QWidget, HomeAPI):
         w.exec_()
 
     def refreshUserTokenFunc(self):
+        if hasattr(self, "refreshUserTokenThread"):
+            if self.refreshUserTokenThread.isRunning():
+                return
         self.refreshUserTokenThread = self.refreshUserTokenAPI()
         self.refreshUserTokenThread.returnSlot.connect(self.refreshUserTokenAPIParser)
         self.refreshUserTokenThread.start()
@@ -363,6 +369,9 @@ class HomePage(QWidget, HomeAPI):
             self.userGetSignInfoFunc()
 
     def getSysSettingFunc(self):
+        if hasattr(self, "getSysSettingThread"):
+            if self.getSysSettingThread.isRunning():
+                return
         self.getSysSettingThread = self.getSysSettingAPI()
         self.getSysSettingThread.returnSlot.connect(self.getSysSettingAPIParser)
         self.getSysSettingThread.start()
@@ -405,6 +414,9 @@ class HomePage(QWidget, HomeAPI):
             )
 
     def userGetSignInfoFunc(self):
+        if hasattr(self, "userGetSignInfoThread"):
+            if self.userGetSignInfoThread.isRunning():
+                return
         self.userGetSignInfoThread = self.userGetSignInfoAPI()
         self.userGetSignInfoThread.returnSlot.connect(self.userGetSignInfoAPIParser)
         self.userGetSignInfoThread.start()
@@ -430,6 +442,9 @@ class HomePage(QWidget, HomeAPI):
             )
 
     def userSignFunc(self):
+        if hasattr(self, "userSignThread"):
+            if self.userSignThread.isRunning():
+                return
         self.userSignThread = self.userSignAPI()
         self.userSignThread.returnSlot.connect(self.userSignAPIParser)
         self.userSignThread.start()

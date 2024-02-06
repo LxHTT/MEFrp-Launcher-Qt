@@ -13,7 +13,7 @@
 
 import hashlib
 from os import makedirs, path as osp
-from typing import Optional, Iterable, Callable, Dict, List
+from typing import Optional, Iterable, Callable, Dict, List, Tuple
 from time import sleep, time
 from datetime import datetime
 from requests import get, head
@@ -77,8 +77,10 @@ def checkSHA1(fileAndSha1: Iterable, _filter: Callable[[str, str], bool] = None)
             rv.append({"file": file, "result": True})
     return rv
 
+
 def unixTimeStampToTime(timeStamp):
     return datetime.fromtimestamp(timeStamp)
+
 
 def check24HoursPassed(timeStamp):
     current_timestamp = int(time())
@@ -86,6 +88,13 @@ def check24HoursPassed(timeStamp):
         return True
     else:
         return False
+
+
+def splitNodeName(name) -> Tuple[str, str]:
+    return (bandwidth := name.replace(" 节点", "").split(" ")[-1]), name.replace(
+        " 节点", ""
+    ).replace(bandwidth, "")
+
 
 class WorkingThreads:
     threads = {}

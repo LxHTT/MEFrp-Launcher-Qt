@@ -23,6 +23,8 @@ from qmaterialwidgets import (
     InfoBarPosition,
 )
 
+from ...AppController.Utils import splitNodeName
+
 
 class NodeWidget(CardWidget):
     def __init__(self, config, slot, parent=None):
@@ -92,10 +94,9 @@ class NodeWidget(CardWidget):
         self.setProperty("allow_port", self.config["allow_port"][:-1].strip().split("-"))
         self.setProperty("allow_type", self.config["allow_type"][:-1].strip().split(";"))
         self.setProperty("status", self.config["status"])
-        self.bandwidthLabel.setText(
-            (bandwidth := self.property("name").replace(" 节点", "").split(" ")[-1])
-        )
-        self.regionLabel.setText(self.property("name").replace(" 节点", "").replace(bandwidth, ""))
+        nodeNameInfo = splitNodeName(self.property("name"))
+        self.bandwidthLabel.setText(nodeNameInfo[0])
+        self.regionLabel.setText(nodeNameInfo[1])
         self.allowPortLabel.setText("端口范围 " + ("-".join(self.property("allow_port"))))
         self.allowPortocolLabel.setText("支持 " + (" | ".join(self.property("allow_type"))))
         self.statusBadge.setText(
