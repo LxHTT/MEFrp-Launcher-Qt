@@ -309,6 +309,7 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         self.tunnelSettingsWidget.setEnabled(False)
         self.domainEdit.setEnabled(False)
         self.randomRemotePortBtn.clicked.connect(self.getFreePortFunc)
+        self.protocolComboBox.currentIndexChanged.connect(self.getFreePortFunc)
         self.createTunnelBtn.clicked.connect(self.createTunnelFunc)
         self.protocolComboBox.currentIndexChanged.connect(
             lambda: self.domainEdit.setEnabled(bool("http" in self.protocolComboBox.text()))
@@ -330,6 +331,9 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         )
 
     def getRealnameStatusFunc(self):
+        if hasattr(self, "getRealnameStatusThread"):
+            if self.getRealnameStatusThread.isRunning():
+                return
         self.getRealnameStatusThread = self.getRealnameStatusAPI()
         self.getRealnameStatusThread.returnSlot.connect(self.getRealnameStatusAPIParser)
         self.getRealnameStatusThread.start()
@@ -375,6 +379,10 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         self.refreshNodeLayout.addWidget(self.refreshNodeBtn)
 
     def getNodeListFunc(self):
+        if hasattr(self, "getNodeListThread"):
+            if self.getNodeListThread.isRunning():
+                return
+
         self.refreshNodeBtn.setEnabled(False)
         try:
             self.tunnelsRealLayout.removeItem(self.spacerItem)
@@ -431,7 +439,8 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         self.protocolComboBox.addItems(self.allow_type)
         self.remotePortSpinBox.setMinimum(int(self.allow_port[0]))
         self.remotePortSpinBox.setMaximum(int(self.allow_port[1]))
-        self.getFreePortFunc()
+        self.protocolComboBox.setCurrentIndex(0)
+        self.randomRemotePortBtn.click()
 
     def getFreePortFunc(self):
         if "http" in self.protocolComboBox.text():
