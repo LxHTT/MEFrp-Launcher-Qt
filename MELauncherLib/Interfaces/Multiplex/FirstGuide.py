@@ -69,6 +69,7 @@ class GuideAPI(QObject):
 
 class GuideInterface(QWidget, GuideAPI):
     finish = pyqtSignal()
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
@@ -599,7 +600,11 @@ class GuideInterface(QWidget, GuideAPI):
                 QLineEdit.Password if self.registerShowPwdBtn.isChecked() else QLineEdit.Normal
             )
         )
+        self.registerHasAccountBtn.clicked.connect(
+            lambda: self.stackedWidget.setCurrentWidget(self.loginPage)
+        )
         self.loginBtn.clicked.connect(self.loginFunc)
+        self.sendVerificationBtn.clicked.connect(self.sendRegisterEmailFunc)
         self.finishSetupBtn.clicked.connect(self.kill)
 
     def kill(self):
@@ -648,6 +653,9 @@ class GuideInterface(QWidget, GuideAPI):
     def loginFunc(self):
         if not self.textInputChecker([self.usernameEdit, self.loginPwdEdit]):
             return
+        if hasattr(self, "loginThread"):
+            if self.loginThread.isRunning():
+                return
         self.loginThread = self.loginAPI(
             username=self.usernameEdit.text(), password=self.loginPwdEdit.text()
         )
@@ -673,3 +681,70 @@ class GuideInterface(QWidget, GuideAPI):
             self.stackedWidget.setCurrentWidget(self.finishPage)
             updateToken(model.data["access_token"])
             saveUser(self.usernameEdit.text(), self.loginPwdEdit.text())
+
+    def sendRegisterEmailFunc(self):
+        if not self.textInputChecker([self.registerEmailEdit]):
+            return
+        if hasattr(self, "sendRegisterEmailThread"):
+            if self.sendRegisterEmailThread.isRunning():
+                return
+        self.sendRegisterEmailThread = self.sendRegisterEmailAPI(
+            email=self.registerEmailEdit.text()
+        )
+        self.sendRegisterEmailThread.returnSlot.connect(self.loginAPIParser)
+        self.sendRegisterEmailThread.start()
+
+    @pyqtSlot(JSONReturnModel)
+    def sendRegisterEmailParser(self, model: JSONReturnModel):
+        attr = "success"
+        if model.status != 200 or "成功" not in model.message:
+            attr = "error"
+        else:
+            pass
+        getattr(InfoBar, attr)(
+            title="错误" if attr == "error" else "成功",
+            content=model.message,
+            duration=1500,
+            position=InfoBarPosition.TOP,
+            parent=self,
+        )
+
+    def registerFunc(self):
+        if not self.textInputChecker([
+            self.registerUserNameEdit,
+            self.registerEmailEdit,
+            self.registerVerificationEdit,
+            self.registerPwdEdit,
+        ]):
+            return
+        if hasattr(self, "registerThread"):
+            if self.registerThread.isRunning():
+                return
+        self.registerThread = self.registerAPI(
+            email=self.registerEmailEdit.text(),
+            username=self.registerUserNameEdit.text(),
+            password=self.registerPwdEdit.text(),
+            code=self.registerVerificationEdit.text(),
+        )
+        self.registerThread.returnSlot.connect(self.registerAPIParser)
+        self.registerThread.start()
+
+    @pyqtSlot(JSONReturnModel)
+    def registerAPIParser(self, model: JSONReturnModel):
+        attr = "success"
+        if model.status != 200:
+            attr = "error"
+        else:
+            pass
+        getattr(InfoBar, attr)(
+            title="错误" if attr == "error" else "成功",
+            content=model.message,
+            duration=1500,
+            position=InfoBarPosition.TOP,
+            parent=self,
+        )
+        if attr == "success":
+            self.stackedWidget.setCurrentWidget(self.loginPage)
+            self.usernameEdit.setText(self.registerEmailEdit.text())
+            self.loginPwdEdit.setText(self.registerPwdEdit.text())
+            self.loginBtn.click()
