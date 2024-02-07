@@ -189,6 +189,8 @@ class MEMainWindow(BaseWindowClass):
     def pageChangedEvent(self):
         if self.stackedWidget.currentIndex() == 1:
             self.createTunnelPage.refreshNodeBtn.click()
+        if self.stackedWidget.currentIndex() == 2:
+            self.tunnelManagerPage.getTunnelListFunc()
 
     def closeEvent(self, a0) -> None:
         # close thread pool

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>EditTunnelWidget</class>
+ <widget class="QWidget" name="EditTunnelWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>195</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string/>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="LineEdit" name="tunnelNameEdit">
+     <property name="label">
+      <string>隧道名称</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="LineEdit" name="localAddrEdit">
+     <property name="label">
+      <string>本地IP</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="LineEdit" name="localPortEdit">
+     <property name="label">
+      <string>本地端口</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qmaterialwidgets</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

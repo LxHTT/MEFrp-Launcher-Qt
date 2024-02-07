@@ -12,8 +12,9 @@ from ...AppController.Utils import splitNodeName
 
 
 class TunnelWidget(CardWidget):
-    def __init__(self, config, editBtnSlot, delBtnSlot, parent=None):
+    def __init__(self, config, copyUrlBtnSlot, editBtnSlot, delBtnSlot, parent=None):
         self.config = config
+        self.copyUrlBtnSlot = copyUrlBtnSlot
         self.editBtnSlot = editBtnSlot
         self.delBtnSlot = delBtnSlot
         super().__init__(parent)
@@ -23,7 +24,7 @@ class TunnelWidget(CardWidget):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
         self.setSizePolicy(sizePolicy)
-        self.setFixedSize(QSize(315, 180))
+        self.setFixedSize(QSize(350, 180))
         self.verticalLayout = QVBoxLayout(self)
         self.verticalLayout.setContentsMargins(13, 5, -1, -1)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -125,9 +126,10 @@ class TunnelWidget(CardWidget):
         self.copyUrlBtn.setIcon(FIF.COPY)
         self.editTunnelBtn.setIcon(FIF.LABEL)
         self.delTunnelBtn.setIcon(FIF.DELETE)
-        self.copyUrlBtn.setText("复制链接地址")
+        self.copyUrlBtn.setText("复制链接")
         self.editTunnelBtn.setText("编辑")
         self.delTunnelBtn.setText("删除")
+        self.setupInfo()
 
     def setupInfo(self):
         self.tunnelNameLabel.setText(self.config["proxy_name"])
@@ -144,7 +146,7 @@ class TunnelWidget(CardWidget):
                 + self.config["remote_port"]
             )
             self.copyUrlBtn.clicked.connect(
-                QApplication.clipboard().setText(
+                lambda: QApplication.clipboard().setText(
                     str(self.config["node_hostname"] + ":" + self.config["remote_port"])
                 )
             )
@@ -159,9 +161,15 @@ class TunnelWidget(CardWidget):
                 + self.config["domain"]
             )
             self.copyUrlBtn.clicked.connect(
-                QApplication.clipboard().setText(
+                lambda: QApplication.clipboard().setText(
                     str(self.config["proxy_type"] + "://" + self.config["domain"])
                 )
             )
+        self.copyUrlBtn.clicked.connect(self.copyUrlBtnSlot)
         self.editTunnelBtn.clicked.connect(self.editBtnSlot)
         self.delTunnelBtn.clicked.connect(self.delBtnSlot)
+        self.editTunnelBtn.setProperty("id", self.config["id"])
+        self.editTunnelBtn.setProperty("tunnel_name", self.config["proxy_name"])
+        self.editTunnelBtn.setProperty("local_ip", self.config["local_ip"])
+        self.editTunnelBtn.setProperty("local_port", self.config["local_port"])
+        self.delTunnelBtn.setProperty("id", self.config["id"])
