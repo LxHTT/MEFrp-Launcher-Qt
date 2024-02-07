@@ -605,6 +605,8 @@ class GuideInterface(QWidget, GuideAPI):
         )
         self.loginBtn.clicked.connect(self.loginFunc)
         self.sendVerificationBtn.clicked.connect(self.sendRegisterEmailFunc)
+        self.registerBtn.clicked.connect(self.registerFunc)
+        self.sendForgotEmailBtn.clicked.connect(self.forgotPasswordFunc)
         self.finishSetupBtn.clicked.connect(self.kill)
 
     def kill(self):
@@ -754,3 +756,33 @@ class GuideInterface(QWidget, GuideAPI):
             self.usernameEdit.setText(self.registerEmailEdit.text())
             self.loginPwdEdit.setText(self.registerPwdEdit.text())
             self.loginBtn.click()
+
+    def forgotPasswordFunc(self):
+        if not self.textInputChecker([self.forgotEmailEdit, self.forgotUsernameEdit]):
+            return
+        if hasattr(self, "forgotPasswordThread"):
+            if self.forgotPasswordThread.isRunning():
+                return
+        self.sendForgotEmailBtn.setEnabled(False)
+        self.forgotPasswordThread = self.forgotPasswordAPI(
+            email=self.forgotEmailEdit.text(),
+            username=self.forgotUsernameEdit.text(),
+        )
+        self.forgotPasswordThread.returnSlot.connect(self.forgotPasswordAPIParser)
+        self.forgotPasswordThread.start()
+
+    @pyqtSlot(JSONReturnModel)
+    def forgotPasswordAPIParser(self, model: JSONReturnModel):
+        self.sendForgotEmailBtn.setEnabled(True)
+        attr = "success"
+        if model.status != 200 or "成功" not in model.message:
+            attr = "error"
+        else:
+            pass
+        getattr(InfoBar, attr)(
+            title=("错误" if attr == "error" else "成功"),
+            content=model.message,
+            duration=1500,
+            position=InfoBarPosition.TOP,
+            parent=self,
+        )
