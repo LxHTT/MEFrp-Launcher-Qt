@@ -47,3 +47,5 @@ class FrpcLogPage(QWidget):
         self.TitleLabel.setText("日志")
         self.clearLogBtn.setText("清空")
         self.saveLogBtn.setText("保存日志")
+        self.frpcLogFilterComboBox.addItem("[#0] 所有隧道")
+        self.frpcLogFilterComboBox.setCurrentIndex(0)

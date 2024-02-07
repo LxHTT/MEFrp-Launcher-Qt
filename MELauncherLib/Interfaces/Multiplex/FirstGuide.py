@@ -656,6 +656,7 @@ class GuideInterface(QWidget, GuideAPI):
         if hasattr(self, "loginThread"):
             if self.loginThread.isRunning():
                 return
+        self.loginBtn.setEnabled(False)
         self.loginThread = self.loginAPI(
             username=self.usernameEdit.text(), password=self.loginPwdEdit.text()
         )
@@ -664,6 +665,7 @@ class GuideInterface(QWidget, GuideAPI):
 
     @pyqtSlot(JSONReturnModel)
     def loginAPIParser(self, model: JSONReturnModel):
+        self.loginBtn.setEnabled(True)
         attr = "success"
         if model.status != 200 or model.data == 0:
             attr = "error"
@@ -688,21 +690,23 @@ class GuideInterface(QWidget, GuideAPI):
         if hasattr(self, "sendRegisterEmailThread"):
             if self.sendRegisterEmailThread.isRunning():
                 return
+        self.sendVerificationBtn.setEnabled(False)
         self.sendRegisterEmailThread = self.sendRegisterEmailAPI(
             email=self.registerEmailEdit.text()
         )
-        self.sendRegisterEmailThread.returnSlot.connect(self.loginAPIParser)
+        self.sendRegisterEmailThread.returnSlot.connect(self.sendRegisterEmailParser)
         self.sendRegisterEmailThread.start()
 
     @pyqtSlot(JSONReturnModel)
     def sendRegisterEmailParser(self, model: JSONReturnModel):
+        self.sendVerificationBtn.setEnabled(True)
         attr = "success"
         if model.status != 200 or "成功" not in model.message:
             attr = "error"
         else:
             pass
         getattr(InfoBar, attr)(
-            title="错误" if attr == "error" else "成功",
+            title=("错误" if attr == "error" else "成功"),
             content=model.message,
             duration=1500,
             position=InfoBarPosition.TOP,
@@ -720,6 +724,7 @@ class GuideInterface(QWidget, GuideAPI):
         if hasattr(self, "registerThread"):
             if self.registerThread.isRunning():
                 return
+        self.registerBtn.setEnabled(False)
         self.registerThread = self.registerAPI(
             email=self.registerEmailEdit.text(),
             username=self.registerUserNameEdit.text(),
@@ -731,13 +736,14 @@ class GuideInterface(QWidget, GuideAPI):
 
     @pyqtSlot(JSONReturnModel)
     def registerAPIParser(self, model: JSONReturnModel):
+        self.registerBtn.setEnabled(True)
         attr = "success"
         if model.status != 200:
             attr = "error"
         else:
             pass
         getattr(InfoBar, attr)(
-            title="错误" if attr == "error" else "成功",
+            title=("错误" if attr == "error" else "成功"),
             content=model.message,
             duration=1500,
             position=InfoBarPosition.TOP,

@@ -495,7 +495,7 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
         else:
             attr = "error"
         getattr(InfoBar, attr)(
-            title="错误" if attr == "error" else "成功",
+            title=("错误" if attr == "error" else "成功"),
             content=model.message,
             duration=1500,
             position=InfoBarPosition.TOP,
