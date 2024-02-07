@@ -494,6 +494,7 @@ class SettingsPage(QWidget, SettingsController):
 
         self.runFrpcEZRadioBtn.setProperty("runFrpcType", "Easy")
         self.runFrpcConfigRadioBtn.setProperty("runFrpcType", "Config")
+        self.runFrpcConfigRadioBtn.setEnabled(False)
         cfg.appRestartSig.connect(self.showRestartTip)
         self.initSettingsInterface()
 

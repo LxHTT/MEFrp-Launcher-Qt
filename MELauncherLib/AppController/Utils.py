@@ -27,6 +27,18 @@ from PyQt5.QtGui import QDesktopServices
 from .. import VERSION
 
 
+def Singleton(cls):
+    """单例化装饰器"""
+    Instances = {}
+
+    def GetInstance(*args, **kwargs):
+        if cls not in Instances:
+            Instances[cls] = cls(*args, **kwargs)
+        return Instances[cls]
+
+    return GetInstance
+
+
 def initMELauncher():
     """
     初始化程序
@@ -271,3 +283,9 @@ class DownloaderThread(QThread):
         # self.msg.emit("下载进度: {}% 速度: {}".format(progress, speed))
         if progress >= 100:
             self.terminate()
+
+
+class FrpcConsoleVariables:
+    totalLogList = []
+    singleLogDict = {}
+    bridgeDict = {}

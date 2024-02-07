@@ -9,11 +9,15 @@ from qmaterialwidgets import (
     FluentIcon as FIF,
 )
 from ...AppController.Utils import splitNodeName
+from ...AppController.Utils import FrpcConsoleVariables
 
 
 class TunnelWidget(CardWidget):
-    def __init__(self, config, copyUrlBtnSlot, editBtnSlot, delBtnSlot, parent=None):
+    def __init__(
+        self, config, runFrpcBtnSlot, copyUrlBtnSlot, editBtnSlot, delBtnSlot, parent=None
+    ):
         self.config = config
+        self.runFrpcBtnSlot = runFrpcBtnSlot
         self.copyUrlBtnSlot = copyUrlBtnSlot
         self.editBtnSlot = editBtnSlot
         self.delBtnSlot = delBtnSlot
@@ -173,3 +177,9 @@ class TunnelWidget(CardWidget):
         self.editTunnelBtn.setProperty("local_ip", self.config["local_ip"])
         self.editTunnelBtn.setProperty("local_port", self.config["local_port"])
         self.delTunnelBtn.setProperty("id", self.config["id"])
+        self.runFrpcBtn.setProperty("id", self.config["id"])
+        self.runFrpcBtn.setProperty("tunnel_name", self.config["proxy_name"])
+        existBridge = FrpcConsoleVariables.bridgeDict.get(str(self.config["id"]), None)
+        if existBridge is not None:
+            self.runFrpcBtn.setChecked(True)
+        self.runFrpcBtn.checkedChanged.connect(self.runFrpcBtnSlot)

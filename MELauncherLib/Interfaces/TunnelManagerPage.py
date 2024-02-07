@@ -20,6 +20,9 @@ from ..APIController import (
 from .Multiplex.TunnelWidget import TunnelWidget
 from .Multiplex.EditTunnelWidget import EditTunnelWidget
 from ..AppController.encrypt import getToken
+from ..AppController.Settings import cfg
+from ..AppController.Utils import FrpcConsoleVariables
+from ..FrpcController.processCreator import FrpcLauncher, FrpcLaunchMode
 
 
 class TunnelManagerAPI(QObject):
@@ -105,10 +108,11 @@ class TunnelManagerPage(QWidget, TunnelManagerAPI):
             for config in model.data:
                 self.tunnelListFlowLayout.addWidget(
                     TunnelWidget(
-                        config,
-                        self.showCopyUrlTip,
-                        self.editTunnelPreFunc,
-                        self.deleteTunnelPreFunc,
+                        config=config,
+                        runFrpcBtnSlot=self.startTunnel,
+                        copyUrlBtnSlot=self.showCopyUrlTip,
+                        editBtnSlot=self.editTunnelPreFunc,
+                        delBtnSlot=self.deleteTunnelPreFunc,
                     )
                 )
 
@@ -209,3 +213,37 @@ class TunnelManagerPage(QWidget, TunnelManagerAPI):
             parent=self,
         )
         self.refreshTunnelListBtn.click()
+
+    def startTunnel(self):
+        tunnelId = self.sender().property("id")
+        if self.sender().isChecked():
+            launchModeDict = {"Easy": FrpcLaunchMode.EasyMode, "Config": FrpcLaunchMode.ConfigMode}
+            bridge = FrpcLauncher(
+                launchMode=launchModeDict[cfg.get(cfg.runFrpcType)],
+                tunnelId=tunnelId,
+            ).setup()
+            bridge.frpcLogOutput.connect(
+                self.parent().parent().parent().frpcLogPage.colorConsoleText
+            )
+            comboBoxView = f"[#{tunnelId}] {self.sender().property('tunnel_name')}"
+            self.parent().parent().parent().frpcLogPage.frpcLogFilterComboBox.addItem(comboBoxView)
+            bridge.frpcClosed.connect(
+                lambda: self.parent()
+                .parent()
+                .parent()
+                .frpcLogPage.frpcLogFilterComboBox.removeItem(
+                    self.parent()
+                    .parent()
+                    .parent()
+                    .frpcLogPage.frpcLogFilterComboBox.findText(comboBoxView)
+                )
+            )
+
+            FrpcConsoleVariables.bridgeDict.update({str(tunnelId): bridge})
+        else:
+            try:
+                existBridge = FrpcConsoleVariables.bridgeDict[str(tunnelId)]
+            except KeyError:
+                return
+            existBridge.killFrpc()
+            FrpcConsoleVariables.bridgeDict.pop(str(tunnelId))
