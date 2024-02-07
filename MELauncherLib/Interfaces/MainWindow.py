@@ -42,7 +42,7 @@ from qmaterialwidgets import (
     MaterialStyleSheet,
 )
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QSize, QThreadPool, pyqtSlot
+from PyQt5.QtCore import QSize, QThreadPool, pyqtSlot, Qt
 from PyQt5.QtWidgets import QApplication
 
 from .. import VERSION
@@ -53,6 +53,7 @@ from .FrpcLogPage import FrpcLogPage
 from .SettingsPage import SettingsPage
 from .AboutPage import AboutPage
 from .Multiplex.FirstGuide import GuideAPI
+from .Multiplex.SystemTray import SystemTrayContainer
 
 if cfg.get(cfg.navigationPosition) == "Bottom":
     from qmaterialwidgets import BottomNavMaterialWindow as BaseWindowClass
@@ -81,11 +82,34 @@ class MEMainWindow(BaseWindowClass):
         sys.excepthook = self.catchExceptions
         self.titleBar.setParent(None)
         self.titleBar.deleteLater()
+
+        self.homePage = HomePage(self)
+        self.createTunnelPage = CreateTunnelPage(self)
+        self.tunnelManagerPage = TunnelManagerPage(self)
+        self.frpcLogPage = FrpcLogPage(self)
+        self.settingsPage = SettingsPage(self)
+        self.aboutPage = AboutPage(self)
+
+        self.setupSystemTray()
         self.setTitleBar(METitleBar(self))
         self.initWindow()
         self.mySetTheme()
         self.initNavigation()
         self.finishSetup()
+
+    def setupSystemTray(self):
+        self.systemTrayIcon = SystemTrayContainer(
+            showLauncherSlot=self.showLauncher, exitSlot=self.close, parent=self
+        ).getTrayIcon()
+        self.systemTrayIcon.show()
+
+    def showLauncher(self):
+        self.show()
+        self.showNormal()
+        self.activateWindow()
+        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
+        self.updateFrameless()
+
 
     def initWindow(self):
         """初始化窗口"""
@@ -105,14 +129,33 @@ class MEMainWindow(BaseWindowClass):
         cfg.themeChanged.connect(self.titleBar.setQss)
         QApplication.processEvents()
 
+    def closeEvent(self, a0) -> None:
+        if self.frpcLogPage.isAnyFrpcRunning():
+            a0.ignore()
+            box = MessageBox(
+                self.tr("无法退出 MEFrp-Launcher-Qt"),
+                self.tr("仍有Frpc正在运行，启动器将最小化到系统托盘。"),
+                parent=self,
+            )
+            box.yesButton.setText(self.tr("了解"))
+            box.yesButton.clicked.connect(
+                lambda: self.setWindowFlags(Qt.SplashScreen | Qt.FramelessWindowHint)
+            )
+            box.cancelButton.setParent(None)
+            box.cancelButton.deleteLater()
+            box.exec_()
+            return
+
+        # close thread pool
+        QThreadPool.globalInstance().clear()
+        QThreadPool.globalInstance().waitForDone()
+        QThreadPool.globalInstance().deleteLater()
+        self.systemTrayIcon.setVisible(False)
+        QApplication.quit()
+        super().closeEvent(a0)
+
     def initNavigation(self):
         self.stackedWidget.currentChanged.connect(self.pageChangedEvent)
-        self.homePage = HomePage(self)
-        self.createTunnelPage = CreateTunnelPage(self)
-        self.tunnelManagerPage = TunnelManagerPage(self)
-        self.frpcLogPage = FrpcLogPage(self)
-        self.settingsPage = SettingsPage(self)
-        self.aboutPage = AboutPage(self)
         self.addSubInterface(
             interface=self.homePage, icon=FIF.HOME, text="主页", selectedIcon=FIF.HOME_FILL
         )
@@ -191,18 +234,6 @@ class MEMainWindow(BaseWindowClass):
             self.createTunnelPage.refreshNodeBtn.click()
         if self.stackedWidget.currentIndex() == 2:
             self.tunnelManagerPage.getTunnelListFunc()
-
-    def closeEvent(self, a0) -> None:
-        # close thread pool
-        QThreadPool.globalInstance().clear()
-        QThreadPool.globalInstance().waitForDone()
-        QThreadPool.globalInstance().deleteLater()
-
-        try:
-            WorkingThreads.closeAllThreads()
-            super().closeEvent(a0)
-        finally:
-            super().closeEvent(a0)
 
     def catchExceptions(
         self, ty: Type[BaseException], value: BaseException, _traceback: TracebackType

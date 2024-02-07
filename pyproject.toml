@@ -4,16 +4,13 @@ dynamic = ["version"]
 description = "A Launcher for ME Frp."
 authors = [{ name = "LxHTT", email = "lxhtt@mcsl.com.cn" }]
 dependencies = [
-
     "PyQt5",
     "pyqt5-qt5==5.15.2",
-    "PyQt-Material-WidgetsX @ file:///${PROJECT_ROOT}/PyQt_Material_Widgets_X-0.10.0-py3-none-any.whl",
-
+    "PyQt-Material-WidgetsX @ file:///${PROJECT_ROOT}/PyQt_Material_Widgets_X-0.10.1-py3-none-any.whl",
     "psutil==5.9.5",
     "requests==2.31.0",
     "pyDes>=2.0.1",
     "MEFrpLib>=2.2.1",
-
     "setuptools>=60",
     "lib-not-dr[nuitka]>=0.3",
     "nuitka==1.9.7",
@@ -79,13 +76,13 @@ file-version = false
 
 # 文件信息
 product-name = "MEFrp-Launcher-Qt"
-company-name = "LxHTT"
+company-name = "MEFrp"
 file-description = "MEFrp-Launcher"
 copyright = "Copyright ©LxHTT. All rights reserved."
 
 # 依赖
-include-package = ["MELauncherLib", "sqlite3"]
-follow-import-to = ["loguru", "requests"]
+include-package = ["MELauncherLib"]
+follow-import-to = ["requests"]
 nofollow-import-to = ["numpy", "scipy", "PIL", "colorthief", "sqlite3.test"]
 
 enable-plugin = ["pyqt5", "multiprocessing"]

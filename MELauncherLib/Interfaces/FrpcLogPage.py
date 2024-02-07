@@ -149,3 +149,6 @@ class FrpcLogPage(QWidget):
                 )
         else:
             return
+
+    def isAnyFrpcRunning(self):
+        return bool(self.frpcLogFilterComboBox.count() > 1)
