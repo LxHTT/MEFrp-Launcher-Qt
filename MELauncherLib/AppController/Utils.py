@@ -239,7 +239,6 @@ class Downloader(QObject):
 
     def run(self):
         fp = open(self.fileName, "wb")
-        # self.msg.emit(f"正在初始化下载文件: {self.fileName}")
         fp.truncate(self.size)
         fp.close()
         part = self.size // self.threadCnt
@@ -253,11 +252,11 @@ class Downloader(QObject):
                 end = start + part - 1
             futures.append(pool.submit(self.down, start, end, i + 1))
         futures.append(pool.submit(self.show))
-        # print(f"正在使用{self.threadCnt}个线程进行下载...")
+        print(f"正在使用{self.threadCnt}个线程进行下载...")
         wait(futures)
         self.finishSignal.emit()
+        print(f"{self.fileName} 下载完成")
         self.deleteLater()
-        # print(f"{self.fileName} 下载完成")
 
 
 class DownloaderThread(QThread):

@@ -27,7 +27,7 @@ Icons/*.py
 Qss/*.py
 *.egg-info
 Icons/icons_rc.py
-*.whl
+# *.whl
 encrypt.pyi
 
 # runtime

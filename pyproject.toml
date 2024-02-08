@@ -66,7 +66,7 @@ clang = true
 msvc = "latest"
 standalone = true
 lto = "yes"
-disable-console = false
+disable-console = true
 show-memory = false
 show-progress = false
 
@@ -76,13 +76,13 @@ file-version = false
 
 # 文件信息
 product-name = "MEFrp-Launcher-Qt"
-company-name = "MEFrp"
-file-description = "MEFrp-Launcher"
-copyright = "Copyright ©LxHTT. All rights reserved."
+company-name = "ME Frp"
+file-description = "MEFrp Launcher"
+copyright = "Copyright © LxHTT. All rights reserved."
 
 # 依赖
-include-package = ["MELauncherLib"]
-follow-import-to = ["requests"]
+include-package = ["MELauncherLib", "pyDes"]
+follow-import-to = ["requests", "pyDes"]
 nofollow-import-to = ["numpy", "scipy", "PIL", "colorthief", "sqlite3.test"]
 
 enable-plugin = ["pyqt5", "multiprocessing"]
