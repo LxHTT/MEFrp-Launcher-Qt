@@ -91,6 +91,9 @@ class FrpcLogPage(QWidget):
                 duration=3500,
                 parent=self.window(),
             )
+            self.parent().parent().parent().systemTrayIcon.showMessage(
+                "MEFrp Launcher", str(id + " " + tunnelName + "隧道启动成功"), 5
+            )
 
     def filterFrpcLog(self):
         if not self.sender().currentIndex():

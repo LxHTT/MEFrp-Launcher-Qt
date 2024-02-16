@@ -18,7 +18,6 @@ from time import time
 from datetime import datetime
 
 
-
 import psutil
 from PyQt5.QtCore import QUrl, QThread, QThreadPool
 from PyQt5.QtGui import QDesktopServices

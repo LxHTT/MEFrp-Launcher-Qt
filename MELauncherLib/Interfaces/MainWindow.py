@@ -76,6 +76,7 @@ class MEMainWindow(BaseWindowClass):
     def __init__(self) -> None:
         super().__init__()
 
+        self.setupSystemTray()
         self.oldHook = sys.excepthook
         # sys.excepthook = self.catchExceptions
         self.titleBar.setParent(None)
@@ -88,7 +89,6 @@ class MEMainWindow(BaseWindowClass):
         self.settingsPage = SettingsPage(self)
         self.aboutPage = AboutPage(self)
 
-        self.setupSystemTray()
         self.setTitleBar(METitleBar(self))
         self.initWindow()
         self.mySetTheme()
@@ -113,9 +113,9 @@ class MEMainWindow(BaseWindowClass):
         self.setWindowTitle(f"MEFrp-Launcher-Qt v{VERSION}")
         self.setWindowIcon(QIcon(":/built-InIcons/MEFrp.ico"))
 
-        # self.splashScreen = SplashScreen(self.windowIcon(), self)
-        # self.splashScreen.setIconSize(QSize(106, 106))
-        # self.splashScreen.raise_()
+        self.splashScreen = SplashScreen(self.windowIcon(), self)
+        self.splashScreen.setIconSize(QSize(106, 106))
+        self.splashScreen.raise_()
 
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()
@@ -194,15 +194,12 @@ class MEMainWindow(BaseWindowClass):
         cfg.themeChanged.connect(lambda: MaterialStyleSheet.MATERIAL_WINDOW.apply(self))
 
     def finishSetup(self):
-        from time import sleep
-
         w = False
         if not checkFrpc(False):
-            downloadFrpc(finished=None)
+            downloadFrpc(self)
         else:
             w = False
-            sleep(1.5)
-        del sleep
+        self.splashScreen.finish()
         if w:
             w = MessageBox(
                 title="Frpc补全失败",

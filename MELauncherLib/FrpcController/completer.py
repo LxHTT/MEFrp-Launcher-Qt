@@ -16,9 +16,9 @@ from os import path as osp, remove
 from shutil import move, rmtree
 from platform import system, architecture
 from PyQt5.QtCore import QProcess
+from PyQt5.QtWidgets import QSystemTrayIcon
 from zipfile import ZipFile
 from .. import FRPC_VERSION
-
 
 frpcDownloadInfo = {
     "darwin_amd64": f"https://download.mefrp.com/MirrorEdgeFrp_{FRPC_VERSION}_darwin_amd64.tar.gz",
@@ -27,11 +27,18 @@ frpcDownloadInfo = {
     "linux_arm64": f"https://download.mefrp.com/MirrorEdgeFrp_{FRPC_VERSION}_linux_arm64.tar.gz",
     "windows_amd64": f"https://download.mefrp.com/MirrorEdgeFrp_{FRPC_VERSION}_windows_amd64.zip",
     "windows_arm64": f"https://download.mefrp.com/MirrorEdgeFrp_{FRPC_VERSION}_windows_arm64.zip",
+    "windows_386": "https://file.mcsl.com.cn/d/alistfile/MEFrp/MirrorEdgeFrp_0.51.3_windows_386.zip",
 }
 
 
-def downloadFrpc(finished):
-    arch = "amd64" if architecture()[0] == "64bit" else "arm64"
+def downloadFrpc(parent):
+    arch = architecture()[0]
+    if arch == "64bit":
+        arch = "amd64"
+    elif arch == "32bit":
+        arch = "386"
+    else:
+        arch = "arm64"
     if system().lower() == "macos":
         systemType = "darwin"
     else:
@@ -40,13 +47,15 @@ def downloadFrpc(finished):
         url = frpcDownloadInfo["{systemType}_{arch}".format(systemType=systemType, arch=arch)]
     except KeyError:
         raise LookupError("Not support this platform!")
-    if osp.exists(osp.basename(url)):
-        remove(osp.basename(url))
+    parent.systemTrayIcon.showMessage("MEFrp Launcher", "正在补全Frpc，请耐心等待...", 5)
+    if osp.exists(f"frpc/{osp.basename(url)}"):
+        remove(f"frpc/{osp.basename(url)}")
     os.system(f"aria2c.exe -d frpc {url}")
-    extractFrpc(file_name=osp.basename(url), finished=finished)
+    extractFrpc(file_name=osp.basename(url))
+    parent.systemTrayIcon.showMessage("MEFrp Launcher", "Frpc补全完毕", 5)
 
 
-def extractFrpc(file_name, finished):
+def extractFrpc(file_name):
     frpcProcessName = "frpc.exe" if system().lower() == "windows" else "frpc"
     if osp.exists(f"frpc/{frpcProcessName}"):
         remove(f"frpc/{frpcProcessName}")
@@ -60,7 +69,6 @@ def extractFrpc(file_name, finished):
     )
     remove(f"frpc/{file_name}")
     rmtree(f"frpc/{file_name.replace('.zip', '').replace('.tar.gz', '')}")
-    # finished()
 
 
 def checkFrpc(getVersion):

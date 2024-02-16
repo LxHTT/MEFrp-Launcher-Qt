@@ -34,7 +34,6 @@ if __name__ == "__main__":
     MEApplication.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
 
     app = MEApplication(sys.argv)
-
     from qmaterialwidgets import MaterialTranslator
     fluentTranslator = MaterialTranslator(QLocale(QLocale.Chinese))
     app.installTranslator(fluentTranslator)
