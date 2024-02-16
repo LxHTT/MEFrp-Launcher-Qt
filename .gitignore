@@ -47,4 +47,8 @@ tmp.py
 1.py
 
 $ secrets
-encrypt.py
+MELauncherLib/AppController/encrypt.py
+
+aria2c.exe
+
+*.whl

@@ -17,12 +17,10 @@ from traceback import format_exception
 from types import TracebackType
 from typing import Type
 
-
 from ..FrpcController.completer import checkFrpc, downloadFrpc
 
 from .Multiplex.ExceptionWidget import ExceptionWidget
 from ..AppController.ExceptionHandler import ExceptionFilterMode, exceptionFilter
-from ..AppController.Utils import WorkingThreads
 from ..AppController.Settings import getStyleSheetFromFile, cfg
 from ..AppController.encrypt import getUser, getPassword, saveUser, updateToken
 from ..APIController import JSONReturnModel
@@ -79,7 +77,7 @@ class MEMainWindow(BaseWindowClass):
         super().__init__()
 
         self.oldHook = sys.excepthook
-        sys.excepthook = self.catchExceptions
+        # sys.excepthook = self.catchExceptions
         self.titleBar.setParent(None)
         self.titleBar.deleteLater()
 
@@ -110,15 +108,14 @@ class MEMainWindow(BaseWindowClass):
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
         self.updateFrameless()
 
-
     def initWindow(self):
         """初始化窗口"""
         self.setWindowTitle(f"MEFrp-Launcher-Qt v{VERSION}")
         self.setWindowIcon(QIcon(":/built-InIcons/MEFrp.ico"))
 
-        self.splashScreen = SplashScreen(self.windowIcon(), self)
-        self.splashScreen.setIconSize(QSize(106, 106))
-        self.splashScreen.raise_()
+        # self.splashScreen = SplashScreen(self.windowIcon(), self)
+        # self.splashScreen.setIconSize(QSize(106, 106))
+        # self.splashScreen.raise_()
 
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()
@@ -201,19 +198,15 @@ class MEMainWindow(BaseWindowClass):
 
         w = False
         if not checkFrpc(False):
-            try:
-                downloadFrpc()
-            except LookupError:
-                w = True
+            downloadFrpc(finished=None)
         else:
             w = False
             sleep(1.5)
         del sleep
-        self.splashScreen.finish()
         if w:
             w = MessageBox(
                 title="Frpc补全失败",
-                content="MEFrp-Launcher 无法获取您对应系统的Frpc。\n请手动下载Frpc并解压到frpc目录。\n",
+                content="MEFrp-Launcher 无法获取您对应系统的Frpc。\n请手动下载Frpc并解压到frpc目录。\n",  # noqa: E501
                 icon=FIF.APPLICATION,
                 parent=self,
             )

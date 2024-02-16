@@ -3,7 +3,9 @@ from qmaterialwidgets import LineEdit
 
 
 class EditTunnelWidget(QWidget):
-    def __init__(self, tunnel_id: int, tunnel_name: str, local_ip: str, local_port: int, parent=None):
+    def __init__(
+        self, tunnel_id: int, tunnel_name: str, local_ip: str, local_port: int, parent=None
+    ):
         super().__init__(parent)
         self.verticalLayout = QVBoxLayout(self)
         self.tunnelNameEdit = LineEdit(self)

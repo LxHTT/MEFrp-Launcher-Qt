@@ -17,6 +17,7 @@ class MEApplication(QApplication):
 
 if __name__ == "__main__":
     # fmt: off
+
     from MELauncherLib.AppController.Utils import initMELauncher
     initMELauncher()
     del initMELauncher

@@ -26,7 +26,6 @@ from MEFrpLib import (
     me_edit_tunnel,
     me_close_tunnel,
     me_delete_tunnel,
-    me_get_tunnel_info,
     me_node_list,
     me_login,
     me_get_sponsor,

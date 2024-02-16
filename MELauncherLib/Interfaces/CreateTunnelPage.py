@@ -464,7 +464,7 @@ class CreateTunnelPage(QWidget, CreateTunnelAPI):
             )
             InfoBar.warning(
                 title="警告",
-                content="API无法返回有效可用端口！\n端口将由 MEFrp-Launcher 随机抽取，无法保证100%不被占用。\n若有占用请更换端口。",
+                content="API无法返回有效可用端口！\n端口将由 MEFrp-Launcher 随机抽取，无法保证100%不被占用。\n若有占用请更换端口。",  # noqa: E501
                 orient=Qt.Horizontal,
                 isClosable=True,
                 duration=1500,
