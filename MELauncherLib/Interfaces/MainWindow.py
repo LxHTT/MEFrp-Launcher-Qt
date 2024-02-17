@@ -78,7 +78,7 @@ class MEMainWindow(BaseWindowClass):
 
         self.setupSystemTray()
         self.oldHook = sys.excepthook
-        # sys.excepthook = self.catchExceptions
+        sys.excepthook = self.catchExceptions
         self.titleBar.setParent(None)
         self.titleBar.deleteLater()
 
