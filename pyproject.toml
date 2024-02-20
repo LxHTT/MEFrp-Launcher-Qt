@@ -28,8 +28,8 @@ all = ["tomli>=2.0.1", "ruff>=0.1.6", "pyqt5-stubs>=5.15.6.0"]
 
 [tool.pdm.scripts]
 main = "python MEFrp-Launcher.py"
-build = "python -m lndl_nuitka . -y --include-data-files=aria2c.exe=aria2c.exe"
-build_github = "python -m lndl_nuitka . -y -- --include-data-files=aria2c.exe=aria2c.exe --disable-console"
+build = "python -m lndl_nuitka . -y "
+build_github = "python -m lndl_nuitka . -y -- --disable-console"
 
 [tool.ruff]
 target-version = "py38"
