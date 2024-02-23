@@ -1,3 +1,3 @@
-VERSION = "1.1.1"
+VERSION = "1.0.0"
 FRPC_VERSION = "0.51.3"
 USER_AGENT = f"MEFrpLauncher/{VERSION}"

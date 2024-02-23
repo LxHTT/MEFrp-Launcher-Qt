@@ -19,7 +19,7 @@ from PyQt5.QtWidgets import (
     QGridLayout,
     QHBoxLayout,
 )
-from PyQt5.QtCore import Qt, QRect, QObject
+from PyQt5.QtCore import Qt, QRect, QObject, pyqtSlot
 
 from ..Resources import *  # noqa: F403 F401
 
@@ -39,9 +39,11 @@ from qmaterialwidgets import (
     setTheme,
     InfoBar,
     InfoBarPosition,
+    MessageBox,
 )
 from .Multiplex.ScollArea import NormalSmoothScrollArea
-from ..AppController.Settings import cfg
+from ..AppController.Settings import cfg, devMode
+from ..AppController.Update import CheckUpdateThread, Updater, compareVersion
 
 
 class SettingsController(QObject):
@@ -550,3 +552,73 @@ class SettingsPage(QWidget, SettingsController):
                 bool(not self.autoCheckUpdateSwitchBtn.isChecked())
             )
         )
+        self.manualCheckUpdateBtn.clicked.connect(lambda: self.checkUpdate(parent=self))
+
+    def checkUpdate(self, parent):
+        """
+        检查更新触发器\n
+        返回：\n
+        1.是否需要更新\n
+            1为需要\n
+            0为不需要\n
+            -1出错\n
+        2.新版更新链接\n
+        3.新版更新介绍\n
+        """
+        self.manualCheckUpdateBtn.setEnabled(False)  # 防止爆炸
+        self.tmpParent = parent
+        self.thread_checkUpdate = CheckUpdateThread(self)
+        self.thread_checkUpdate.isUpdate.connect(self.showUpdateMsg)
+        self.thread_checkUpdate.start()
+
+    @pyqtSlot(dict)
+    def showUpdateMsg(self, latestVerInfo):
+        """如果需要更新，显示弹窗；不需要则弹出提示"""
+        if not len(latestVerInfo["version"]):
+            InfoBar.error(
+                title=self.tr("检查更新失败"),
+                content=self.tr("尝试自己检查一下网络？"),
+                orient=Qt.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.TOP_RIGHT,
+                duration=2500,
+                parent=self.tmpParent,
+            )
+            self.manualCheckUpdateBtn.setEnabled(True)
+            return
+        if compareVersion(latestVerInfo["version"]):
+            title = self.tr("发现新版本：") + latestVerInfo["version"]
+            w = MessageBox(title, latestVerInfo["log"], parent=self.tmpParent)
+            w.contentLabel.setTextFormat(Qt.MarkdownText)
+            w.yesButton.setText(self.tr("更新"))
+            w.cancelButton.setText(self.tr("关闭"))
+            if not devMode:
+                w.yesButton.clicked.connect(lambda: self.window().switchTo(self))
+                w.yesButton.clicked.connect(
+                    Updater(updateInfo=latestVerInfo, parent=self).downloadUpdate
+                )
+            else:
+                w.yesButton.clicked.connect(
+                    lambda: InfoBar.error(
+                        title=self.tr("不行"),
+                        content=self.tr("开发模式下更新会把Python删掉的"),
+                        orient=Qt.Horizontal,
+                        isClosable=True,
+                        position=InfoBarPosition.TOP_RIGHT,
+                        duration=2500,
+                        parent=self.tmpParent,
+                    )
+                )
+            w.exec()
+        else:
+            InfoBar.success(
+                title=self.tr("无需更新"),
+                content=self.tr("已是最新版本"),
+                orient=Qt.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.TOP_RIGHT,
+                duration=2500,
+                parent=self.tmpParent,
+            )
+
+        self.manualCheckUpdateBtn.setEnabled(True)

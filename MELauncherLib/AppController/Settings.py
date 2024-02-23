@@ -51,6 +51,7 @@ class Config(QConfig):
 
 
 cfg = Config()
+devMode = True
 
 
 def getStyleSheetFromFile(file: Union[str, QFile]):
@@ -63,6 +64,7 @@ def getStyleSheetFromFile(file: Union[str, QFile]):
 
 
 def initMELauncherConfig():
+    global devMode
     qconfig.load("MEFrp-Launcher-Settings.json", cfg)
     if cfg.get(cfg.isFirstGuideFinished):
         return
@@ -75,3 +77,12 @@ def initMELauncherConfig():
     cfg.set(cfg.themeColor, QColor("#6750A4"))
     cfg.set(cfg.themeMode, Theme.AUTO)
     cfg.set(cfg.navigationPosition, "Bottom")
+    if (
+        cfg.get(cfg.oldExecuteable) == "python"
+        or cfg.get(cfg.oldExecuteable) == "python.exe"
+        or cfg.get(cfg.oldExecuteable) == "py"
+        or cfg.get(cfg.oldExecuteable) == "py.exe"
+    ):
+        devMode = True
+    else:
+        devMode = False
