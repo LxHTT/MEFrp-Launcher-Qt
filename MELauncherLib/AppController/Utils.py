@@ -14,8 +14,7 @@
 import hashlib
 from os import makedirs, path as osp
 from typing import Optional, Iterable, Callable, Dict, List, Tuple
-from time import time
-from datetime import datetime
+from time import time, strftime, localtime
 
 
 import psutil
@@ -87,7 +86,7 @@ def checkSHA1(fileAndSha1: Iterable, _filter: Callable[[str, str], bool] = None)
 
 
 def unixTimeStampToTime(timeStamp):
-    return datetime.fromtimestamp(timeStamp)
+    return strftime("%Y-%m-%d %H:%M:%S", localtime(timeStamp))
 
 
 def check24HoursPassed(timeStamp):
