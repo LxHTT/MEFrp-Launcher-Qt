@@ -590,8 +590,8 @@ class SettingsPage(QWidget, SettingsController):
             title = self.tr("发现新版本：") + latestVerInfo["version"]
             w = MessageBox(title, latestVerInfo["log"], parent=self.tmpParent)
             w.contentLabel.setTextFormat(Qt.MarkdownText)
-            w.yesButton.setText(self.tr("更新"))
-            w.cancelButton.setText(self.tr("关闭"))
+            w.yesButton.setText(self.tr("  更新  "))
+            w.cancelButton.setText(self.tr("  关闭  "))
             if not devMode:
                 w.yesButton.clicked.connect(lambda: self.window().switchTo(self))
                 w.yesButton.clicked.connect(

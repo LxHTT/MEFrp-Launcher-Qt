@@ -215,6 +215,8 @@ class MEMainWindow(BaseWindowClass):
             self.runFirstGuide()
         else:
             self.runReLogin()
+        if cfg.get(cfg.autoCheckUpdate):
+            self.settingsPage.checkUpdate(parent=self)
         self.homePage.getSysSettingFunc()
         self.homePage.frpcStatusContent.setText(checkFrpc(True))
         self.settingsPage.frpcVresionLabel.setText(self.homePage.frpcStatusContent.text())
