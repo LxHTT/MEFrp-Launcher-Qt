@@ -10,7 +10,7 @@ dependencies = [
     "psutil==5.9.5",
     "requests==2.31.0",
     "pyDes>=2.0.1",
-    "MEFrpLib>=2.2.1",
+    "MEFrpLib>=2.2.6",
     "setuptools>=60",
     "lib-not-dr[nuitka]>=0.3",
     "nuitka==2.0.3",

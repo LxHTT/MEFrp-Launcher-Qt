@@ -496,7 +496,6 @@ class SettingsPage(QWidget, SettingsController):
 
         self.runFrpcEZRadioBtn.setProperty("runFrpcType", "Easy")
         self.runFrpcConfigRadioBtn.setProperty("runFrpcType", "Config")
-        self.runFrpcConfigRadioBtn.setEnabled(False)
         cfg.appRestartSig.connect(self.showRestartTip)
         self.initSettingsInterface()
 
@@ -575,15 +574,16 @@ class SettingsPage(QWidget, SettingsController):
     def showUpdateMsg(self, latestVerInfo):
         """如果需要更新，显示弹窗；不需要则弹出提示"""
         if not len(latestVerInfo["version"]):
-            InfoBar.error(
-                title=self.tr("检查更新失败"),
-                content=self.tr("尝试自己检查一下网络？"),
-                orient=Qt.Horizontal,
-                isClosable=True,
-                position=InfoBarPosition.TOP_RIGHT,
-                duration=2500,
-                parent=self.tmpParent,
-            )
+            if self.tmpParent == self:
+                InfoBar.error(
+                    title=self.tr("检查更新失败"),
+                    content=self.tr("尝试自己检查一下网络？"),
+                    orient=Qt.Horizontal,
+                    isClosable=True,
+                    position=InfoBarPosition.TOP,
+                    duration=2500,
+                    parent=self.tmpParent,
+                )
             self.manualCheckUpdateBtn.setEnabled(True)
             return
         if compareVersion(latestVerInfo["version"]):
@@ -604,21 +604,22 @@ class SettingsPage(QWidget, SettingsController):
                         content=self.tr("开发模式下更新会把Python删掉的"),
                         orient=Qt.Horizontal,
                         isClosable=True,
-                        position=InfoBarPosition.TOP_RIGHT,
+                        position=InfoBarPosition.TOP,
                         duration=2500,
                         parent=self.tmpParent,
                     )
                 )
             w.exec()
         else:
-            InfoBar.success(
-                title=self.tr("无需更新"),
-                content=self.tr("已是最新版本"),
-                orient=Qt.Horizontal,
-                isClosable=True,
-                position=InfoBarPosition.TOP_RIGHT,
-                duration=2500,
-                parent=self.tmpParent,
-            )
+            if self.tmpParent == self:
+                InfoBar.success(
+                    title=self.tr("无需更新"),
+                    content=self.tr("已是最新版本"),
+                    orient=Qt.Horizontal,
+                    isClosable=True,
+                    position=InfoBarPosition.TOP,
+                    duration=2500,
+                    parent=self.tmpParent,
+                )
 
         self.manualCheckUpdateBtn.setEnabled(True)

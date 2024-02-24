@@ -19,10 +19,13 @@ from os import path as osp
 from typing import Optional, List
 from enum import Enum
 from platform import system
-from PyQt5.QtCore import QProcess, QObject, pyqtSignal
-
+from PyQt5.QtCore import QProcess, QObject, pyqtSignal, pyqtSlot
+from ..APIController import (
+    GetTunnelConfigIdThread,
+    TextReturnModel,
+)
 from ..AppController.encrypt import getToken
-from ..AppController.Utils import FrpcConsoleVariables
+from ..AppController.Utils import FrpcConsoleVariables, writeFile
 
 
 class FrpcLaunchMode(Enum):
@@ -108,28 +111,26 @@ class FrpcProcessBridge(QObject):
         return self.frpcProcess.process.state() == QProcess.Running
 
 
-# class FrpcConfigDownloader:
-# pass
-
-
-class FrpcLauncher:
-    def __init__(self, launchMode: FrpcLaunchMode, tunnelId: int):
+class FrpcLauncher(QObject):
+    def __init__(self, launchMode: FrpcLaunchMode, tunnelId: int, isUpdateConfig: bool = False, parent=None):
+        super().__init__(parent=parent)
         self.launchMode = launchMode
         self.tunnelId = str(tunnelId)
+        self.isUpdateConfig = isUpdateConfig
         self.argList = []
 
     def constructArgs(self):
         if self.launchMode == FrpcLaunchMode.ConfigMode:
-            return
+            self.argList = ["-c", osp.abspath("config/{id}.ini".format(id=self.tunnelId))]
         else:
             self.argList = ["-t", getToken(), "-i", self.tunnelId]
 
     def setup(self):
         self.constructArgs()
+        FrpcConsoleVariables.singleLogDict[str(self.tunnelId)] = []
         if self.launchMode == FrpcLaunchMode.ConfigMode:
-            return
+            return self.getTunnelConfigFunc()
         else:
-            FrpcConsoleVariables.singleLogDict[str(self.tunnelId)] = []
             return self._launch()
 
     def _launch(self) -> FrpcProcessBridge:
@@ -141,3 +142,20 @@ class FrpcLauncher:
             lambda: FrpcConsoleVariables.singleLogDict.pop(str(self.tunnelId))
         )
         return bridge
+
+    def getTunnelConfigFunc(self):
+        if osp.exists("config/{id}.ini".format(id=self.tunnelId)):
+            if not self.isUpdateConfig:
+                return self._launch()
+        else:
+            self.getTunnelConfigThread = GetTunnelConfigIdThread(
+                authorization=getToken(), id=self.tunnelId, parent=self
+            )
+            self.getTunnelConfigThread.returnSlot.connect(self.getTunnelConfigAPIParser)
+            self.getTunnelConfigThread.start()
+            self.getTunnelConfigThread.wait()
+            return self._launch()
+
+    @pyqtSlot(TextReturnModel)
+    def getTunnelConfigAPIParser(self, model: TextReturnModel):
+        writeFile(file="config/{id}.ini".format(id=self.tunnelId), content=model.data)

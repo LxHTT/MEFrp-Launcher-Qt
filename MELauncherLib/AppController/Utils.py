@@ -18,7 +18,7 @@ from time import time, strftime, localtime
 
 
 import psutil
-from PyQt5.QtCore import QUrl, QThread, QThreadPool
+from PyQt5.QtCore import QUrl, QThread, QThreadPool, QFile
 from PyQt5.QtGui import QDesktopServices
 
 
@@ -39,9 +39,7 @@ def initMELauncher():
     初始化程序
     """
 
-    folders = [
-        "frpc",
-    ]
+    folders = ["frpc", "config"]
     for folder in folders:
         if not osp.exists(folder):
             makedirs(folder, exist_ok=True)
@@ -61,6 +59,36 @@ def openLocalFile(FilePath):
     QDesktopServices.openUrl(QUrl.fromLocalFile(FilePath))
 
 
+def readFile(file: str):
+    f = QFile(file)
+    f.open(QFile.ReadOnly)
+    content = str(f.readAll(), encoding="utf-8")
+    f.close()
+    return content
+
+
+def writeFile(file: str, content: str):
+    f = QFile(file)
+    f.open(QFile.WriteOnly)
+    f.write(content.encode("utf-8"))
+    f.close()
+
+
+def readBytesFile(file: str):
+    f = QFile(file)
+    f.open(QFile.ReadOnly)
+    content = f.readAll()
+    f.close()
+    return content
+
+
+def writeBytesFile(file: str, content: bytes):
+    f = QFile(file)
+    f.open(QFile.WriteOnly)
+    f.write(content)
+    f.close()
+
+
 def checkSHA1(fileAndSha1: Iterable, _filter: Callable[[str, str], bool] = None) -> List[Dict]:
     """
     检查文件的SHA1值是否正确
@@ -77,8 +105,9 @@ def checkSHA1(fileAndSha1: Iterable, _filter: Callable[[str, str], bool] = None)
             continue
         if _filter(file, sha1):
             # check sha1
-            with open(file, "rb") as f:
-                fileSha1 = hashlib.sha1(f.read()).hexdigest()
+            f = readBytesFile(file)
+            fileSha1 = hashlib.sha1(f).hexdigest()
+            del f
             rv.append({"file": file, "result": fileSha1 == sha1})
         else:
             rv.append({"file": file, "result": True})

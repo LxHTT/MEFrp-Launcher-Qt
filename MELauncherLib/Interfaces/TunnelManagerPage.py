@@ -1,28 +1,29 @@
-from PyQt5.QtWidgets import QGridLayout, QSizePolicy, QSpacerItem, QWidget
+from PyQt5.QtWidgets import QGridLayout, QSizePolicy, QSpacerItem, QWidget, QDialogButtonBox
 from PyQt5.QtCore import QObject, pyqtSlot
 from qmaterialwidgets import (
     TitleLabel,
     FlowLayout,
     TonalPushButton,
     FluentIcon as FIF,
+    TextEdit,
     MessageBox,
     InfoBarPosition,
     InfoBar,
+    TextPushButton,
 )
 from ..APIController import (
-    GetTunnelConfigIdThread,
     EditTunnelThread,
     GetTunnelListThread,
     DeleteTunnelThread,
     JSONReturnModel,
-    # TextReturnModel,
 )
 from .Multiplex.TunnelWidget import TunnelWidget
 from .Multiplex.EditTunnelWidget import EditTunnelWidget
 from ..AppController.encrypt import getToken
 from ..AppController.Settings import cfg
-from ..AppController.Utils import FrpcConsoleVariables
+from ..AppController.Utils import FrpcConsoleVariables, readFile, writeFile
 from ..FrpcController.processCreator import FrpcLauncher, FrpcLaunchMode
+from os import path as osp
 
 
 class TunnelManagerAPI(QObject):
@@ -31,9 +32,6 @@ class TunnelManagerAPI(QObject):
 
     def getTunnelListAPI(self) -> GetTunnelListThread:
         return GetTunnelListThread(authorization=getToken(), parent=self)
-
-    def getTunnelConfigIdAPI(self, id: int) -> GetTunnelConfigIdThread:
-        return GetTunnelConfigIdThread(authorization=getToken(), id=id, parent=self)
 
     def editTunnelAPI(
         self, tunnel_id: int, tunnel_name: str, local_port: int, local_ip: str
@@ -216,34 +214,98 @@ class TunnelManagerPage(QWidget, TunnelManagerAPI):
 
     def startTunnel(self):
         tunnelId = self.sender().property("id")
+        sd = self.sender()
         if self.sender().isChecked():
-            launchModeDict = {"Easy": FrpcLaunchMode.EasyMode, "Config": FrpcLaunchMode.ConfigMode}
-            bridge = FrpcLauncher(
-                launchMode=launchModeDict[cfg.get(cfg.runFrpcType)],
-                tunnelId=tunnelId,
-            ).setup()
-            bridge.frpcLogOutput.connect(
-                self.parent().parent().parent().frpcLogPage.colorConsoleText
+            w = MessageBox("启动选项", "您当前选用了 frpc.ini 启动方式。\n\n请选择您的操作：", self)
+            w.yesButton.setText("启动隧道")
+            w.cancelButton.setText("更新配置并启动")
+            editConfigBtn = TextPushButton("编辑配置")
+            editConfigBtn.clicked.connect(w.close)
+            editConfigBtn.clicked.connect(
+                lambda: self.editTunnelConfigFile(tunnelId=tunnelId, sender=sd)
             )
-            comboBoxView = f"[#{tunnelId}] {self.sender().property('tunnel_name')}"
-            self.parent().parent().parent().frpcLogPage.frpcLogFilterComboBox.addItem(comboBoxView)
-            bridge.frpcClosed.connect(
-                lambda: self.parent()
-                .parent()
-                .parent()
-                .frpcLogPage.frpcLogFilterComboBox.removeItem(
-                    self.parent()
-                    .parent()
-                    .parent()
-                    .frpcLogPage.frpcLogFilterComboBox.findText(comboBoxView)
+            w.buttonGroup.addButton(editConfigBtn, QDialogButtonBox.ActionRole)
+            w.yesButton.clicked.connect(
+                lambda: self.runTunnel(
+                    tunnelId=tunnelId, isUpdateConfig=False, sender=sd
                 )
             )
-
-            FrpcConsoleVariables.bridgeDict.update({str(tunnelId): bridge})
+            w.cancelButton.clicked.connect(
+                lambda: self.runTunnel(tunnelId=tunnelId, isUpdateConfig=True, sender=sd)
+            )
+            w.exec_()
         else:
-            try:
-                existBridge = FrpcConsoleVariables.bridgeDict[str(tunnelId)]
-            except KeyError:
-                return
+            self.closeTunnel(tunnelId=tunnelId)
+
+    def editTunnelConfigFile(self, tunnelId: int, sender):
+        sender.setChecked(False)
+        if osp.exists("config/{tunnelId}.ini".format(tunnelId=tunnelId)):
+            config = readFile("config/{tunnelId}.ini".format(tunnelId=tunnelId))
+            w = MessageBox(
+                title="编辑配置",
+                content="",
+                parent=self,
+            )
+            w.yesButton.setText("保存")
+            w.contentLabel.setParent(None)
+            w.textLayout.addWidget(
+                t := TextEdit(
+                    parent=w,
+                )
+            )
+            t.setFixedWidth(int(self.window().width() * 0.65))
+            t.setPlainText(config)
+            w.yesButton.clicked.connect(
+                lambda: writeFile(
+                    "config/{tunnelId}.ini".format(tunnelId=tunnelId), t.toPlainText()
+                )
+            )
+            w.exec_()
+            del config
+        else:
+            e = MessageBox(
+                title="错误",
+                content="配置文件不存在，请先更新配置文件。",
+                icon=FIF.QUESTION,
+                parent=self,
+            )
+            e.cancelButton.setParent(None)
+            e.exec_()
+
+    def runTunnel(self, tunnelId: int, isUpdateConfig: bool, sender):
+        launchModeDict = {"Easy": FrpcLaunchMode.EasyMode, "Config": FrpcLaunchMode.ConfigMode}
+        bridge = FrpcLauncher(
+            launchMode=launchModeDict[cfg.get(cfg.runFrpcType)],
+            tunnelId=tunnelId,
+            isUpdateConfig=isUpdateConfig,
+            parent=self,
+        ).setup()
+        bridge.frpcLogOutput.connect(self.parent().parent().parent().frpcLogPage.colorConsoleText)
+        comboBoxView = f"[#{tunnelId}] {sender.property('tunnel_name')}"
+        self.parent().parent().parent().frpcLogPage.frpcLogFilterComboBox.addItem(comboBoxView)
+        bridge.frpcClosed.connect(
+            lambda: self.parent()
+            .parent()
+            .parent()
+            .frpcLogPage.frpcLogFilterComboBox.removeItem(
+                self.parent()
+                .parent()
+                .parent()
+                .frpcLogPage.frpcLogFilterComboBox.findText(comboBoxView)
+            )
+        )
+        bridge.frpcClosed.connect(lambda: self.closeTunnel(tunnelId=tunnelId, closed=True))
+
+        FrpcConsoleVariables.bridgeDict.update({str(tunnelId): bridge})
+
+    def closeTunnel(self, tunnelId: int, closed=False):
+        try:
+            existBridge = FrpcConsoleVariables.bridgeDict[str(tunnelId)]
+        except KeyError:
+            return
+        try:
             existBridge.killFrpc()
+        except Exception:
+            pass
+        if not closed:
             FrpcConsoleVariables.bridgeDict.pop(str(tunnelId))

@@ -34,6 +34,7 @@ encrypt.pyi
 MEFrp-Launcher-Settings.json
 frpc/**
 update/**
+config/**
 *.zip*
 
 # debug

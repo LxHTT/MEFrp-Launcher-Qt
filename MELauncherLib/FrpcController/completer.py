@@ -16,7 +16,6 @@ from os import path as osp, remove
 from shutil import move, rmtree
 from platform import system, architecture
 from PyQt5.QtCore import QProcess
-from PyQt5.QtWidgets import QSystemTrayIcon
 from zipfile import ZipFile
 from .. import FRPC_VERSION
 

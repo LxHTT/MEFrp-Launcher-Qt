@@ -12,7 +12,7 @@ from qmaterialwidgets import (
 )
 from os import getcwd
 from ..AppController.encrypt import getToken
-from ..AppController.Utils import FrpcConsoleVariables, openLocalFile
+from ..AppController.Utils import FrpcConsoleVariables, openLocalFile, writeFile
 
 
 class FrpcLogPage(QWidget):
@@ -71,6 +71,8 @@ class FrpcLogPage(QWidget):
         self.frpcLogFilterComboBox.currentIndexChanged.connect(self.filterFrpcLog)
         self.clearLogBtn.clicked.connect(self.clearFrpcLog)
         self.saveLogBtn.clicked.connect(self.saveFrpcLog)
+        self.clearLogBtn.setIcon(FIF.DELETE)
+        self.saveLogBtn.setIcon(FIF.SAVE)
 
     @pyqtSlot(str)
     def colorConsoleText(self, frpcLogOutput: str):
@@ -123,8 +125,10 @@ class FrpcLogPage(QWidget):
         saveLogFileDialog.selectFile("Frpc.log")
         if saveLogFileDialog.exec_() == QFileDialog.Accepted:
             try:
-                with open(saveLogFileDialog.selectedFiles()[0], "w+", encoding="utf-8") as f:
-                    f.write(self.frpcLogTextEdit.toPlainText())
+                writeFile(
+                    file=saveLogFileDialog.selectedFiles()[0],
+                    content=self.frpcLogTextEdit.toPlainText(),
+                )
                 finishBtn = ElevatedPushButton(text="打开", parent=self)
                 finishBtn.clicked.connect(
                     lambda: openLocalFile(saveLogFileDialog.selectedFiles()[0])

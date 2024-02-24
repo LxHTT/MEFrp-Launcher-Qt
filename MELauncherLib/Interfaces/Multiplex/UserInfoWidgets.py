@@ -17,6 +17,7 @@ from PyQt5.QtGui import QPixmap
 from qmaterialwidgets import BodyLabel, ImageLabel, StrongBodyLabel, TonalPushButton
 from ...Resources import *  # noqa: F403 F401
 
+
 class UserInfoWidget(QWidget):
     def __init__(self, typeName, value, parent=None):
         super().__init__(parent)
