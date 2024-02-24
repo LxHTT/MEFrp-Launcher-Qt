@@ -23,7 +23,7 @@ def checkUpdate():
         arch = "x86"
     else:
         arch = "arm64"
-    updateInfo[-1]["url"] = str(updateInfo[-1]["url"]).format(arch=arch).replace(r"_v{version}", "")
+    updateInfo[-1]["url"] = str(updateInfo[-1]["url"]).replace(r"_v{version}", "").format(arch=arch)
     return updateInfo[-1]
 
 
@@ -40,11 +40,11 @@ class CheckUpdateThread(QThread):
         self.setObjectName("CheckUpdateThread")
 
     def run(self):
-        try:
-            latestVerInfo = checkUpdate()
-            self.isUpdate.emit(latestVerInfo)
-        except Exception:
-            self.isUpdate.emit({"version": "", "log": "", "url": ""})
+        # try:
+        latestVerInfo = checkUpdate()
+        self.isUpdate.emit(latestVerInfo)
+        # except Exception:
+        #     self.isUpdate.emit({"version": "", "log": "", "url": ""})
 
 
 class Updater(QObject):
