@@ -40,11 +40,11 @@ class CheckUpdateThread(QThread):
         self.setObjectName("CheckUpdateThread")
 
     def run(self):
-        # try:
-        latestVerInfo = checkUpdate()
-        self.isUpdate.emit(latestVerInfo)
-        # except Exception:
-        #     self.isUpdate.emit({"version": "", "log": "", "url": ""})
+        try:
+            latestVerInfo = checkUpdate()
+            self.isUpdate.emit(latestVerInfo)
+        except Exception:
+            self.isUpdate.emit({"version": "", "log": "", "url": ""})
 
 
 class Updater(QObject):
