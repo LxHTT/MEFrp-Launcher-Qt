@@ -23,9 +23,7 @@ def checkUpdate():
         arch = "x86"
     else:
         arch = "arm64"
-    updateInfo[-1]["url"] = str(updateInfo[-1]["url"]).format(
-        arch=arch, version=updateInfo[-1]["version"]
-    )
+    updateInfo[-1]["url"] = str(updateInfo[-1]["url"]).format(arch=arch)
     return updateInfo[-1]
 
 
