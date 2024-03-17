@@ -69,7 +69,6 @@ def initMELauncherConfig():
     if cfg.get(cfg.isFirstGuideFinished):
         return
     cfg.set(cfg.isFirstGuideFinished, False)
-    cfg.set(cfg.oldExecuteable, osp.basename(sys.executable))
     cfg.set(cfg.userName, "")
     cfg.set(cfg.userPassword, "")
     cfg.set(cfg.userAuthorization, "")
