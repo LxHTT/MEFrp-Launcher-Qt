@@ -233,7 +233,7 @@ class HomePage(QWidget, HomeAPI):
         self.userSignBtn.setEnabled(False)
         self.userSignBtn.clicked.connect(self.userSignFunc)
         self.announcementContent.setAlignment(Qt.AlignLeading | Qt.AlignLeft | Qt.AlignTop)
-        self.spacerItem = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.spacerItem = QSpacerItem(20, 10, QSizePolicy.Fixed, QSizePolicy.Expanding)
 
     def getUserInfoFunc(self):
         if hasattr(self, "getUserInfoThread"):
@@ -291,33 +291,6 @@ class HomePage(QWidget, HomeAPI):
             self.userInfoSCRealLayout.addWidget(
                 UserInfoWidget("邮箱", model.data["email"], self.userInfoSC)
             )
-            self.userInfoSCRealLayout.addWidget(
-                (
-                    w := UserInfoPushWidget(
-                        "Token",
-                        "复制",
-                        lambda: QApplication.clipboard().setText(model.data["token"]),
-                        self.userInfoSC,
-                    )
-                )
-            )
-            w.actionBtn.clicked.connect(
-                lambda: InfoBar.success(
-                    title="已复制",
-                    content="请妥善保存，切勿泄露。\n已经泄露的请立即重置！",
-                    duration=1500,
-                    position=InfoBarPosition.TOP,
-                    parent=self,
-                )
-            )
-            self.userInfoSCRealLayout.addWidget(
-                UserInfoPushWidget(
-                    "Token泄露？",
-                    "重置",
-                    self.refreshUserTokenPreFunc,
-                    self.userInfoSC,
-                )
-            )
             self.userInfoSCRealLayout.addItem(self.spacerItem)
         else:
             InfoBar.error(
@@ -338,7 +311,7 @@ class HomePage(QWidget, HomeAPI):
         w.yesButton.setText("确定")
         w.yesButton.clicked.connect(self.refreshUserTokenFunc)
         w.cancelButton.setText("取消")
-        w.exec_()
+        w.exec()
 
     def refreshUserTokenFunc(self):
         if hasattr(self, "refreshUserTokenThread"):
@@ -413,23 +386,38 @@ class HomePage(QWidget, HomeAPI):
                 parent=self,
             )
 
-    def userGetSignInfoFunc(self):
+    def userGetSignInfoFunc(self, isSigning: bool = False):
         if hasattr(self, "userGetSignInfoThread"):
             if self.userGetSignInfoThread.isRunning():
                 return
         self.userGetSignInfoThread = self.userGetSignInfoAPI()
-        self.userGetSignInfoThread.returnSlot.connect(self.userGetSignInfoAPIParser)
+        self.userGetSignInfoThread.returnSlot.connect(
+            lambda x: self.userGetSignInfoAPIParser(model=x, isSigning=isSigning)
+        )
         self.userGetSignInfoThread.start()
 
     @pyqtSlot(JSONReturnModel)
-    def userGetSignInfoAPIParser(self, model: JSONReturnModel):
+    def userGetSignInfoAPIParser(self, model: JSONReturnModel, isSigning: bool = False):
         if model.status == 200 or model.message == "Success!":
-            text = "  用户ID：{id}\n  用户名：{username}\n  总签到次数：{totalsign}\n  总获得流量：{totaltraffic}".format(  # noqa: E501
+            text = "  用户ID：{id}\n  用户名：{username}\n  总签到次数：{totalsign} 次\n  总获得流量：{totaltraffic} GB".format(  # noqa: E501
                 id=model.data["id"],
                 username=model.data["username"],
                 totalsign=model.data["totalsign"],
                 totaltraffic=model.data["totaltraffic"],
             )
+            if isSigning:
+                oldTraffic = int(
+                    self.userSignContent.text().split("  总获得流量：")[1].replace(" GB", "")
+                )
+                InfoBar.success(
+                    title="签到成功",
+                    content="获得 {traffic}GB 流量".format(
+                        traffic=str(int(model.data["totaltraffic"]) - oldTraffic)
+                    ),
+                    duration=1500,
+                    position=InfoBarPosition.TOP,
+                    parent=self,
+                )
             self.userSignContent.setText(text)
             self.userSignBtn.setEnabled(check24HoursPassed(model.data["signdate"]))
         else:
@@ -451,7 +439,7 @@ class HomePage(QWidget, HomeAPI):
 
     def userSignAPIParser(self, model: JSONReturnModel):
         if model.status == 200 or model.message == "Success!":
-            self.userGetSignInfoFunc()
+            self.userGetSignInfoFunc(isSigning=True)
         else:
             InfoBar.warning(
                 title="提示",
