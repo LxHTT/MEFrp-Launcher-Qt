@@ -18,9 +18,11 @@ from PyQt5.QtWidgets import (
     QSizePolicy,
     QGridLayout,
     QHBoxLayout,
+    QApplication,
+    QLineEdit,
 )
-from PyQt5.QtCore import Qt, QRect, QObject, pyqtSlot
-
+from PyQt5.QtCore import Qt, QRect, QObject, pyqtSlot, QSize
+from ..AppController.encrypt import getToken, getUser, updateToken, getPassword, saveUser
 from ..Resources import *  # noqa: F403 F401
 
 from qmaterialwidgets import (
@@ -40,15 +42,24 @@ from qmaterialwidgets import (
     InfoBar,
     InfoBarPosition,
     MessageBox,
+    TonalPushButton,
+    LineEdit,
 )
 from .Multiplex.ScollArea import NormalSmoothScrollArea
 from ..AppController.Settings import cfg, devMode
 from ..AppController.Update import CheckUpdateThread, Updater, compareVersion
+from ..APIController import RefreshUserTokenThread, JSONReturnModel, ResetPasswordThread
 
 
 class SettingsController(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
+
+    def resetUserTokenAPI(self) -> RefreshUserTokenThread:
+        return RefreshUserTokenThread(authorization=getToken(), parent=self)
+
+    def resetPasswordAPI(self, old: str, new: str) -> ResetPasswordThread:
+        return ResetPasswordThread(authorization=getToken(), old=old, new=new, parent=self)
 
     def runFrpcTypeControl(self):
         cfg.set(cfg.runFrpcType, self.sender().property("runFrpcType"), save=True)
@@ -101,6 +112,133 @@ class SettingsPage(QWidget, SettingsController):
         self.settingsLayout.setContentsMargins(0, 0, 0, 0)
         self.settingsLayout.setSpacing(10)
         self.settingsLayout.setObjectName("settingsLayout")
+        self.accountAndSecuritySettingsTitle = SubtitleLabel(self.settingsSC)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.accountAndSecuritySettingsTitle.sizePolicy().hasHeightForWidth()
+        )
+        self.accountAndSecuritySettingsTitle.setSizePolicy(sizePolicy)
+        self.accountAndSecuritySettingsTitle.setObjectName("accountAndSecuritySettingsTitle")
+        self.settingsLayout.addWidget(self.accountAndSecuritySettingsTitle)
+        self.accountAndSecurityWidget = OutlinedCardWidget(self.settingsSC)
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.accountAndSecurityWidget.sizePolicy().hasHeightForWidth())
+        self.accountAndSecurityWidget.setSizePolicy(sizePolicy)
+        self.accountAndSecurityWidget.setMinimumSize(QSize(0, 245))
+        self.accountAndSecurityWidget.setMaximumSize(QSize(16777215, 245))
+        self.accountAndSecurityWidget.setObjectName("accountAndSecurityWidget")
+        self.accountAndSecurityLayout = QVBoxLayout(self.accountAndSecurityWidget)
+        self.accountAndSecurityLayout.setObjectName("accountAndSecurityLayout")
+        self.currentAccountWidget = CardWidget(self.accountAndSecurityWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.currentAccountWidget.sizePolicy().hasHeightForWidth())
+        self.currentAccountWidget.setSizePolicy(sizePolicy)
+        self.currentAccountWidget.setMinimumSize(QSize(0, 70))
+        self.currentAccountWidget.setMaximumSize(QSize(16777215, 70))
+        self.currentAccountWidget.setObjectName("currentAccountWidget")
+        self.currentAccountLayout = QGridLayout(self.currentAccountWidget)
+        self.currentAccountLayout.setContentsMargins(16, 16, 16, 16)
+        self.currentAccountLayout.setObjectName("currentAccountLayout")
+        self.currentAccountTitle = StrongBodyLabel(self.currentAccountWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.currentAccountTitle.sizePolicy().hasHeightForWidth())
+        self.currentAccountTitle.setSizePolicy(sizePolicy)
+        self.currentAccountTitle.setObjectName("currentAccountTitle")
+        self.currentAccountLayout.addWidget(self.currentAccountTitle, 0, 0, 1, 1)
+        self.logoutCurrentAccountBtn = FilledPushButton(self.currentAccountWidget)
+        self.logoutCurrentAccountBtn.setObjectName("toggleCurrentAccountBtn")
+        self.currentAccountLayout.addWidget(self.logoutCurrentAccountBtn, 0, 2, 2, 1)
+        spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.currentAccountLayout.addItem(spacerItem, 0, 1, 2, 1)
+        self.currentAccountTip = BodyLabel(self.currentAccountWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.currentAccountTip.sizePolicy().hasHeightForWidth())
+        self.currentAccountTip.setSizePolicy(sizePolicy)
+        self.currentAccountTip.setObjectName("currentAccountTip")
+        self.currentAccountLayout.addWidget(self.currentAccountTip, 1, 0, 1, 1)
+        self.accountAndSecurityLayout.addWidget(self.currentAccountWidget)
+        self.resetPwdWidget = CardWidget(self.accountAndSecurityWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.resetPwdWidget.sizePolicy().hasHeightForWidth())
+        self.resetPwdWidget.setSizePolicy(sizePolicy)
+        self.resetPwdWidget.setMinimumSize(QSize(0, 70))
+        self.resetPwdWidget.setMaximumSize(QSize(16777215, 70))
+        self.resetPwdWidget.setObjectName("resetPwdWidget")
+        self.resetPwdLayout = QGridLayout(self.resetPwdWidget)
+        self.resetPwdLayout.setContentsMargins(16, 16, 16, 16)
+        self.resetPwdLayout.setObjectName("resetPwdLayout")
+        self.resetPwdTitle = StrongBodyLabel(self.resetPwdWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.resetPwdTitle.sizePolicy().hasHeightForWidth())
+        self.resetPwdTitle.setSizePolicy(sizePolicy)
+        self.resetPwdTitle.setObjectName("resetPwdTitle")
+        self.resetPwdLayout.addWidget(self.resetPwdTitle, 0, 0, 1, 1)
+        self.resetPwdBtn = FilledPushButton(self.resetPwdWidget)
+        self.resetPwdBtn.setObjectName("resetPwdBtn")
+        self.resetPwdLayout.addWidget(self.resetPwdBtn, 0, 2, 2, 1)
+        spacerItem1 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.resetPwdLayout.addItem(spacerItem1, 0, 1, 2, 1)
+        self.resetPwdTip = BodyLabel(self.resetPwdWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.resetPwdTip.sizePolicy().hasHeightForWidth())
+        self.resetPwdTip.setSizePolicy(sizePolicy)
+        self.resetPwdTip.setObjectName("resetPwdTip")
+        self.resetPwdLayout.addWidget(self.resetPwdTip, 1, 0, 1, 1)
+        self.accountAndSecurityLayout.addWidget(self.resetPwdWidget)
+        self.resetTokenWidget = CardWidget(self.accountAndSecurityWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.resetTokenWidget.sizePolicy().hasHeightForWidth())
+        self.resetTokenWidget.setSizePolicy(sizePolicy)
+        self.resetTokenWidget.setMinimumSize(QSize(0, 70))
+        self.resetTokenWidget.setMaximumSize(QSize(16777215, 70))
+        self.resetTokenWidget.setObjectName("resetTokenWidget")
+        self.resetTokenLayout = QGridLayout(self.resetTokenWidget)
+        self.resetTokenLayout.setContentsMargins(16, 16, 16, 16)
+        self.resetTokenLayout.setObjectName("resetTokenLayout")
+        self.resetTokenTitle = StrongBodyLabel(self.resetTokenWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.resetTokenTitle.sizePolicy().hasHeightForWidth())
+        self.resetTokenTitle.setSizePolicy(sizePolicy)
+        self.resetTokenTitle.setObjectName("resetTokenTitle")
+        self.resetTokenLayout.addWidget(self.resetTokenTitle, 0, 0, 1, 1)
+        spacerItem2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.resetTokenLayout.addItem(spacerItem2, 0, 1, 2, 1)
+        self.resetTokenBtn = FilledPushButton(self.resetTokenWidget)
+        self.resetTokenBtn.setObjectName("resetTokenBtn")
+        self.resetTokenLayout.addWidget(self.resetTokenBtn, 0, 3, 2, 1)
+        self.resetTokenTip = BodyLabel(self.resetTokenWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.resetTokenTip.sizePolicy().hasHeightForWidth())
+        self.resetTokenTip.setSizePolicy(sizePolicy)
+        self.resetTokenTip.setObjectName("resetTokenTip")
+        self.resetTokenLayout.addWidget(self.resetTokenTip, 1, 0, 1, 1)
+        self.copyTokenBtn = TonalPushButton(self.resetTokenWidget)
+        self.copyTokenBtn.setObjectName("copyTokenBtn")
+        self.resetTokenLayout.addWidget(self.copyTokenBtn, 0, 2, 2, 1)
+        self.accountAndSecurityLayout.addWidget(self.resetTokenWidget)
+        self.settingsLayout.addWidget(self.accountAndSecurityWidget)
         self.frpcSettingsTitle = SubtitleLabel(self.settingsSC)
         sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -465,6 +603,17 @@ class SettingsPage(QWidget, SettingsController):
         self.bypassSystemProxySwitchBtn.setChecked(True)
         self.manualCheckUpdateBtn.setIcon(FIF.UPDATE)
         self.TitleLabel.setText("设置")
+        self.accountAndSecuritySettingsTitle.setText("账户与安全")
+        self.currentAccountTitle.setText("当前登录账户")
+        self.logoutCurrentAccountBtn.setText("退出登录")
+        self.currentAccountTip.setText("[当前账户]")
+        self.resetPwdTitle.setText("重置密码")
+        self.resetPwdBtn.setText("重置")
+        self.resetPwdTip.setText("当泄露密码时，请立刻重置。")
+        self.resetTokenTitle.setText("账户 Token")
+        self.resetTokenBtn.setText("重置")
+        self.resetTokenTip.setText("如果您的 Token不慎泄露，请立刻重置。")
+        self.copyTokenBtn.setText("复制 Token")
         self.frpcSettingsTitle.setText("Frpc 设置")
         self.runFrpcTitle.setText("Frpc 启动方式")
         self.runFrpcTip.setText("注意：选择 frpc.ini 启动时，高级配置选项才会生效。")
@@ -529,6 +678,13 @@ class SettingsPage(QWidget, SettingsController):
 
         self.autoCheckUpdateSwitchBtn.setChecked(cfg.get(cfg.autoCheckUpdate))
         self.connectSettingsSlot()
+        self.updateAccountStatus()
+
+    def updateAccountStatus(self):
+        """更新账户状态"""
+        self.currentAccountTip.setText(
+            "已登录：{username}".format(username=getUser()) if cfg.get(cfg.userName) else "未登录"
+        )
 
     def connectSettingsSlot(self):
         self.runFrpcEZRadioBtn.clicked.connect(self.runFrpcTypeControl)
@@ -552,6 +708,10 @@ class SettingsPage(QWidget, SettingsController):
             )
         )
         self.manualCheckUpdateBtn.clicked.connect(lambda: self.checkUpdate(parent=self))
+        self.copyTokenBtn.clicked.connect(self.copyToken)
+        self.logoutCurrentAccountBtn.clicked.connect(self.logoutAccountFunc)
+        self.resetTokenBtn.clicked.connect(self.resetUserTokenPreFunc)
+        self.resetPwdBtn.clicked.connect(self.resetPasswordPreFunc)
 
     def checkUpdate(self, parent):
         """
@@ -623,3 +783,125 @@ class SettingsPage(QWidget, SettingsController):
                 )
 
         self.manualCheckUpdateBtn.setEnabled(True)
+
+    def copyToken(self):
+        """复制Token"""
+        QApplication.clipboard().setText(getToken())
+        InfoBar.success(
+            title="已复制",
+            content="请妥善保存，切勿泄露。\n已经泄露的请立即重置！",
+            duration=1500,
+            position=InfoBarPosition.TOP,
+            parent=self,
+        )
+
+    def logoutAccountFunc(self):
+        """退出登录确认"""
+        w = MessageBox(
+            title="退出登录",
+            content="您确定要退出当前账户吗？\n\n你将需要重新登录才能获得此账户的访问权限。\n",
+            parent=self,
+        )
+        w.yesButton.clicked.connect(self.doLogoutAccount)
+        w.yesButton.setText(" 退出 ")
+        w.cancelButton.setText(" 取消 ")
+        w.exec()
+
+    def doLogoutAccount(self):
+        """退出登录"""
+        cfg.set(cfg.userName, "")
+        cfg.set(cfg.userPassword, "")
+        cfg.set(cfg.userAuthorization, "")
+        cfg.set(cfg.isFirstGuideFinished, False)
+        self.parent().parent().parent().runFirstGuide()
+
+    def resetUserTokenPreFunc(self):
+        w = MessageBox(
+            title="重置 Token",
+            content="确认重置 Token 吗？当前 Token 将会失效。",
+            icon=FIF.FINGERPRINT,
+            parent=self,
+        )
+        w.yesButton.setText("确定")
+        w.yesButton.clicked.connect(self.resetUserTokenFunc)
+        w.cancelButton.setText("取消")
+        w.exec()
+
+    def resetUserTokenFunc(self):
+        if hasattr(self, "resetUserTokenThread"):
+            if self.resetUserTokenThread.isRunning():
+                return
+        self.resetUserTokenThread = self.resetUserTokenAPI()
+        self.resetUserTokenThread.returnSlot.connect(self.resetUserTokenAPIParser)
+        self.resetUserTokenThread.start()
+
+    @pyqtSlot(JSONReturnModel)
+    def resetUserTokenAPIParser(self, model: JSONReturnModel):
+        attr = "success"
+        if model.status != 200 or model.message != "Token更新成功":
+            attr = "error"
+        else:
+            pass
+
+        getattr(InfoBar, attr)(
+            title=("错误" if attr == "error" else "成功"),
+            content=model.message,
+            duration=1500,
+            position=InfoBarPosition.TOP,
+            parent=self,
+        )
+        if attr == "success":
+            updateToken(model.data["newToken"])
+            self.parent().parent().parent().homePage.getUserInfoFunc()
+            self.parent().parent().parent().homePage.userGetSignInfoFunc()
+
+    def resetPasswordPreFunc(self):
+        w = MessageBox(
+            title="重置密码",
+            content="若您确实需要重置密码，请在下方输入新密码，然后点击“提交”按钮。\n",  # noqa: E501
+            parent=self,
+        )
+        w.textLayout.addWidget(oldPwdLineEdit := LineEdit(w))
+        oldPwdLineEdit.setEchoMode(QLineEdit.Password)
+        oldPwdLineEdit.setPlaceholderText("旧密码")
+        w.textLayout.addWidget(newPwdLineEdit := LineEdit(w))
+        newPwdLineEdit.setEchoMode(QLineEdit.Password)
+        newPwdLineEdit.setPlaceholderText("新密码")
+        w.yesButton.setText("提交")
+        w.yesButton.clicked.connect(
+            lambda: self.resetPasswordFunc(
+                oldPwd=oldPwdLineEdit.text(), newPwd=newPwdLineEdit.text()
+            )
+        )
+        w.exec()
+
+    def resetPasswordFunc(self, oldPwd: str, newPwd: str):
+        if hasattr(self, "resetPassword"):
+            if self.resetPassword.isRunning():
+                return
+        self.resetPassword = self.resetPasswordAPI(old=oldPwd, new=newPwd)
+        self.resetPassword.returnSlot.connect(
+            lambda r: self.resetPasswordAPIParser(model=r, pwd=newPwd)
+        )
+        self.resetPassword.start()
+
+    @pyqtSlot(JSONReturnModel)
+    def resetPasswordAPIParser(self, model: JSONReturnModel, pwd: str):
+        attr = "success"
+        if model.status != 200 or model.message != "密码重置成功，已为您自动重新登录":
+            attr = "error"
+        else:
+            pass
+
+        getattr(InfoBar, attr)(
+            title=("错误" if attr == "error" else "成功"),
+            content=model.message,
+            duration=1500,
+            position=InfoBarPosition.TOP,
+            parent=self,
+        )
+        if attr == "success":
+            updateToken(model.data["token"])
+            saveUser(getUser(), pwd)
+            self.parent().parent().parent().homePage.getUserInfoFunc()
+            self.parent().parent().parent().homePage.userGetSignInfoFunc()

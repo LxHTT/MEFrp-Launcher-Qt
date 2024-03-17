@@ -19,7 +19,6 @@ from PyQt5.QtWidgets import (
     QFrame,
     QGridLayout,
     QHBoxLayout,
-    QApplication,
 )
 from PyQt5.QtCore import Qt, QRect, QSize, QObject, pyqtSlot
 
@@ -30,13 +29,12 @@ from ..APIController import (
     UserSignThread,
     UserGetSignInfoThread,
     GetSettingThread,
-    RefreshUserTokenThread,
     JSONReturnModel,
 )
 from ..Resources import *  # noqa: F403 F401
 from ..AppController.encrypt import getToken
 from .Multiplex.ScollArea import NormalSmoothScrollArea
-from .Multiplex.UserInfoWidgets import UserInfoAvatarWidget, UserInfoPushWidget, UserInfoWidget
+from .Multiplex.UserInfoWidgets import UserInfoAvatarWidget, UserInfoWidget
 
 from qmaterialwidgets import (
     BodyLabel,
@@ -61,9 +59,6 @@ class HomeAPI(QObject):
 
     def getSysSettingAPI(self) -> GetSettingThread:
         return GetSettingThread(parent=self)
-
-    def refreshUserTokenAPI(self) -> RefreshUserTokenThread:
-        return RefreshUserTokenThread(authorization=getToken(), parent=self)
 
     def userSignAPI(self) -> UserSignThread:
         return UserSignThread(authorization=getToken(), parent=self)
@@ -300,46 +295,6 @@ class HomePage(QWidget, HomeAPI):
                 position=InfoBarPosition.TOP,
                 parent=self,
             )
-
-    def refreshUserTokenPreFunc(self):
-        w = MessageBox(
-            title="确认重置Token？",
-            content="确认重置 Token 吗？这将使当前 Token 失效并生成新的 Token。",
-            icon=FIF.FINGERPRINT,
-            parent=self,
-        )
-        w.yesButton.setText("确定")
-        w.yesButton.clicked.connect(self.refreshUserTokenFunc)
-        w.cancelButton.setText("取消")
-        w.exec()
-
-    def refreshUserTokenFunc(self):
-        if hasattr(self, "refreshUserTokenThread"):
-            if self.refreshUserTokenThread.isRunning():
-                return
-        self.refreshUserTokenThread = self.refreshUserTokenAPI()
-        self.refreshUserTokenThread.returnSlot.connect(self.refreshUserTokenAPIParser)
-        self.refreshUserTokenThread.start()
-
-    @pyqtSlot(JSONReturnModel)
-    def refreshUserTokenAPIParser(self, model: JSONReturnModel):
-        attr = "success"
-        if model.status != 200 or model.message != "Token更新成功":
-            attr = "error"
-        else:
-            pass
-
-        getattr(InfoBar, attr)(
-            title=("错误" if attr == "error" else "成功"),
-            content=model.message,
-            duration=1500,
-            position=InfoBarPosition.TOP,
-            parent=self,
-        )
-        if attr == "success":
-            updateToken(model.data["newToken"])
-            self.getUserInfoFunc()
-            self.userGetSignInfoFunc()
 
     def getSysSettingFunc(self):
         if hasattr(self, "getSysSettingThread"):

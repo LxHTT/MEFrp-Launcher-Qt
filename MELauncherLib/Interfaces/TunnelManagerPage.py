@@ -145,7 +145,7 @@ class TunnelManagerPage(QWidget, TunnelManagerAPI):
         self.editTunnelMessageBox.yesButton.clicked.connect(self.editTunnelFunc)
         self.editTunnelMessageBox.cancelButton.setText("取消")
         self.editTunnelMessageBox.textLayout.addWidget(self.editTunnelWidget)
-        self.editTunnelMessageBox.exec_()
+        self.editTunnelMessageBox.exec()
 
     def editTunnelFunc(self):
         self.editTunnelMessageBox.yesButton.setEnabled(False)
@@ -185,7 +185,7 @@ class TunnelManagerPage(QWidget, TunnelManagerAPI):
         w.yesButton.setText("确定")
         w.yesButton.clicked.connect(lambda: self.deleteTunnelFunc(id))
         w.cancelButton.setText("取消")
-        w.exec_()
+        w.exec()
 
     def deleteTunnelFunc(self, id: int):
         if hasattr(self, "deleteTunnelThread"):
@@ -233,7 +233,7 @@ class TunnelManagerPage(QWidget, TunnelManagerAPI):
             w.cancelButton.clicked.connect(
                 lambda: self.runTunnel(tunnelId=tunnelId, isUpdateConfig=True, sender=sd)
             )
-            w.exec_()
+            w.exec()
         else:
             self.closeTunnel(tunnelId=tunnelId)
 
@@ -260,7 +260,7 @@ class TunnelManagerPage(QWidget, TunnelManagerAPI):
                     "config/{tunnelId}.ini".format(tunnelId=tunnelId), t.toPlainText()
                 )
             )
-            w.exec_()
+            w.exec()
             del config
         else:
             e = MessageBox(
@@ -270,7 +270,7 @@ class TunnelManagerPage(QWidget, TunnelManagerAPI):
                 parent=self,
             )
             e.cancelButton.setParent(None)
-            e.exec_()
+            e.exec()
 
     def runTunnel(self, tunnelId: int, isUpdateConfig: bool, sender):
         launchModeDict = {"Easy": FrpcLaunchMode.EasyMode, "Config": FrpcLaunchMode.ConfigMode}

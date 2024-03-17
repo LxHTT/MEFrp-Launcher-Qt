@@ -123,7 +123,7 @@ class FrpcLogPage(QWidget):
         saveLogFileDialog.setAcceptMode(QFileDialog.AcceptSave)
         saveLogFileDialog.setNameFilter("Log Files (*.log);;Text Files (*.txt)")
         saveLogFileDialog.selectFile("Frpc.log")
-        if saveLogFileDialog.exec_() == QFileDialog.Accepted:
+        if saveLogFileDialog.exec() == QFileDialog.Accepted:
             try:
                 writeFile(
                     file=saveLogFileDialog.selectedFiles()[0],

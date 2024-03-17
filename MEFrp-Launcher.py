@@ -41,6 +41,6 @@ if __name__ == "__main__":
     from MELauncherLib.Interfaces.MainWindow import MEMainWindow
     w = MEMainWindow()
 
-    app.exec_()
+    app.exec()
     sys.exit()
     # fmt: on

@@ -175,7 +175,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>使用ME Frp账户登录以使用此启动器的所有功能。</string>
+          <string>使用 ME Frp账户登录以使用此启动器的所有功能。</string>
          </property>
         </widget>
        </item>
@@ -207,7 +207,7 @@
           </size>
          </property>
          <property name="text">
-          <string>我还没有ME Frp账户</string>
+          <string>我还没有 ME Frp 账户</string>
          </property>
         </widget>
        </item>
@@ -226,7 +226,7 @@
           </size>
          </property>
          <property name="text">
-          <string>我已有ME Frp账户</string>
+          <string>我已有 ME Frp 账户</string>
          </property>
         </widget>
        </item>
@@ -255,7 +255,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>ME Frp账户</string>
+          <string>ME Frp 账户</string>
          </property>
         </widget>
        </item>
@@ -578,7 +578,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>登录ME Frp账户</string>
+          <string>登录 ME Frp 账户</string>
          </property>
         </widget>
        </item>
@@ -659,7 +659,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>找回ME Frp账户</string>
+          <string>找回 ME Frp 账户</string>
          </property>
         </widget>
        </item>
@@ -1091,7 +1091,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>注册ME Frp账户</string>
+          <string>注册 ME Frp 账户</string>
          </property>
         </widget>
        </item>

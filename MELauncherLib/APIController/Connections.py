@@ -35,6 +35,7 @@ from MEFrpLib import (
     me_forgot_password,
     me_get_setting,
     me_get_free_port,
+    me_reset_password,
 )
 from MEFrpLib.models import JSONReturnModel, TextReturnModel
 from ..AppController.Settings import cfg
@@ -468,6 +469,26 @@ class GetFreePortThread(BaseJSONThread):
                 authorization=self.authorization,
                 id=self.id,
                 protocol=self.protocol,
+                bypass_proxy=self.bypass_proxy,
+                ua=USER_AGENT,
+            )
+        )
+
+
+class ResetPasswordThread(BaseJSONThread):
+    def __init__(self, authorization: str, old: str, new: str, parent=None):
+        super().__init__(parent)
+        self.authorization = authorization
+        self.old = old
+        self.new = new
+        self.bypass_proxy = cfg.get(cfg.bypassProxy)
+
+    def run(self):
+        self.returnSlot.emit(
+            me_reset_password(
+                authorization=self.authorization,
+                old_password=self.old,
+                password=self.new,
                 bypass_proxy=self.bypass_proxy,
                 ua=USER_AGENT,
             )

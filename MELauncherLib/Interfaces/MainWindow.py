@@ -77,8 +77,8 @@ class MEMainWindow(BaseWindowClass):
         super().__init__()
 
         self.setupSystemTray()
-        self.oldHook = sys.excepthook
-        sys.excepthook = self.catchExceptions
+        # self.oldHook = sys.excepthook
+        # sys.excepthook = self.catchExceptions
         self.titleBar.setParent(None)
         self.titleBar.deleteLater()
 
@@ -140,7 +140,7 @@ class MEMainWindow(BaseWindowClass):
             )
             box.cancelButton.setParent(None)
             box.cancelButton.deleteLater()
-            box.exec_()
+            box.exec()
             return
 
         # close thread pool
@@ -208,7 +208,7 @@ class MEMainWindow(BaseWindowClass):
                 parent=self,
             )
             w.cancelButton.setParent(None)
-            w.exec_()
+            w.exec()
         else:
             pass
         if not cfg.get(cfg.isFirstGuideFinished):
@@ -265,7 +265,7 @@ class MEMainWindow(BaseWindowClass):
             box.cancelButton.clicked.connect(box.deleteLater)
             box.yesButton.clicked.connect(exceptionWidget.deleteLater)
             box.cancelButton.clicked.connect(exceptionWidget.deleteLater)
-            box.exec_()
+            box.exec()
             return self.oldHook(ty, value, _traceback)
 
     def runFirstGuide(self):
@@ -275,12 +275,14 @@ class MEMainWindow(BaseWindowClass):
         from .Multiplex.FirstGuide import GuideInterface
 
         self.guideInterface = GuideInterface(self)
+        self.guideInterface.finish.connect(self.settingsPage.updateAccountStatus)
         self.guideInterface.finish.connect(self.homePage.getUserInfoFunc)
         self.guideInterface.finish.connect(self.homePage.userGetSignInfoFunc)
         self.guideInterface.show()
         self.guideInterface.raise_()
         self.resize(self.width() - 1, self.height() - 1)
         self.resize(self.width() + 1, self.height() + 1)
+        self.stackedWidget.setCurrentWidget(self.homePage)
         self.titleBar.raise_()
 
     def runReLogin(self):
@@ -306,6 +308,7 @@ class MEMainWindow(BaseWindowClass):
             parent=self,
         )
         if attr == "success":
+            self.settingsPage.updateAccountStatus()
             updateToken(model.data["access_token"])
             saveUser(getUser(), getPassword())
             self.homePage.getUserInfoFunc()

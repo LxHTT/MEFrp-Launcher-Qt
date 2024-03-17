@@ -1,4 +1,5 @@
 from .Connections import (
+    ResetPasswordThread,  # noqa: F401
     GetUserInfoThread,  # noqa: F401
     UserGetSignInfoThread,  # noqa: F401
     UserSignThread,  # noqa: F401
