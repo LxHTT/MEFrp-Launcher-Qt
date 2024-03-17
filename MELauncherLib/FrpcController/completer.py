@@ -20,13 +20,12 @@ from zipfile import ZipFile
 from .. import FRPC_VERSION
 
 frpcDownloadInfo = {
-    "darwin_amd64": f"https://jn.sv.ztsin.cn:5244/d/alistfile/MEFrp/MirrorEdgeFrp_{FRPC_VERSION}_darwin_amd64.tar.gz",
-    "darwin_arm64": f"https://jn.sv.ztsin.cn:5244/d/alistfile/MEFrp/MirrorEdgeFrp_{FRPC_VERSION}_darwin_arm64.tar.gz",
-    "linux_amd64": f"https://jn.sv.ztsin.cn:5244/d/alistfile/MEFrp/MirrorEdgeFrp_{FRPC_VERSION}_linux_amd64.tar.gz",
-    "linux_arm64": f"https://jn.sv.ztsin.cn:5244/d/alistfile/MEFrp/MirrorEdgeFrp_{FRPC_VERSION}_linux_arm64.tar.gz",
-    "windows_amd64": f"https://jn.sv.ztsin.cn:5244/d/alistfile/MEFrp/MirrorEdgeFrp_{FRPC_VERSION}_windows_amd64.zip",
-    "windows_arm64": f"https://jn.sv.ztsin.cn:5244/d/alistfile/MEFrp/MirrorEdgeFrp_{FRPC_VERSION}_windows_arm64.zip",
-    "windows_386": "https://jn.sv.ztsin.cn:5244/d/alistfile/MEFrp/MirrorEdgeFrp_0.51.3_windows_386.zip",
+    "darwin_amd64": f"https://mecdn.mcserverx.com/mefrp/MirrorEdgeFrp_{FRPC_VERSION}_darwin_amd64.tar.gz",
+    "darwin_arm64": f"https://mecdn.mcserverx.com/mefrp/MirrorEdgeFrp_{FRPC_VERSION}_darwin_arm64.tar.gz",
+    "linux_amd64": f"https://mecdn.mcserverx.com/mefrp/MirrorEdgeFrp_{FRPC_VERSION}_linux_amd64.tar.gz",
+    "linux_arm64": f"https://mecdn.mcserverx.com/mefrp/MirrorEdgeFrp_{FRPC_VERSION}_linux_arm64.tar.gz",
+    "windows_amd64": f"https://mecdn.mcserverx.com/mefrp/MirrorEdgeFrp_{FRPC_VERSION}_windows_amd64.zip",
+    "windows_arm64": f"https://mecdn.mcserverx.com/mefrp/MirrorEdgeFrp_{FRPC_VERSION}_windows_arm64.zip",
 }
 
 
