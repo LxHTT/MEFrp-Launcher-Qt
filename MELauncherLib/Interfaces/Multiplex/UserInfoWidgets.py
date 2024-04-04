@@ -14,7 +14,7 @@
 from PyQt5.QtWidgets import QWidget, QSizePolicy, QHBoxLayout
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QPixmap
-from qmaterialwidgets import BodyLabel, ImageLabel, StrongBodyLabel, TonalPushButton
+from qmaterialwidgets import BodyLabel, ImageLabel, StrongBodyLabel
 from ...Resources import *  # noqa: F403 F401
 
 

@@ -16,14 +16,12 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
     QSpacerItem,
     QSizePolicy,
-    QFrame,
     QGridLayout,
     QHBoxLayout,
 )
 from PyQt5.QtCore import Qt, QRect, QSize, QObject, pyqtSlot
 
 from ..AppController.Utils import check24HoursPassed
-from ..AppController.encrypt import updateToken
 from ..APIController import (
     GetUserInfoThread,
     UserSignThread,
@@ -41,12 +39,11 @@ from qmaterialwidgets import (
     OutlinedCardWidget,
     SubtitleLabel,
     TitleLabel,
-    MessageBox,
+    InfoBarIcon,
     InfoBar,
     InfoBarPosition,
     TextWrap,
     TonalPushButton,
-    FluentIcon as FIF,
 )
 
 
@@ -76,37 +73,7 @@ class HomePage(QWidget, HomeAPI):
         self.gridLayout = QGridLayout(self)
         self.gridLayout.setObjectName("gridLayout")
         spacerItem = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
-        self.gridLayout.addItem(spacerItem, 1, 0, 1, 2)
-        self.frpcStatusWidget = OutlinedCardWidget(self)
-        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.frpcStatusWidget.sizePolicy().hasHeightForWidth())
-        self.frpcStatusWidget.setSizePolicy(sizePolicy)
-        self.frpcStatusWidget.setMinimumSize(QSize(0, 100))
-        self.frpcStatusWidget.setMaximumSize(QSize(16777215, 100))
-        self.frpcStatusWidget.setObjectName("frpcStatusWidget")
-        self.frpcStatusLayout = QHBoxLayout(self.frpcStatusWidget)
-        self.frpcStatusLayout.setContentsMargins(25, -1, -1, -1)
-        self.frpcStatusLayout.setObjectName("frpcStatusLayout")
-        self.frpcStatusTitle = SubtitleLabel(self.frpcStatusWidget)
-        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.frpcStatusTitle.sizePolicy().hasHeightForWidth())
-        self.frpcStatusTitle.setSizePolicy(sizePolicy)
-        self.frpcStatusTitle.setObjectName("frpcStatusTitle")
-        self.frpcStatusLayout.addWidget(self.frpcStatusTitle)
-        self.frpcStatusContent = BodyLabel(self.frpcStatusWidget)
-        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.frpcStatusContent.sizePolicy().hasHeightForWidth())
-        self.frpcStatusContent.setSizePolicy(sizePolicy)
-        self.frpcStatusContent.setText("")
-        self.frpcStatusContent.setObjectName("frpcStatusContent")
-        self.frpcStatusLayout.addWidget(self.frpcStatusContent)
-        self.gridLayout.addWidget(self.frpcStatusWidget, 7, 1, 1, 1)
+        self.gridLayout.addItem(spacerItem, 1, 0, 1, 3)
         self.TitleLabel = TitleLabel(self)
         sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -114,15 +81,100 @@ class HomePage(QWidget, HomeAPI):
         sizePolicy.setHeightForWidth(self.TitleLabel.sizePolicy().hasHeightForWidth())
         self.TitleLabel.setSizePolicy(sizePolicy)
         self.TitleLabel.setObjectName("TitleLabel")
-        self.gridLayout.addWidget(self.TitleLabel, 0, 0, 1, 1)
-        self.userSignWidget = OutlinedCardWidget(self)
+        self.gridLayout.addWidget(self.TitleLabel, 0, 0, 1, 2)
+        self.announcementWidget = OutlinedCardWidget(self)
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.announcementWidget.sizePolicy().hasHeightForWidth())
+        self.announcementWidget.setSizePolicy(sizePolicy)
+        self.announcementWidget.setObjectName("announcementWidget")
+        self.verticalLayout = QVBoxLayout(self.announcementWidget)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.announcementTitle = SubtitleLabel(self.announcementWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.announcementTitle.sizePolicy().hasHeightForWidth())
+        self.announcementTitle.setSizePolicy(sizePolicy)
+        self.announcementTitle.setObjectName("announcementTitle")
+        self.verticalLayout.addWidget(self.announcementTitle)
+        self.announcementContentSC = NormalSmoothScrollArea(self.announcementWidget)
+        self.announcementContentSC.setWidgetResizable(True)
+        self.announcementContentSC.setObjectName("announcementContentSC")
+        self.announcementContentSCWidget = QWidget()
+        self.announcementContentSCWidget.setGeometry(QRect(0, 0, 376, 375))
+        self.announcementContentSCWidget.setObjectName("announcementContentSCWidget")
+        self.announcementContentLayout = QGridLayout(self.announcementContentSCWidget)
+        self.announcementContentLayout.setContentsMargins(6, 6, 6, 6)
+        self.announcementContentLayout.setSpacing(4)
+        self.announcementContentLayout.setObjectName("announcementContentLayout")
+        self.announcementContent = BodyLabel(self.announcementContentSCWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.announcementContent.sizePolicy().hasHeightForWidth())
+        self.announcementContent.setSizePolicy(sizePolicy)
+        self.announcementContent.setOpenExternalLinks(True)
+        self.announcementContent.setTextFormat(Qt.MarkdownText)
+        self.announcementContent.setAlignment(Qt.AlignLeading | Qt.AlignLeft | Qt.AlignTop)
+        self.announcementContent.setObjectName("announcementContent")
+        self.announcementContentLayout.addWidget(self.announcementContent, 0, 0, 1, 1)
+        self.announcementContentSC.setWidget(self.announcementContentSCWidget)
+        self.verticalLayout.addWidget(self.announcementContentSC)
+        self.gridLayout.addWidget(self.announcementWidget, 3, 2, 1, 1)
+        self.serviceStatusWidget = QWidget(self)
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.serviceStatusWidget.sizePolicy().hasHeightForWidth())
+        self.serviceStatusWidget.setSizePolicy(sizePolicy)
+        self.serviceStatusWidget.setMinimumSize(QSize(0, 50))
+        self.serviceStatusWidget.setObjectName("serviceStatusWidget")
+        self.serviceStatusLayout = QVBoxLayout(self.serviceStatusWidget)
+        self.serviceStatusLayout.setContentsMargins(0, 0, 0, 0)
+        self.serviceStatusLayout.setSpacing(0)
+        self.serviceStatusLayout.setObjectName("serviceStatusLayout")
+        self.gridLayout.addWidget(self.serviceStatusWidget, 2, 2, 1, 1)
+        self.homePageSC = NormalSmoothScrollArea(self)
+        self.homePageSC.setMinimumSize(QSize(270, 0))
+        self.homePageSC.setWidgetResizable(True)
+        self.homePageSC.setObjectName("homePageSC")
+        self.homePageSCWidget = QWidget()
+        self.homePageSCWidget.setGeometry(QRect(0, 0, 274, 516))
+        self.homePageSCWidget.setObjectName("homePageSCWidget")
+        self.homePageSCLayout = QGridLayout(self.homePageSCWidget)
+        self.homePageSCLayout.setContentsMargins(0, 0, 0, 0)
+        self.homePageSCLayout.setHorizontalSpacing(4)
+        self.homePageSCLayout.setVerticalSpacing(8)
+        self.homePageSCLayout.setObjectName("homePageSCLayout")
+        self.userInfoWidget = OutlinedCardWidget(self.homePageSCWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.userInfoWidget.sizePolicy().hasHeightForWidth())
+        self.userInfoWidget.setSizePolicy(sizePolicy)
+        self.userInfoWidget.setFixedSize(QSize(270, 300))
+        self.userInfoWidget.setObjectName("userInfoWidget")
+        self.userInfoLayout = QVBoxLayout(self.userInfoWidget)
+        self.userInfoLayout.setObjectName("userInfoLayout")
+        self.userInfoTitle = SubtitleLabel(self.userInfoWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.userInfoTitle.sizePolicy().hasHeightForWidth())
+        self.userInfoTitle.setSizePolicy(sizePolicy)
+        self.userInfoTitle.setObjectName("userInfoTitle")
+        self.userInfoLayout.addWidget(self.userInfoTitle)
+        self.homePageSCLayout.addWidget(self.userInfoWidget, 2, 0, 2, 2)
+        self.userSignWidget = OutlinedCardWidget(self.homePageSCWidget)
         sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.userSignWidget.sizePolicy().hasHeightForWidth())
         self.userSignWidget.setSizePolicy(sizePolicy)
         self.userSignWidget.setMinimumSize(QSize(270, 200))
-        self.userSignWidget.setMaximumSize(QSize(270, 200))
+        self.userSignWidget.setMaximumSize(QSize(270, 16777215))
         self.userSignWidget.setObjectName("userSignWidget")
         self.gridLayout_2 = QGridLayout(self.userSignWidget)
         self.gridLayout_2.setContentsMargins(9, -1, -1, 11)
@@ -151,84 +203,50 @@ class HomePage(QWidget, HomeAPI):
         self.userSignTitle.setSizePolicy(sizePolicy)
         self.userSignTitle.setObjectName("userSignTitle")
         self.gridLayout_2.addWidget(self.userSignTitle, 0, 0, 1, 1)
-        self.gridLayout.addWidget(self.userSignWidget, 2, 0, 1, 1)
-        self.userInfoWidget = OutlinedCardWidget(self)
-        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+        self.homePageSCLayout.addWidget(self.userSignWidget, 0, 0, 1, 1)
+        self.frpcStatusWidget = OutlinedCardWidget(self.homePageSCWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.userInfoWidget.sizePolicy().hasHeightForWidth())
-        self.userInfoWidget.setSizePolicy(sizePolicy)
-        self.userInfoWidget.setMinimumSize(QSize(270, 0))
-        self.userInfoWidget.setMaximumSize(QSize(270, 16777215))
-        self.userInfoWidget.setObjectName("userInfoWidget")
-        self.userInfoWidgetLayout = QVBoxLayout(self.userInfoWidget)
-        self.userInfoWidgetLayout.setObjectName("userInfoWidgetLayout")
-        self.userInfoTitle = SubtitleLabel(self.userInfoWidget)
+        sizePolicy.setHeightForWidth(self.frpcStatusWidget.sizePolicy().hasHeightForWidth())
+        self.frpcStatusWidget.setSizePolicy(sizePolicy)
+        self.frpcStatusWidget.setFixedSize(QSize(270, 100))
+        self.frpcStatusWidget.setObjectName("frpcStatusWidget")
+        self.frpcStatusLayout = QHBoxLayout(self.frpcStatusWidget)
+        self.frpcStatusLayout.setContentsMargins(-1, -1, -1, -1)
+        self.frpcStatusLayout.setObjectName("frpcStatusLayout")
+        self.frpcStatusTitle = SubtitleLabel(self.frpcStatusWidget)
         sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.userInfoTitle.sizePolicy().hasHeightForWidth())
-        self.userInfoTitle.setSizePolicy(sizePolicy)
-        self.userInfoTitle.setObjectName("userInfoTitle")
-        self.userInfoWidgetLayout.addWidget(self.userInfoTitle)
-        self.userInfoScrollArea = NormalSmoothScrollArea(self.userInfoWidget)
-        self.userInfoScrollArea.setFrameShape(QFrame.NoFrame)
-        self.userInfoScrollArea.setFrameShadow(QFrame.Plain)
-        self.userInfoScrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.userInfoScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.userInfoScrollArea.setWidgetResizable(True)
-        self.userInfoScrollArea.setAlignment(Qt.AlignCenter)
-        self.userInfoScrollArea.setObjectName("userInfoScrollArea")
-        self.userInfoSC = QWidget()
-        self.userInfoSC.setGeometry(QRect(0, 0, 252, 217))
-        self.userInfoSC.setObjectName("userInfoSC")
-        self.userInfoSCFakeLayout = QVBoxLayout(self.userInfoSC)
-        self.userInfoSCFakeLayout.setContentsMargins(0, 0, 0, 0)
-        self.userInfoSCFakeLayout.setObjectName("userInfoSCFakeLayout")
-        self.userInfoSCRealLayout = QVBoxLayout()
-        self.userInfoSCRealLayout.setObjectName("userInfoSCRealLayout")
-        self.userInfoSCFakeLayout.addLayout(self.userInfoSCRealLayout)
-        self.userInfoScrollArea.setWidget(self.userInfoSC)
-        self.userInfoWidgetLayout.addWidget(self.userInfoScrollArea)
-        self.gridLayout.addWidget(self.userInfoWidget, 3, 0, 5, 1)
-        self.announcementWidget = OutlinedCardWidget(self)
+        sizePolicy.setHeightForWidth(self.frpcStatusTitle.sizePolicy().hasHeightForWidth())
+        self.frpcStatusTitle.setSizePolicy(sizePolicy)
+        self.frpcStatusTitle.setObjectName("frpcStatusTitle")
+        self.frpcStatusLayout.addWidget(self.frpcStatusTitle)
+        self.frpcStatusContent = BodyLabel(self.frpcStatusWidget)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.announcementWidget.sizePolicy().hasHeightForWidth())
-        self.announcementWidget.setSizePolicy(sizePolicy)
-        self.announcementWidget.setObjectName("announcementWidget")
-        self.verticalLayout = QVBoxLayout(self.announcementWidget)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.announcementTitle = SubtitleLabel(self.announcementWidget)
-        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.announcementTitle.sizePolicy().hasHeightForWidth())
-        self.announcementTitle.setSizePolicy(sizePolicy)
-        self.announcementTitle.setObjectName("announcementTitle")
-        self.verticalLayout.addWidget(self.announcementTitle)
-        self.announcementContent = BodyLabel(self.announcementWidget)
-        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.announcementContent.sizePolicy().hasHeightForWidth())
-        self.announcementContent.setSizePolicy(sizePolicy)
-        self.announcementContent.setText("")
-        self.announcementContent.setObjectName("announcementContent")
-        self.verticalLayout.addWidget(self.announcementContent)
-        self.gridLayout.addWidget(self.announcementWidget, 2, 1, 5, 1)
+        sizePolicy.setHeightForWidth(self.frpcStatusContent.sizePolicy().hasHeightForWidth())
+        self.frpcStatusContent.setSizePolicy(sizePolicy)
+        self.frpcStatusContent.setText("")
+        self.frpcStatusContent.setObjectName("frpcStatusContent")
+        self.frpcStatusLayout.addWidget(self.frpcStatusContent)
+        self.homePageSCLayout.addWidget(self.frpcStatusWidget, 1, 0, 1, 1)
+        self.homePageSC.setWidget(self.homePageSCWidget)
+        self.gridLayout.addWidget(self.homePageSC, 2, 0, 2, 2)
 
+        self.frpcStatusContent.setText("")
         self.TitleLabel.setText("主页")
         self.announcementTitle.setText(" 公告")
         self.userInfoTitle.setText(" 用户信息")
-        self.frpcStatusTitle.setText("Frpc客户端状态")
+        self.frpcStatusTitle.setText(" Frpc")
         self.userSignTitle.setText(" 签到")
         self.userSignBtn.setText("签到")
         self.userSignBtn.setEnabled(False)
         self.userSignBtn.clicked.connect(self.userSignFunc)
         self.announcementContent.setAlignment(Qt.AlignLeading | Qt.AlignLeft | Qt.AlignTop)
-        self.spacerItem = QSpacerItem(20, 10, QSizePolicy.Fixed, QSizePolicy.Expanding)
+        self.announcementContent.setWordWrap(True)
 
     def getUserInfoFunc(self):
         if hasattr(self, "getUserInfoThread"):
@@ -241,52 +259,47 @@ class HomePage(QWidget, HomeAPI):
     @pyqtSlot(JSONReturnModel)
     def getUserInfoAPIParser(self, model: JSONReturnModel):
         if model.status == 200 or model.message == "Success!":
-            try:
-                self.userInfoSCRealLayout.removeItem(self.spacerItem)
-            except Exception:
-                pass
-            for i in reversed(range(self.userInfoSCRealLayout.count())):
+            for i in reversed(range(self.userInfoLayout.count())):
                 try:
-                    if self.userInfoSCRealLayout.itemAt(i).widget().objectName() != "userInfoTitle":
-                        self.userInfoSCRealLayout.itemAt(i).widget().setParent(None)
+                    if self.userInfoLayout.itemAt(i).widget().objectName() != "userInfoTitle":
+                        self.userInfoLayout.itemAt(i).widget().setParent(None)
                     else:
                         pass
                 except AttributeError:
                     pass
                 try:
-                    if self.userInfoSCRealLayout.itemAt(i).widget().objectName() != "userInfoTitle":
-                        self.userInfoSCRealLayout.itemAt(i).widget().deleteLater()
+                    if self.userInfoLayout.itemAt(i).widget().objectName() != "userInfoTitle":
+                        self.userInfoLayout.itemAt(i).widget().deleteLater()
                     else:
                         pass
-                    del self.userInfoSCRealLayout.itemAt(i).widget
+                    del self.userInfoLayout.itemAt(i).widget
                 except AttributeError:
                     pass
 
-            self.userInfoSCRealLayout.addWidget(
-                UserInfoAvatarWidget(model.data["username"], self.userInfoSC)
+            self.userInfoLayout.addWidget(
+                UserInfoAvatarWidget(model.data["username"], self.userInfoWidget)
             )
-            self.userInfoSCRealLayout.addWidget(
-                UserInfoWidget("用户ID", str(model.data["id"]), self.userInfoSC)
-            )
-
-            self.userInfoSCRealLayout.addWidget(
-                UserInfoWidget("用户组", model.data["group"], self.userInfoSC)
-            )
-            self.userInfoSCRealLayout.addWidget(
-                UserInfoWidget(
-                    "出网带宽", str(model.data["outbound"] / 128) + " Mbps", self.userInfoSC
-                )
-            )
-            self.userInfoSCRealLayout.addWidget(
-                UserInfoWidget(
-                    "剩余流量", str(model.data["traffic"] / 1024) + " GB", self.userInfoSC
-                )
+            self.userInfoLayout.addWidget(
+                UserInfoWidget("用户ID", str(model.data["id"]), self.userInfoWidget)
             )
 
-            self.userInfoSCRealLayout.addWidget(
-                UserInfoWidget("邮箱", model.data["email"], self.userInfoSC)
+            self.userInfoLayout.addWidget(
+                UserInfoWidget("用户组", model.data["group"], self.userInfoWidget)
             )
-            self.userInfoSCRealLayout.addItem(self.spacerItem)
+            self.userInfoLayout.addWidget(
+                UserInfoWidget(
+                    "出网带宽", str(model.data["outbound"] / 128) + " Mbps", self.userInfoWidget
+                )
+            )
+            self.userInfoLayout.addWidget(
+                UserInfoWidget(
+                    "剩余流量", str(model.data["traffic"] / 1024) + " GB", self.userInfoWidget
+                )
+            )
+
+            self.userInfoLayout.addWidget(
+                UserInfoWidget("邮箱", model.data["email"], self.userInfoWidget)
+            )
         else:
             InfoBar.error(
                 title="错误",
@@ -307,30 +320,52 @@ class HomePage(QWidget, HomeAPI):
     @pyqtSlot(JSONReturnModel)
     def getSysSettingAPIParser(self, model: JSONReturnModel):
         if model.status == 200 or model.message == "成功":
-            alertText = "\n\n\n"
-            if model.data["alert"]["error"]["title"] != "null":
-                alertText += f"  运行异常！\n  {model.data['alert']['error']['content']}\n"
-            else:
-                alertText += f"  运行正常\n  {model.data['alert']['info']['content']}\n"
+            for i in reversed(range(self.serviceStatusLayout.count())):
+                try:
+                    self.serviceStatusLayout.itemAt(i).widget().setParent(None)
+                except AttributeError:
+                    pass
+                try:
+                    self.serviceStatusLayout.itemAt(i).widget().deleteLater()
+                    del self.serviceStatusLayout.itemAt(i).widget
+                except AttributeError:
+                    pass
+            self.serviceStatusInfoBar = InfoBar(
+                icon=InfoBarIcon.SUCCESS
+                if model.data["alert"]["error"]["title"] == "null"
+                else InfoBarIcon.ERROR,
+                title="服务正常" if model.data["alert"]["error"]["title"] == "null" else "服务异常",
+                content=model.data["alert"]["info"]["content"]
+                if model.data["alert"]["error"]["title"] == "null"
+                else model.data["alert"]["error"]["content"],
+                orient=Qt.Horizontal,
+                isClosable=False,
+                duration=-1,
+                position=InfoBarPosition.NONE,
+                parent=self.serviceStatusWidget,
+            )
+            sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            sizePolicy.setHorizontalStretch(0)
+            sizePolicy.setVerticalStretch(0)
+            sizePolicy.setHeightForWidth(self.serviceStatusInfoBar.sizePolicy().hasHeightForWidth())
+            self.serviceStatusInfoBar.setSizePolicy(sizePolicy)
+            self.serviceStatusLayout.addWidget(self.serviceStatusInfoBar)
             self.announcementContent.setText(
-                (
-                    "  "
-                    + TextWrap()
-                    .wrap(
-                        "  \n\n".join([
-                            str(content).replace("，", "，\n")
-                            for content in (
-                                item[1]["content"] for item in model.data["announce"].items()
-                            )
-                        ]),
-                        400,
-                        False,
-                    )[0]
-                    .replace("\n", "\n  ")
-                    if model.data["announce"] is not None
-                    else "  暂无公告"
-                )
-                + alertText
+                "  "
+                + TextWrap()
+                .wrap(
+                    "  \n\n".join([
+                        str(content).replace("，", "，\n")
+                        for content in (
+                            item[1]["content"] for item in model.data["announce"].items()
+                        )
+                    ]),
+                    400,
+                    False,
+                )[0]
+                .replace("\n", "\n  ")
+                if model.data["announce"] is not None
+                else "  暂无公告"
             )
         else:
             InfoBar.error(
