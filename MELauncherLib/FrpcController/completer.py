@@ -84,7 +84,7 @@ def checkFrpc(getVersion):
             frpc.readAll().data().decode("utf-8").replace("MirrorEdgeFrp_", "").replace("\n", "")
         )
         return (
-            "已安装，版本 {frpcVersion}".format(frpcVersion=frpcVersion)
+            " 已安装 v{frpcVersion} 版本".format(frpcVersion=frpcVersion)
             if getVersion
             else bool(frpcVersion == FRPC_VERSION)
         )
