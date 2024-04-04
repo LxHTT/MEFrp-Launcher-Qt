@@ -142,6 +142,22 @@ class AboutPage(QWidget):
         self.aboutLayout.addWidget(self.openSourceLabel)
         spacerItem3 = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
         self.aboutLayout.addItem(spacerItem3)
+        self.softwareRegTitle = SubtitleLabel(self.aboutSC)
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.softwareRegTitle.sizePolicy().hasHeightForWidth())
+        self.softwareRegTitle.setSizePolicy(sizePolicy)
+        self.softwareRegTitle.setObjectName("softwareRegTitle")
+        self.aboutLayout.addWidget(self.softwareRegTitle)
+        self.softwareRegLabel = BodyLabel(self.aboutSC)
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.softwareRegLabel.sizePolicy().hasHeightForWidth())
+        self.softwareRegLabel.setSizePolicy(sizePolicy)
+        self.softwareRegLabel.setObjectName("softwareRegLabel")
+        self.aboutLayout.addWidget(self.softwareRegLabel)
         self.openSourceProjectLabel = SubtitleLabel(self.aboutSC)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -388,6 +404,10 @@ class AboutPage(QWidget):
         self.openSourceTitle.setText("开源协议提示")
         self.openSourceLabel.setText(
             "本程序遵循 GPL-3.0 开源协议进行开源。\n您可借鉴并使用本程序源代码及思路，但不可二次分发本程序。"  # noqa: E501
+        )
+        self.softwareRegTitle.setText("计算机软件著作权提醒")
+        self.softwareRegLabel.setText(
+            "“镜缘映射MEFrp桌面启动器软件” 已进行中华人民共和国计算机软件著作权登记，一切侵权行为将依法追究。\n计算机软件著作权登记号: 2024SR0443831"  # noqa: E501
         )
         self.openSourceProjectLabel.setText("开源项目引用列表")
         self.pyqt5Title.setText("PyQt5")
