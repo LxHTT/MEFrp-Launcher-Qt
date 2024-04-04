@@ -216,24 +216,27 @@ class TunnelManagerPage(QWidget, TunnelManagerAPI):
         tunnelId = self.sender().property("id")
         sd = self.sender()
         if self.sender().isChecked():
-            w = MessageBox("启动选项", "您当前选用了 frpc.ini 启动方式。\n\n请选择您的操作：", self)
-            w.yesButton.setText("启动隧道")
-            w.cancelButton.setText("更新配置并启动")
-            editConfigBtn = TextPushButton("编辑配置")
-            editConfigBtn.clicked.connect(w.close)
-            editConfigBtn.clicked.connect(
-                lambda: self.editTunnelConfigFile(tunnelId=tunnelId, sender=sd)
-            )
-            w.buttonGroup.addButton(editConfigBtn, QDialogButtonBox.ActionRole)
-            w.yesButton.clicked.connect(
-                lambda: self.runTunnel(
-                    tunnelId=tunnelId, isUpdateConfig=False, sender=sd
+            if cfg.get(cfg.runFrpcType) == "Config":
+                w = MessageBox(
+                    "启动选项", "您当前选用了 frpc.ini 启动方式。\n\n请选择您的操作：", self
                 )
-            )
-            w.cancelButton.clicked.connect(
-                lambda: self.runTunnel(tunnelId=tunnelId, isUpdateConfig=True, sender=sd)
-            )
-            w.exec()
+                w.yesButton.setText("启动隧道")
+                w.cancelButton.setText("更新配置并启动")
+                editConfigBtn = TextPushButton("编辑配置")
+                editConfigBtn.clicked.connect(w.close)
+                editConfigBtn.clicked.connect(
+                    lambda: self.editTunnelConfigFile(tunnelId=tunnelId, sender=sd)
+                )
+                w.buttonGroup.addButton(editConfigBtn, QDialogButtonBox.ActionRole)
+                w.yesButton.clicked.connect(
+                    lambda: self.runTunnel(tunnelId=tunnelId, isUpdateConfig=False, sender=sd)
+                )
+                w.cancelButton.clicked.connect(
+                    lambda: self.runTunnel(tunnelId=tunnelId, isUpdateConfig=True, sender=sd)
+                )
+                w.exec()
+            else:
+                self.runTunnel(tunnelId=tunnelId, isUpdateConfig=False, sender=sd)
         else:
             self.closeTunnel(tunnelId=tunnelId)
 
@@ -275,7 +278,7 @@ class TunnelManagerPage(QWidget, TunnelManagerAPI):
     def runTunnel(self, tunnelId: int, isUpdateConfig: bool, sender):
         launchModeDict = {"Easy": FrpcLaunchMode.EasyMode, "Config": FrpcLaunchMode.ConfigMode}
         bridge = FrpcLauncher(
-            launchMode=launchModeDict[cfg.get(cfg.runFrpcType)],
+            launchMode=launchModeDict.get(cfg.get(cfg.runFrpcType)),
             tunnelId=tunnelId,
             isUpdateConfig=isUpdateConfig,
             parent=self,

@@ -112,7 +112,12 @@ class FrpcProcessBridge(QObject):
 
 
 class FrpcLauncher(QObject):
-    def __init__(self, launchMode: FrpcLaunchMode, tunnelId: int, isUpdateConfig: bool = False, parent=None):
+    def __init__(
+        self, launchMode: FrpcLaunchMode,
+        tunnelId: int,
+        isUpdateConfig: bool = False,
+        parent=None
+    ):
         super().__init__(parent=parent)
         self.launchMode = launchMode
         self.tunnelId = str(tunnelId)
@@ -143,7 +148,7 @@ class FrpcLauncher(QObject):
         )
         return bridge
 
-    def getTunnelConfigFunc(self):
+    def getTunnelConfigFunc(self) -> FrpcProcessBridge:
         if osp.exists("config/{id}.ini".format(id=self.tunnelId)):
             if not self.isUpdateConfig:
                 return self._launch()
