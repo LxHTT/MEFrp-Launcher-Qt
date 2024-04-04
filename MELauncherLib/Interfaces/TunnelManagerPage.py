@@ -128,7 +128,7 @@ class TunnelManagerPage(QWidget, TunnelManagerAPI):
             title="编辑隧道 “{tunnel_name}”".format(
                 tunnel_name=self.sender().property("tunnel_name")
             ),
-            content="对于HTTP / HTTPS 隧道，我们并不支持直接修改域名。\n此类用户请删除隧道重建。",
+            content="对于 HTTP / HTTPS 隧道，我们并不支持直接修改域名。\n此类用户请删除隧道重建。",
             parent=self,
         )
         self.editTunnelWidget = EditTunnelWidget(
