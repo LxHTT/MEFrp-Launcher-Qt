@@ -124,17 +124,23 @@ class FrpcLauncher(QObject):
         self.isUpdateConfig = isUpdateConfig
         self.argList = []
 
-    def constructArgs(self):
+    def _constructArgs(self):
         if self.launchMode == FrpcLaunchMode.ConfigMode:
             self.argList = ["-c", osp.abspath("config/{id}.ini".format(id=self.tunnelId))]
         else:
             self.argList = ["-t", getToken(), "-i", self.tunnelId]
 
     def setup(self):
-        self.constructArgs()
+        self._constructArgs()
         FrpcConsoleVariables.singleLogDict[str(self.tunnelId)] = []
         if self.launchMode == FrpcLaunchMode.ConfigMode:
-            return self.getTunnelConfigFunc()
+            if not self.isUpdateConfig:
+                if osp.exists("config/{id}.ini".format(id=self.tunnelId)):
+                    return self._launch()
+                else:
+                    return self._getTunnelConfigFunc()
+            else:
+                return self._getTunnelConfigFunc()
         else:
             return self._launch()
 
@@ -148,18 +154,14 @@ class FrpcLauncher(QObject):
         )
         return bridge
 
-    def getTunnelConfigFunc(self) -> FrpcProcessBridge:
-        if osp.exists("config/{id}.ini".format(id=self.tunnelId)):
-            if not self.isUpdateConfig:
-                return self._launch()
-        else:
-            self.getTunnelConfigThread = GetTunnelConfigIdThread(
-                authorization=getToken(), id=self.tunnelId, parent=self
-            )
-            self.getTunnelConfigThread.returnSlot.connect(self.getTunnelConfigAPIParser)
-            self.getTunnelConfigThread.start()
-            self.getTunnelConfigThread.wait()
-            return self._launch()
+    def _getTunnelConfigFunc(self) -> FrpcProcessBridge:
+        self.getTunnelConfigThread = GetTunnelConfigIdThread(
+            authorization=getToken(), id=self.tunnelId, parent=self
+        )
+        self.getTunnelConfigThread.returnSlot.connect(self.getTunnelConfigAPIParser)
+        self.getTunnelConfigThread.start()
+        self.getTunnelConfigThread.wait()
+        return self._launch()
 
     @pyqtSlot(TextReturnModel)
     def getTunnelConfigAPIParser(self, model: TextReturnModel):
