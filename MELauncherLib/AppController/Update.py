@@ -4,7 +4,6 @@ import os
 import sys
 from platform import architecture
 from qmaterialwidgets import InfoBar, InfoBarPosition
-from .Settings import devMode
 
 
 def checkUpdate():
@@ -54,17 +53,14 @@ class Updater(QObject):
 
     def downloadUpdate(self, showInfoBar: bool = True):
         """下载"""
-        if devMode:
-            return
-        else:
-            if showInfoBar:
-                InfoBar.info(
-                    title=self.tr("正在下载更新"),
-                    content=self.tr("MEFrp-Launcher 稍后将自动重启"),
-                    position=InfoBarPosition.BOTTOM_RIGHT,
-                    duration=-1,
-                    parent=self.parent().window(),
-                )
+        if showInfoBar:
+            InfoBar.info(
+                title=self.tr("正在下载更新"),
+                content=self.tr("MEFrp-Launcher 稍后将自动重启"),
+                position=InfoBarPosition.BOTTOM_RIGHT,
+                duration=-1,
+                parent=self.parent().window(),
+            )
         os.system(f"aria2c.exe -d update {self.url}")
         os.system(f".\\update\\{os.path.basename(self.url)}")
         sys.exit()

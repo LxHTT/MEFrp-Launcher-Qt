@@ -22,7 +22,7 @@ from PyQt5.QtWidgets import (
     QLineEdit,
 )
 from PyQt5.QtCore import Qt, QRect, QObject, pyqtSlot, QSize
-from ..AppController.encrypt import getToken, getUser, updateToken, getPassword, saveUser
+from ..AppController.encrypt import getToken, getUser, updateToken, saveUser
 from ..Resources import *  # noqa: F403 F401
 
 from qmaterialwidgets import (
@@ -46,7 +46,7 @@ from qmaterialwidgets import (
     LineEdit,
 )
 from .Multiplex.ScollArea import NormalSmoothScrollArea
-from ..AppController.Settings import cfg, devMode
+from ..AppController.Settings import cfg
 from ..AppController.Update import CheckUpdateThread, Updater, compareVersion
 from ..APIController import RefreshUserTokenThread, JSONReturnModel, ResetPasswordThread
 
@@ -752,23 +752,10 @@ class SettingsPage(QWidget, SettingsController):
             w.contentLabel.setTextFormat(Qt.MarkdownText)
             w.yesButton.setText(self.tr("  更新  "))
             w.cancelButton.setText(self.tr("  关闭  "))
-            if not devMode:
-                w.yesButton.clicked.connect(lambda: self.window().switchTo(self))
-                w.yesButton.clicked.connect(
-                    Updater(updateInfo=latestVerInfo, parent=self).downloadUpdate
-                )
-            else:
-                w.yesButton.clicked.connect(
-                    lambda: InfoBar.error(
-                        title=self.tr("不行"),
-                        content=self.tr("开发模式下更新会把Python删掉的"),
-                        orient=Qt.Horizontal,
-                        isClosable=True,
-                        position=InfoBarPosition.TOP,
-                        duration=2500,
-                        parent=self.tmpParent,
-                    )
-                )
+            w.yesButton.clicked.connect(lambda: self.window().switchTo(self))
+            w.yesButton.clicked.connect(
+                Updater(updateInfo=latestVerInfo, parent=self).downloadUpdate
+            )
             w.exec()
         else:
             if self.tmpParent == self:
