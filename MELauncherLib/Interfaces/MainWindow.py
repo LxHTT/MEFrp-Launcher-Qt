@@ -138,6 +138,9 @@ class MEMainWindow(BaseWindowClass):
             box.yesButton.clicked.connect(
                 lambda: self.setWindowFlags(Qt.SplashScreen | Qt.FramelessWindowHint)
             )
+            box.yesButton.clicked.connect(
+                lambda: self.updateFrameless()
+            )
             box.cancelButton.setParent(None)
             box.cancelButton.deleteLater()
             box.exec()

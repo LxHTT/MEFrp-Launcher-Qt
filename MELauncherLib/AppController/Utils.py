@@ -22,16 +22,18 @@ from PyQt5.QtCore import QUrl, QThread, QThreadPool, QFile
 from PyQt5.QtGui import QDesktopServices
 
 
-def Singleton(cls):
-    """单例化装饰器"""
-    Instances = {}
-
-    def GetInstance(*args, **kwargs):
-        if cls not in Instances:
-            Instances[cls] = cls(*args, **kwargs)
-        return Instances[cls]
-
-    return GetInstance
+def UserGroup(v: str) -> str:
+    """
+    用户组
+    """
+    if v == "default":
+        return "未实名"
+    elif v == "realname":
+        return "实名认证"
+    elif v == "admin":
+        return "管理员"
+    elif v == "dafault":
+        return "异常"
 
 
 def initMELauncher():

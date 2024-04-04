@@ -21,7 +21,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt, QRect, QSize, QObject, pyqtSlot
 
-from ..AppController.Utils import check24HoursPassed
+from ..AppController.Utils import UserGroup, check24HoursPassed
 from ..APIController import (
     GetUserInfoThread,
     UserSignThread,
@@ -284,11 +284,13 @@ class HomePage(QWidget, HomeAPI):
             )
 
             self.userInfoLayout.addWidget(
-                UserInfoWidget("用户组", model.data["group"], self.userInfoWidget)
+                UserInfoWidget("用户组", UserGroup(model.data["group"]), self.userInfoWidget)
             )
             self.userInfoLayout.addWidget(
                 UserInfoWidget(
-                    "出网带宽", str(model.data["outbound"] / 128) + " Mbps", self.userInfoWidget
+                    "出网带宽",
+                    str(int(model.data["outbound"] / 128)) + " Mbps",
+                    self.userInfoWidget,
                 )
             )
             self.userInfoLayout.addWidget(
