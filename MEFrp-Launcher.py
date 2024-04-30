@@ -26,10 +26,6 @@ if __name__ == "__main__":
     initMELauncherConfig()
     del initMELauncherConfig
 
-    from MELauncherLib.AppController.Settings import cfg
-    cfg.set(cfg.oldExecuteable, sys.executable.split("\\")[-1])
-    del cfg
-
     MEApplication.setHighDpiScaleFactorRoundingPolicy(
         Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
     )
