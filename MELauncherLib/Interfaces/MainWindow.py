@@ -21,7 +21,7 @@ from ..FrpcController.completer import checkFrpc, downloadFrpc
 
 from .Multiplex.ExceptionWidget import ExceptionWidget
 from ..AppController.ExceptionHandler import ExceptionFilterMode, exceptionFilter
-from ..AppController.Settings import getStyleSheetFromFile, cfg
+from ..AppController.Settings import cfg
 from ..AppController.encrypt import getUser, getPassword, saveUser, updateToken
 from ..APIController import JSONReturnModel
 
@@ -39,6 +39,7 @@ from qmaterialwidgets import (
     NavigationItemPosition,
     MaterialStyleSheet,
 )
+from qmaterialwidgets.common.style_sheet import getStyleSheetFromFile
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize, QThreadPool, pyqtSlot, Qt
 from PyQt5.QtWidgets import QApplication
