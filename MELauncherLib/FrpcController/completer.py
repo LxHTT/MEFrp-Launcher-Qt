@@ -18,14 +18,15 @@ from platform import system, architecture
 from PyQt5.QtCore import QProcess
 from zipfile import ZipFile
 from .. import FRPC_VERSION
+from ..AppController.Settings import cfg
 
 frpcDownloadInfo = {
-    "darwin_amd64": f"https://mecdn.mcserverx.com/mefrp/MirrorEdgeFrp_{FRPC_VERSION}_darwin_amd64.tar.gz",
-    "darwin_arm64": f"https://mecdn.mcserverx.com/mefrp/MirrorEdgeFrp_{FRPC_VERSION}_darwin_arm64.tar.gz",
-    "linux_amd64": f"https://mecdn.mcserverx.com/mefrp/MirrorEdgeFrp_{FRPC_VERSION}_linux_amd64.tar.gz",
-    "linux_arm64": f"https://mecdn.mcserverx.com/mefrp/MirrorEdgeFrp_{FRPC_VERSION}_linux_arm64.tar.gz",
-    "windows_amd64": f"https://mecdn.mcserverx.com/mefrp/MirrorEdgeFrp_{FRPC_VERSION}_windows_amd64.zip",
-    "windows_arm64": f"https://mecdn.mcserverx.com/mefrp/MirrorEdgeFrp_{FRPC_VERSION}_windows_arm64.zip",
+    "darwin_amd64": f"MirrorEdgeFrp_{FRPC_VERSION}_darwin_amd64.tar.gz",
+    "darwin_arm64": f"MirrorEdgeFrp_{FRPC_VERSION}_darwin_arm64.tar.gz",
+    "linux_amd64": f"MirrorEdgeFrp_{FRPC_VERSION}_linux_amd64.tar.gz",
+    "linux_arm64": f"MirrorEdgeFrp_{FRPC_VERSION}_linux_arm64.tar.gz",
+    "windows_amd64": f"MirrorEdgeFrp_{FRPC_VERSION}_windows_amd64.zip",
+    "windows_arm64": f"MirrorEdgeFrp_{FRPC_VERSION}_windows_arm64.zip",
 }
 
 
@@ -42,7 +43,10 @@ def downloadFrpc(parent):
     else:
         systemType = system().lower()
     try:
-        url = frpcDownloadInfo["{systemType}_{arch}".format(systemType=systemType, arch=arch)]
+        url = (
+            cfg.get(cfg.frpcCompletionSrc)
+            + frpcDownloadInfo["{systemType}_{arch}".format(systemType=systemType, arch=arch)]
+        )
     except KeyError:
         raise LookupError("Not support this platform!")
     parent.systemTrayIcon.showMessage("MEFrp Launcher", "正在补全Frpc，请耐心等待...", 5)

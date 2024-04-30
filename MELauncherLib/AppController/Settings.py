@@ -11,8 +11,6 @@
 #
 ################################################################################
 
-from typing import Union
-from PyQt5.QtCore import QFile
 from PyQt5.QtGui import QColor
 
 from qmaterialwidgets import (
@@ -39,7 +37,9 @@ class Config(QConfig):
 
     isFirstGuideFinished = ConfigItem("Launcher", "isFirstGuideFinished", False, BoolValidator())
 
-    oldExecuteable = ConfigItem("Launcher", "oldExecuteable", "", "")
+    frpcCompletionSrc = ConfigItem(
+        "Launcher", "frpcCompletionSrc", "https://download.mefrp.com/", ""
+    )
 
     bypassProxy = ConfigItem("Launcher", "bypassProxy", True, BoolValidator())
     navigationPosition = OptionsConfigItem(
@@ -49,15 +49,6 @@ class Config(QConfig):
 
 
 cfg = Config()
-
-
-def getStyleSheetFromFile(file: Union[str, QFile]):
-    """get style sheet from qss file"""
-    f = QFile(file)
-    f.open(QFile.ReadOnly)
-    qss = str(f.readAll(), encoding="utf-8")
-    f.close()
-    return qss
 
 
 def initMELauncherConfig():
