@@ -1113,7 +1113,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>尚未完成，点了也不为所动。</string>
+                <string>点击即可检查更新。</string>
                </property>
               </widget>
              </item>

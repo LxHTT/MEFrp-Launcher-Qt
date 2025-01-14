@@ -1,4 +1,4 @@
-#                    Copyright 2024, LxHTT.
+#                    Copyright 2025, LxHTT.
 #
 #     Part of "MEFrp-Launcher-Qt", a frpc launcher for ME Frp.
 #
@@ -95,6 +95,14 @@ class AboutPage(QWidget):
         self.openMEFrpWebBtn.setSizePolicy(sizePolicy)
         self.openMEFrpWebBtn.setObjectName("openMEFrpWebBtn")
         self.aboutBtnLayout.addWidget(self.openMEFrpWebBtn)
+        self.joinMEFrpQQGroupBtn = TonalPushButton(self.aboutBtnWidget)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.joinMEFrpQQGroupBtn.sizePolicy().hasHeightForWidth())
+        self.joinMEFrpQQGroupBtn.setSizePolicy(sizePolicy)
+        self.joinMEFrpQQGroupBtn.setObjectName("joinMEFrpQQGroupBtn")
+        self.aboutBtnLayout.addWidget(self.joinMEFrpQQGroupBtn)
         self.openLauncherRepoBtn = TonalPushButton(self.aboutBtnWidget)
         sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -396,9 +404,10 @@ class AboutPage(QWidget):
         self.TitleLabel.setText("关于")
         self.launcherTitle.setText("MEFrp-Launcher-Qt")
         self.versionLabel.setText(f"当前版本：{VERSION}")
-        self.copyrightLabel.setText("Copyright © 2024 LxHTT.")
+        self.copyrightLabel.setText("Copyright © 2025 LxHTT.")
         self.openMEFrpWebBtn.setText("打开 ME Frp 官网")
-        self.openLauncherRepoBtn.setText("打开 GitHub 仓库")
+        self.joinMEFrpQQGroupBtn.setText("加入官方 QQ 群聊")
+        self.openLauncherRepoBtn.setText("打开程序 GitHub 仓库")
         self.authorTitle.setText("作者")
         self.authorLabel.setText("落雪无痕LxHTT")
         self.openSourceTitle.setText("开源协议提示")
@@ -407,17 +416,17 @@ class AboutPage(QWidget):
         )
         self.softwareRegTitle.setText("计算机软件著作权提醒")
         self.softwareRegLabel.setText(
-            "“镜缘映射MEFrp桌面启动器软件” 已进行中华人民共和国计算机软件著作权登记，一切侵权行为将依法追究。\n计算机软件著作权登记号: 2024SR0443831"  # noqa: E501
+            "“镜缘映射MEFrp桌面启动器软件” 已进行中华人民共和国计算机软件著作权登记，一切侵权行为将依法追究。\n计算机软件著作权登记号: 2025SR0443831"  # noqa: E501
         )
         self.openSourceProjectLabel.setText("开源项目引用列表")
         self.pyqt5Title.setText("PyQt5")
         self.pyqt5Copyright.setText("Copyright © 2023 Riverbank Computing Limited.")
         self.pyqt5License.setText("Licensed under the GPL-3.0 License.")
         self.mefrplibTitle.setText("MEFrpLib")
-        self.mefrplibCopyright.setText("Copyright © 2024, LxHTT.")
+        self.mefrplibCopyright.setText("Copyright © 2025, LxHTT.")
         self.mefrplibLicense.setText("Licensed under the GPL-3.0 License.")
         self.qmaterialwidgetsxTitle.setText("QMaterialWidgets X")
-        self.qmaterialwidgetsxCopyright.setText("Copyright © 2024, zhiyiYo and LxHTT.")
+        self.qmaterialwidgetsxCopyright.setText("Copyright © 2025, zhiyiYo and LxHTT.")
         self.requestsTitle.setText("requests")
         self.requestsCopyright.setText("Copyright © 2017 by Kenneth Reitz.")
         self.requestsLicense.setText("Licensed under the Apache 2.0 License.")
@@ -428,6 +437,7 @@ class AboutPage(QWidget):
         self.pydesCopyright.setText("Copyright © 2010, Todd Whiteman.")
         self.pydesLicense.setText("Licensed under the MIT License.")
         self.openMEFrpWebBtn.clicked.connect(lambda: openWebUrl("https://www.mefrp.com"))
+        self.openMEFrpWebBtn.clicked.connect(lambda: openWebUrl("https://qm.qq.com/q/pZaRHwiowi"))
         self.openLauncherRepoBtn.clicked.connect(
             lambda: openWebUrl("https://github.com/LxHTT/MEFrp-Launcher-Qt")
         )

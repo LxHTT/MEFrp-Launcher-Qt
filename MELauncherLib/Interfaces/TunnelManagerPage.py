@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QGridLayout, QSizePolicy, QSpacerItem, QWidget, QDialogButtonBox
-from PyQt5.QtCore import QObject, pyqtSlot
+from PyQt5.QtCore import QObject, pyqtSlot, Qt, QRect
 from qmaterialwidgets import (
     TitleLabel,
     FlowLayout,
@@ -17,6 +17,7 @@ from ..APIController import (
     DeleteTunnelThread,
     JSONReturnModel,
 )
+from .Multiplex.ScollArea import NormalSmoothScrollArea
 from .Multiplex.TunnelWidget import TunnelWidget
 from .Multiplex.EditTunnelWidget import EditTunnelWidget
 from ..AppController.encrypt import getToken
@@ -77,18 +78,27 @@ class TunnelManagerPage(QWidget, TunnelManagerAPI):
         self.gridLayout.addWidget(self.refreshTunnelListBtn, 2, 0, 1, 1)
         spacerItem = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
         self.gridLayout.addItem(spacerItem, 3, 0, 1, 2)
-        self.containerWidget = QWidget(self)
+        self.scrollArea = NormalSmoothScrollArea(self)
+        self.scrollArea.setObjectName("scrollArea")
+        self.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.scrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.containerWidget.sizePolicy().hasHeightForWidth())
-        self.containerWidget.setSizePolicy(sizePolicy)
-        self.tunnelListFlowLayout = FlowLayout(self.containerWidget)
-        self.gridLayout.addWidget(self.containerWidget, 4, 0, 1, 2)
+        sizePolicy.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
+        self.scrollArea.setSizePolicy(sizePolicy)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setAlignment(Qt.AlignLeading | Qt.AlignLeft | Qt.AlignTop)
+        self.scrollAreaContents = QWidget()
+        self.scrollAreaContents.setGeometry(0, 0, 0, 0)
+        self.scrollAreaContents.setObjectName("scrollAreaContents")
+        self.scrollArea.setWidget(self.scrollAreaContents)
+        self.gridLayout.addWidget(self.scrollArea, 4, 0, 1, 2)
+        self.tunnelListFlowLayout = FlowLayout(self.scrollAreaContents)
+        self.tunnelListFlowLayout.setContentsMargins(0, 0, 0, 0)
         self.TitleLabel.setText("隧道列表")
         self.refreshTunnelListBtn.setIcon(FIF.UPDATE)
         self.refreshTunnelListBtn.setText("刷新")
-        self.tunnelListFlowLayout.setContentsMargins(0, 0, 0, 0)
         self.refreshTunnelListBtn.clicked.connect(self.getTunnelListFunc)
 
     def getTunnelListFunc(self):

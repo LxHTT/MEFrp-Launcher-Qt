@@ -1,4 +1,4 @@
-#                    Copyright 2024, LxHTT.
+#                    Copyright 2025, LxHTT.
 #
 #     Part of "MEFrp-Launcher-Qt", a frpc launcher for ME Frp.
 #
@@ -17,7 +17,7 @@ from traceback import format_exception
 from types import TracebackType
 from typing import Type
 
-from ..FrpcController.completer import checkFrpc, downloadFrpc
+from ..FrpcController.completer import checkFrpc
 
 from .Multiplex.ExceptionWidget import ExceptionWidget
 from ..AppController.ExceptionHandler import ExceptionFilterMode, exceptionFilter
@@ -111,7 +111,7 @@ class MEMainWindow(BaseWindowClass):
 
     def initWindow(self):
         """初始化窗口"""
-        self.setWindowTitle(f"MEFrp-Launcher-Qt v{VERSION}")
+        self.setWindowTitle(f"MEFrp-Launcher-Qt v{VERSION} (Final Version for ME Frp 4.0)")
         self.setWindowIcon(QIcon(":/built-InIcons/MEFrp.ico"))
 
         self.splashScreen = SplashScreen(self.windowIcon(), self)
@@ -198,23 +198,7 @@ class MEMainWindow(BaseWindowClass):
         cfg.themeChanged.connect(lambda: MaterialStyleSheet.MATERIAL_WINDOW.apply(self))
 
     def finishSetup(self):
-        w = False
-        if not checkFrpc(False):
-            downloadFrpc(self)
-        else:
-            w = False
         self.splashScreen.finish()
-        if w:
-            w = MessageBox(
-                title="Frpc补全失败",
-                content="MEFrp-Launcher 无法获取您对应系统的Frpc。\n请手动下载Frpc并解压到frpc目录。\n",  # noqa: E501
-                icon=FIF.APPLICATION,
-                parent=self,
-            )
-            w.cancelButton.setParent(None)
-            w.exec()
-        else:
-            pass
         if not cfg.get(cfg.isFirstGuideFinished):
             self.runFirstGuide()
         else:

@@ -1,4 +1,4 @@
-#                    Copyright 2024, LxHTT.
+#                    Copyright 2025, LxHTT.
 #
 #     Part of "MEFrp-Launcher-Qt", a frpc launcher for ME Frp.
 #
@@ -11,14 +11,17 @@
 #
 ################################################################################
 
-import os
-from os import path as osp, remove
-from shutil import move, rmtree
-from platform import system, architecture
+# from shutil import move, rmtree
+# from platform import system, architecture
+# from zipfile import ZipFile
+# from ..AppController.Settings import cfg
+# import os
+# from os import path as osp, remove
+from os import path as osp
+from platform import system
 from PyQt5.QtCore import QProcess
-from zipfile import ZipFile
 from .. import FRPC_VERSION
-from ..AppController.Settings import cfg
+
 
 frpcDownloadInfo = {
     "darwin_amd64": f"MirrorEdgeFrp_{FRPC_VERSION}_darwin_amd64.tar.gz",
@@ -30,47 +33,47 @@ frpcDownloadInfo = {
 }
 
 
-def downloadFrpc(parent):
-    arch = architecture()[0]
-    if arch == "64bit":
-        arch = "amd64"
-    elif arch == "32bit":
-        arch = "386"
-    else:
-        arch = "arm64"
-    if system().lower() == "macos":
-        systemType = "darwin"
-    else:
-        systemType = system().lower()
-    try:
-        url = (
-            cfg.get(cfg.frpcCompletionSrc)
-            + frpcDownloadInfo["{systemType}_{arch}".format(systemType=systemType, arch=arch)]
-        )
-    except KeyError:
-        raise LookupError("Not support this platform!")
-    parent.systemTrayIcon.showMessage("MEFrp Launcher", "正在补全Frpc，请耐心等待...", 5)
-    if osp.exists(f"frpc/{osp.basename(url)}"):
-        remove(f"frpc/{osp.basename(url)}")
-    os.system(f"aria2c.exe -d frpc {url}")
-    extractFrpc(file_name=osp.basename(url))
-    parent.systemTrayIcon.showMessage("MEFrp Launcher", "Frpc补全完毕", 5)
+# def downloadFrpc(parent):
+#     arch = architecture()[0]
+#     if arch == "64bit":
+#         arch = "amd64"
+#     elif arch == "32bit":
+#         arch = "386"
+#     else:
+#         arch = "arm64"
+#     if system().lower() == "macos":
+#         systemType = "darwin"
+#     else:
+#         systemType = system().lower()
+#     try:
+#         url = (
+#             cfg.get(cfg.frpcCompletionSrc)
+#             + frpcDownloadInfo["{systemType}_{arch}".format(systemType=systemType, arch=arch)]
+#         )
+#     except KeyError:
+#         raise LookupError("Not support this platform!")
+#     parent.systemTrayIcon.showMessage("MEFrp Launcher", "正在补全Frpc，请耐心等待...", 5)
+#     if osp.exists(f"frpc/{osp.basename(url)}"):
+#         remove(f"frpc/{osp.basename(url)}")
+#     os.system(f"aria2c.exe -d frpc {url}")
+#     extractFrpc(file_name=osp.basename(url))
+#     parent.systemTrayIcon.showMessage("MEFrp Launcher", "Frpc补全完毕", 5)
 
 
-def extractFrpc(file_name):
-    frpcProcessName = "frpc.exe" if system().lower() == "windows" else "frpc"
-    if osp.exists(f"frpc/{frpcProcessName}"):
-        remove(f"frpc/{frpcProcessName}")
-    with ZipFile(f"frpc/{file_name}", "r") as frpcArchive:
-        frpcArchive.extract(
-            f"{file_name.replace('.zip', '').replace('.tar.gz', '')}/{frpcProcessName}", "frpc"
-        )
-    move(
-        f"frpc/{file_name.replace('.zip', '').replace('.tar.gz', '')}/{frpcProcessName}",
-        f"frpc/{frpcProcessName}",
-    )
-    remove(f"frpc/{file_name}")
-    rmtree(f"frpc/{file_name.replace('.zip', '').replace('.tar.gz', '')}")
+# def extractFrpc(file_name):
+#     frpcProcessName = "frpc.exe" if system().lower() == "windows" else "frpc"
+#     if osp.exists(f"frpc/{frpcProcessName}"):
+#         remove(f"frpc/{frpcProcessName}")
+#     with ZipFile(f"frpc/{file_name}", "r") as frpcArchive:
+#         frpcArchive.extract(
+#             f"{file_name.replace('.zip', '').replace('.tar.gz', '')}/{frpcProcessName}", "frpc"
+#         )
+#     move(
+#         f"frpc/{file_name.replace('.zip', '').replace('.tar.gz', '')}/{frpcProcessName}",
+#         f"frpc/{frpcProcessName}",
+#     )
+#     remove(f"frpc/{file_name}")
+#     rmtree(f"frpc/{file_name.replace('.zip', '').replace('.tar.gz', '')}")
 
 
 def checkFrpc(getVersion):

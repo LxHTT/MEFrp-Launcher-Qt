@@ -1,4 +1,4 @@
-#                    Copyright 2024, LxHTT.
+#                    Copyright 2025, LxHTT.
 #
 #     Part of "MEFrp-Launcher-Qt", a frpc launcher for ME Frp.
 #
@@ -582,7 +582,7 @@ class SettingsPage(QWidget, SettingsController):
         self.manualCheckUpdateTip.setSizePolicy(sizePolicy)
         self.manualCheckUpdateTip.setObjectName("manualCheckUpdateTip")
         self.manualCheckUpdateLayout.addWidget(self.manualCheckUpdateTip, 2, 0, 2, 1)
-        self.manualCheckUpdateBtn = FilledPushButton(self.manualCheckUpdateWidget)
+        self.manualCheckUpdateBtn = TonalPushButton(self.manualCheckUpdateWidget)
         self.manualCheckUpdateBtn.setObjectName("manualCheckUpdateBtn")
         self.manualCheckUpdateLayout.addWidget(self.manualCheckUpdateBtn, 1, 3, 3, 1)
         self.manualCheckUpdateTitle = StrongBodyLabel(self.manualCheckUpdateWidget)
@@ -600,6 +600,11 @@ class SettingsPage(QWidget, SettingsController):
         self.settingsScrollArea.setWidget(self.settingsSC)
         self.gridLayout.addWidget(self.settingsScrollArea, 2, 0, 1, 1)
 
+        self.manualCheckUpdateBtn.setEnabled(False)
+        self.autoCheckUpdateSwitchBtn.setEnabled(False)
+        self.manualCheckUpdateBtn.setCursor(Qt.ForbiddenCursor)
+        self.autoCheckUpdateSwitchBtn.setCursor(Qt.ForbiddenCursor)
+        self.manualCheckUpdateBtn.setVisible(False)
         self.bypassSystemProxySwitchBtn.setChecked(True)
         self.manualCheckUpdateBtn.setIcon(FIF.UPDATE)
         self.TitleLabel.setText("设置")
@@ -634,7 +639,7 @@ class SettingsPage(QWidget, SettingsController):
         self.launcherThemeTip.setText("随你所好。")
         self.autoCheckUpdateTip.setText("开启后，MEFrp-Launcher 将在每次启动时检查更新。")
         self.autoCheckUpdateTitle.setText("自动检查更新")
-        self.manualCheckUpdateTip.setText("尚未完成，点了也不为所动。")
+        self.manualCheckUpdateTip.setText("本版本已是为 ME Frp 4.0 打造的最终版。")
         self.manualCheckUpdateBtn.setText("检查更新")
         self.manualCheckUpdateTitle.setText("检查更新")
         self.navigationPositionTip.setText("遥遥领先 遥遥领先！")
@@ -678,6 +683,7 @@ class SettingsPage(QWidget, SettingsController):
 
         self.autoCheckUpdateSwitchBtn.setChecked(cfg.get(cfg.autoCheckUpdate))
         self.connectSettingsSlot()
+        self.autoCheckUpdateSwitchBtn.setChecked(False)
         self.updateAccountStatus()
 
     def updateAccountStatus(self):
@@ -707,7 +713,7 @@ class SettingsPage(QWidget, SettingsController):
                 bool(not self.autoCheckUpdateSwitchBtn.isChecked())
             )
         )
-        self.manualCheckUpdateBtn.clicked.connect(lambda: self.checkUpdate(parent=self))
+        # self.manualCheckUpdateBtn.clicked.connect(lambda: self.checkUpdate(parent=self))
         self.copyTokenBtn.clicked.connect(self.copyToken)
         self.logoutCurrentAccountBtn.clicked.connect(self.logoutAccountFunc)
         self.resetTokenBtn.clicked.connect(self.resetUserTokenPreFunc)
