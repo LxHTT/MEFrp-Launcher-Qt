@@ -416,7 +416,7 @@ class AboutPage(QWidget):
         )
         self.softwareRegTitle.setText("计算机软件著作权提醒")
         self.softwareRegLabel.setText(
-            "“镜缘映射MEFrp桌面启动器软件” 已进行中华人民共和国计算机软件著作权登记，一切侵权行为将依法追究。\n计算机软件著作权登记号: 2025SR0443831"  # noqa: E501
+            "“镜缘映射MEFrp桌面启动器软件” 已进行中华人民共和国计算机软件著作权登记，一切侵权行为将依法追究。\n计算机软件著作权登记号: 2024SR0443831"  # noqa: E501
         )
         self.openSourceProjectLabel.setText("开源项目引用列表")
         self.pyqt5Title.setText("PyQt5")
